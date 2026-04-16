@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="어르신을 위한 AI 음성 대중교통 안내 앱">
+<title>말하면 바로 가요</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+KR:wght@400;500;700;900&family=Noto+Sans+SC:wght@400;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue:#007AFF;--blue-lt:#e8f2ff;--green:#34C759;--orange:#FF9500;
+  --red:#FF3B30;--yellow:#FFD60A;--purple:#AF52DE;
+  --g1:#F2F2F7;--g2:#E5E5EA;--g3:#C7C7CC;--g4:#8E8E93;--g5:#636366;--g6:#3A3A3C;
+  --black:#1C1C1E;--white:#FFFFFF;
+  --l2:#00A650;--l3:#EF7C1C;--l9:#8B5CF6;
+}
+body{background:#F2F2F7;font-family:'Inter','Noto Sans KR',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:28px 16px 56px;-webkit-font-smoothing:antialiased}
+
+/* 상단 */
+.top{text-align:center;margin-bottom:24px;width:100%;max-width:380px}
+.wordmark{font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--blue);text-transform:uppercase;margin-bottom:4px}
+.app-name{font-size:24px;font-weight:800;color:var(--black);letter-spacing:-.02em;margin-bottom:14px}
+.lang-tabs{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+.lt{padding:6px 13px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--g2);background:var(--white);color:var(--g5);transition:all .18s}
+.lt:hover{border-color:var(--blue);color:var(--blue)}
+.lt.on{background:var(--blue);border-color:var(--blue);color:var(--white)}
+
+/* 데모 배지 */
+.demo-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(255,149,0,.1);border:1px solid rgba(255,149,0,.3);border-radius:20px;padding:4px 10px;font-size:11px;font-weight:600;color:var(--orange);margin-top:10px;cursor:pointer}
+.demo-badge:hover{background:rgba(255,149,0,.18)}
+
+/* 폰 */
+.shell{width:320px;background:#1C1C1E;border-radius:46px;padding:13px;box-shadow:0 36px 72px rgba(0,0,0,.22),0 0 0 1px rgba(255,255,255,.05),inset 0 1px 0 rgba(255,255,255,.08)}
+.notch{width:88px;height:6px;background:#0a0a0a;border-radius:10px;margin:0 auto 9px}
+.screen-wrap{width:100%;height:620px;background:var(--white);border-radius:34px;overflow:hidden;position:relative}
+.hbar{height:20px;display:flex;align-items:center;justify-content:center;margin-top:5px}
+.hpill{width:100px;height:4px;background:rgba(255,255,255,.2);border-radius:2px}
+
+/* 화면 */
+.scr{position:absolute;inset:0;display:none;flex-direction:column;background:var(--white);animation:sIn .22s ease}
+.scr.on{display:flex}
+@keyframes sIn{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:translateX(0)}}
+@keyframes sBack{from{opacity:0;transform:translateX(-16px)}to{opacity:1;transform:translateX(0)}}
+.scr.back{animation:sBack .22s ease}
+
+/* 상태바 */
+.sbar{display:flex;justify-content:space-between;align-items:center;padding:10px 18px 3px;flex-shrink:0}
+.sbar-time{font-size:13px;font-weight:700;font-family:'Inter',sans-serif}
+.sbar-icons{font-size:11px;display:flex;gap:4px}
+
+/* 네비바 */
+.nav{display:flex;align-items:center;justify-content:space-between;padding:5px 14px 9px;flex-shrink:0}
+.nbk{width:32px;height:32px;border-radius:50%;background:var(--g1);border:none;cursor:pointer;font-size:16px;color:var(--blue);display:flex;align-items:center;justify-content:center;transition:background .15s}
+.nbk:hover{background:var(--g2)}
+.nbk.inv{opacity:0;pointer-events:none}
+.ntitle{font-size:14px;font-weight:700;color:var(--black);flex:1;text-align:center;letter-spacing:-.01em}
+.nreset{font-size:11px;font-weight:700;color:var(--red);cursor:pointer;padding:4px 8px;border-radius:7px;background:rgba(255,59,48,.08);border:none;transition:background .15s;white-space:nowrap}
+.nreset:hover{background:rgba(255,59,48,.15)}
+.nreset.inv{opacity:0;pointer-events:none}
+
+/* ─── S1 홈 ─── */
+#s1{background:var(--white)}
+.s1hero{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:0 24px}
+.app-icon{width:68px;height:68px;border-radius:16px;background:linear-gradient(145deg,#0055FF,#00A8FF);display:flex;align-items:center;justify-content:center;font-size:34px;box-shadow:0 8px 22px rgba(0,100,255,.28);margin-bottom:2px}
+.s1head{font-size:25px;font-weight:800;color:var(--black);text-align:center;line-height:1.25;letter-spacing:-.02em}
+.s1sub{font-size:13px;color:var(--g4);text-align:center;line-height:1.5}
+.mic-wrap{display:flex;flex-direction:column;align-items:center;gap:8px;margin-top:2px}
+.mic-outer{width:82px;height:82px;border-radius:50%;background:var(--blue-lt);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .15s;position:relative}
+.mic-outer::before{content:'';position:absolute;inset:-7px;border-radius:50%;border:2px solid rgba(0,122,255,.18);animation:rp 2s ease-in-out infinite}
+.mic-outer::after{content:'';position:absolute;inset:-16px;border-radius:50%;border:1.5px solid rgba(0,122,255,.08);animation:rp 2s ease-in-out infinite .5s}
+@keyframes rp{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0;transform:scale(1.1)}}
+.mic-outer:hover{transform:scale(1.06)}
+.mic-outer.on{background:rgba(52,199,89,.12)}
+.mic-outer.on::before{border-color:rgba(52,199,89,.28);animation:rpg 0.7s ease-in-out infinite alternate}
+@keyframes rpg{from{opacity:.6;transform:scale(.98)}to{opacity:1;transform:scale(1.04)}}
+.mic-btn{width:60px;height:60px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 4px 14px rgba(0,122,255,.38);transition:background .2s}
+.mic-outer.on .mic-btn{background:var(--green)}
+.mic-lbl{font-size:11px;font-weight:600;color:var(--g4)}
+.vstatus{font-size:13px;font-weight:600;color:var(--blue);min-height:18px;text-align:center}
+.chips{width:100%;display:flex;flex-direction:column;gap:6px}
+.s1bot{padding:14px 20px 18px;display:flex;flex-direction:column;gap:6px}
+.chip{background:var(--g1);border-radius:13px;padding:10px 13px;font-size:13px;font-weight:500;color:var(--g6);cursor:pointer;transition:background .15s;display:flex;align-items:center;gap:7px;border:1px solid transparent}
+.chip:hover{background:var(--blue-lt);border-color:rgba(0,122,255,.18);color:var(--blue)}
+
+/* ─── S2 경로 선택 ─── */
+#s2{background:var(--g1)}
+.dpill{margin:0 14px 10px;background:var(--white);border-radius:14px;padding:11px 13px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 1px 4px rgba(0,0,0,.06);flex-shrink:0}
+.dft{display:flex;align-items:center;gap:7px;font-size:17px;font-weight:800;color:var(--black);letter-spacing:-.02em}
+.darr{color:var(--blue)}
+.dmeta{font-size:11px;color:var(--g4);margin-top:2px}
+.mapfab{width:38px;height:38px;border-radius:11px;background:var(--blue-lt);border:none;cursor:pointer;font-size:17px;display:flex;align-items:center;justify-content:center;transition:background .15s;flex-shrink:0}
+.mapfab:hover{background:rgba(0,122,255,.18)}
+.banner{margin:0 14px 10px;background:var(--blue);border-radius:11px;padding:9px 13px;font-size:13px;font-weight:700;color:var(--white);text-align:center;flex-shrink:0;letter-spacing:-.01em}
+.routes{flex:1;overflow-y:auto;padding:0 14px 14px;display:flex;flex-direction:column;gap:9px}
+.routes::-webkit-scrollbar{display:none}
+.rcard{background:var(--white);border-radius:18px;overflow:hidden;cursor:pointer;border:2px solid transparent;box-shadow:0 2px 8px rgba(0,0,0,.06);transition:border-color .18s,box-shadow .18s,transform .12s}
+.rcard:hover{border-color:var(--blue);box-shadow:0 5px 18px rgba(0,122,255,.14);transform:translateY(-1px)}
+.rcard.rec{border-color:var(--blue)}
+.rbadge{padding:6px 13px;font-size:11px;font-weight:700;display:block;letter-spacing:.02em}
+.rb-bl{background:var(--blue);color:var(--white)}
+.rb-yl{background:var(--yellow);color:var(--black)}
+.rcont{padding:11px 15px 13px}
+.rmin{font-size:36px;font-weight:800;color:var(--black);line-height:1;letter-spacing:-.03em}
+.rmin span{font-size:15px;font-weight:500;color:var(--g4)}
+.rpills{display:flex;gap:5px;margin-top:7px;flex-wrap:wrap}
+.rpill{background:var(--g1);border-radius:7px;padding:3px 8px;font-size:11px;color:var(--g5);font-weight:500}
+.lvis{display:flex;align-items:center;gap:4px;margin-top:9px}
+.ldot{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:var(--white)}
+.lbar{flex:1;height:3px;border-radius:2px}
+.lxfer{font-size:10px;color:var(--orange);font-weight:700;background:rgba(239,124,28,.1);border-radius:5px;padding:2px 6px}
+.vhbox{margin:0 14px 14px;background:var(--white);border-radius:13px;padding:10px 13px;box-shadow:0 1px 4px rgba(0,0,0,.06);flex-shrink:0}
+.vhlbl{font-size:10px;font-weight:600;color:var(--g4);text-transform:uppercase;letter-spacing:.04em}
+.vhtxt{font-size:13px;color:var(--g6);margin-top:3px;line-height:1.5}
+
+/* ─── 노선도 모달 ─── */
+.modal{position:absolute;inset:0;background:rgba(0,0,0,.46);z-index:200;display:none;flex-direction:column;justify-content:flex-end;border-radius:34px;overflow:hidden;backdrop-filter:blur(3px)}
+.modal.on{display:flex}
+.msheet{background:var(--white);border-radius:22px 22px 34px 34px;height:88%;display:flex;flex-direction:column;overflow:hidden;animation:shUp .26s cubic-bezier(.34,1.56,.64,1)}
+@keyframes shUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.mhandle{width:38px;height:4px;background:var(--g2);border-radius:2px;margin:9px auto 5px;flex-shrink:0}
+.mhdr{display:flex;align-items:center;justify-content:space-between;padding:0 16px 11px;flex-shrink:0;border-bottom:1px solid var(--g2)}
+.mhdr-title{font-size:16px;font-weight:700;color:var(--black)}
+.mcls{width:28px;height:28px;border-radius:50%;background:var(--g1);border:none;cursor:pointer;font-size:13px;font-weight:700;color:var(--g5);display:flex;align-items:center;justify-content:center}
+.mcls:hover{background:var(--g2)}
+.mbody{flex:1;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:7px}
+.mbody::-webkit-scrollbar{display:none}
+.mlrow{display:flex;align-items:flex-start;gap:11px;padding:10px 12px;border-radius:12px;background:var(--g1)}
+.mlrow.cur{background:var(--blue-lt)}
+.mlbadge{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:var(--white);flex-shrink:0;margin-top:1px}
+.mlinfo{flex:1}
+.mlname{font-size:13px;font-weight:700;color:var(--black)}
+.mlrange{font-size:11px;color:var(--g4);margin-top:1px}
+.mlstops{display:flex;gap:4px;flex-wrap:wrap;margin-top:5px}
+.stp{font-size:10px;padding:2px 6px;border-radius:5px;background:var(--white);color:var(--g5);border:1px solid var(--g2);font-weight:500}
+.stp.hi{background:var(--blue);color:var(--white);border-color:var(--blue)}
+.mtip{font-size:11px;color:var(--g4);text-align:center;padding:5px 0}
+
+/* ─── S3 탑승 안내 ─── */
+#s3{background:#090A12}
+#s3 .sbar-time{color:var(--white)}
+#s3 .sbar-icons{color:rgba(255,255,255,.6)}
+#s3 .nav{border:none}
+#s3 .nbk{background:rgba(255,255,255,.1);color:var(--white)}
+#s3 .ntitle{color:var(--white)}
+#s3 .nreset{background:rgba(255,59,48,.15);color:#ff6a63}
+.linestrip{background:var(--blue);padding:8px 16px;flex-shrink:0;display:flex;justify-content:space-between;align-items:center}
+.lstxt{font-size:13px;font-weight:700;color:var(--white)}
+.lsbadge{background:rgba(255,255,255,.2);border-radius:20px;padding:3px 9px;font-size:11px;color:var(--white);font-family:'Inter',sans-serif;font-weight:600}
+.s3body{flex:1;overflow-y:auto;padding:13px 14px;display:flex;flex-direction:column;gap:10px}
+.s3body::-webkit-scrollbar{display:none}
+.stcard{background:rgba(0,122,255,.1);border:1px solid rgba(0,122,255,.2);border-radius:18px;padding:18px 14px;text-align:center}
+.stlbl{font-size:11px;font-weight:600;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px}
+.stname{font-size:38px;font-weight:800;color:var(--white);letter-spacing:-.02em;line-height:1}
+.stsub{font-size:13px;color:rgba(255,255,255,.4);margin-top:6px}
+.cdwrap{text-align:center}
+.cdlbl{font-size:11px;font-weight:600;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.cdnum{font-size:52px;font-weight:800;color:var(--yellow);font-family:'Inter',sans-serif;line-height:1;letter-spacing:-.03em}
+.cdsub{font-size:12px;color:rgba(255,255,255,.35);margin-top:2px}
+.doorcard{background:rgba(52,199,89,.1);border:1px solid rgba(52,199,89,.24);border-radius:13px;padding:11px 14px;display:flex;justify-content:space-between;align-items:center}
+.dmain{font-size:15px;font-weight:700;color:var(--green)}
+.dhint{font-size:11px;color:rgba(255,255,255,.3);margin-top:2px}
+.xfercta{background:rgba(255,214,10,.08);border:1px solid rgba(255,214,10,.2);border-radius:14px;padding:13px 14px;cursor:pointer;transition:background .15s}
+.xfercta:hover{background:rgba(255,214,10,.15)}
+.xctop{font-size:14px;font-weight:700;color:var(--yellow)}
+.xcbody{font-size:13px;color:rgba(255,255,255,.4);margin-top:4px;line-height:1.5}
+.xctap{font-size:11px;color:var(--yellow);margin-top:6px;font-weight:600}
+
+/* ─── S4 버스 연계 ─── */
+#s4{background:var(--g1)}
+.s4hdr{margin:0 14px 9px;background:var(--white);border-radius:13px;padding:10px 13px;flex-shrink:0;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.s4title{font-size:15px;font-weight:700;color:var(--black)}
+.s4sub{font-size:11px;color:var(--g4);margin-top:1px}
+.buslist{flex:1;overflow-y:auto;padding:0 14px;display:flex;flex-direction:column;gap:7px}
+.buslist::-webkit-scrollbar{display:none}
+.bcard{background:var(--white);border-radius:16px;padding:12px 13px;cursor:pointer;border:2px solid transparent;box-shadow:0 2px 7px rgba(0,0,0,.06);transition:border-color .15s,transform .12s}
+.bcard:hover{border-color:var(--blue);transform:translateY(-1px)}
+.btop{display:flex;justify-content:space-between;align-items:flex-start}
+.bnum{font-size:24px;font-weight:800;line-height:1;font-family:'Inter',sans-serif;letter-spacing:-.02em}
+.barr{font-size:21px;font-weight:800;line-height:1;font-family:'Inter',sans-serif}
+.arr-red{color:var(--red)} .arr-ora{color:var(--orange)} .arr-grn{color:var(--green)}
+.bdest{font-size:12px;color:var(--g5);margin-top:3px;font-weight:500}
+.bstop{font-size:11px;color:var(--g4);margin-top:4px}
+.bvcta{margin:8px 14px 14px;background:var(--blue);border-radius:13px;padding:11px 14px;display:flex;align-items:center;gap:9px;font-size:13px;font-weight:700;color:var(--white);cursor:pointer;flex-shrink:0;transition:opacity .15s}
+.bvcta:hover{opacity:.88}
+
+/* API 상태 토스트 */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.82);color:var(--white);padding:9px 18px;border-radius:20px;font-size:12px;font-weight:600;z-index:999;opacity:0;transition:opacity .3s;white-space:nowrap;backdrop-filter:blur(10px)}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+
+<!-- 상단 -->
+<div class="top">
+  <div class="wordmark">Transit Voice Guide</div>
+  <div class="app-name" id="appName">말하면 바로 가요 🚇</div>
+  <div class="lang-tabs">
+    <div class="lt on" onclick="setLang('ko',this)">🇰🇷 한국어</div>
+    <div class="lt"    onclick="setLang('en',this)">🇺🇸 English</div>
+    <div class="lt"    onclick="setLang('zh',this)">🇨🇳 中文</div>
+    <div class="lt"    onclick="setLang('ja',this)">🇯🇵 日本語</div>
+  </div>
+  <div class="demo-badge" id="demoBadge" onclick="showApiGuide()">
+    🔧 데모 모드 · API 키 설정하기
+  </div>
+</div>
+
+<!-- 폰 -->
+<div class="shell">
+  <div class="notch"></div>
+  <div class="screen-wrap">
+
+    <!-- S1 홈 -->
+    <div class="scr on" id="s1">
+      <div class="sbar">
+        <div class="sbar-time" id="clk" style="color:var(--black)">9:41</div>
+        <div class="sbar-icons" style="color:var(--black)">● ● ● 🔋</div>
+      </div>
+      <div class="nav">
+        <button class="nbk inv">←</button>
+        <span class="ntitle" id="s1t">말하면 바로가요</span>
+        <button class="nreset inv">-</button>
+      </div>
+      <div class="s1hero">
+        <div class="app-icon">🚇</div>
+        <div class="s1head" id="s1h">어디 가세요?<br>말씀해 주세요</div>
+        <div class="s1sub" id="s1s">마이크를 누르거나 아래 예시를 눌러보세요</div>
+        <div class="mic-wrap">
+          <div class="mic-outer" id="micOuter" onclick="doListen()">
+            <div class="mic-btn">🎙️</div>
+          </div>
+          <div class="mic-lbl" id="mlbl">탭하여 말하기</div>
+          <div class="vstatus" id="vst"></div>
+        </div>
+      </div>
+      <div class="s1bot">
+        <div class="chips">
+          <div class="chip" onclick="doChip(0)"><span>💬</span><span id="c0">"강남역 가고 싶어"</span></div>
+          <div class="chip" onclick="doChip(1)"><span>💬</span><span id="c1">"서울역까지 어떻게 가?"</span></div>
+          <div class="chip" onclick="doChip(2)"><span>💬</span><span id="c2">"잠실 가는 급행 있어?"</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S2 경로 선택 -->
+    <div class="scr" id="s2">
+      <div class="sbar"><div class="sbar-time" id="clk2">9:41</div><div class="sbar-icons">● ● ● 🔋</div></div>
+      <div class="nav">
+        <button class="nbk" onclick="goBack()">←</button>
+        <span class="ntitle" id="s2t">경로 선택</span>
+        <button class="nreset" onclick="goReset()" id="r2">재설정</button>
+      </div>
+      <div class="dpill">
+        <div>
+          <div class="dft"><span id="dfrom">신림</span><span class="darr">→</span><span id="dto">강남</span></div>
+          <div class="dmeta" id="dmeta">경로 2개 · 지금 출발 기준</div>
+        </div>
+        <button class="mapfab" onclick="openModal()">🗺️</button>
+      </div>
+      <div class="banner" id="banner">탑승할 경로를 선택하셨으면 눌러주세요!</div>
+      <div class="routes">
+        <div class="rcard rec" onclick="pickRoute()">
+          <div class="rbadge rb-bl" id="rb1">✅ 추천 · 일반열차</div>
+          <div class="rcont">
+            <div class="rmin">23<span id="msu"> 분</span></div>
+            <div class="rpills"><span class="rpill" id="rp1">환승 1회</span><span class="rpill">1,600원</span><span class="rpill" id="rp2">3분 후 출발</span></div>
+            <div class="lvis">
+              <div class="ldot" style="background:var(--l2)">2</div>
+              <div class="lbar" style="background:var(--l2)"></div>
+              <div class="lxfer" id="lxf">교대환승</div>
+              <div class="lbar" style="background:var(--l3)"></div>
+              <div class="ldot" style="background:var(--l3)">3</div>
+            </div>
+          </div>
+        </div>
+        <div class="rcard" onclick="pickRoute()">
+          <div class="rbadge rb-yl" id="rb2">⚡ 급행열차 · 빠름</div>
+          <div class="rcont">
+            <div class="rmin">15<span id="msu2"> 분</span></div>
+            <div class="rpills"><span class="rpill" id="rp3">환승 없음</span><span class="rpill">1,600원</span><span class="rpill" id="rp4">8분 후 출발</span></div>
+            <div class="lvis">
+              <div class="ldot" style="background:var(--l9)">9</div>
+              <div class="lbar" style="background:var(--l9)"></div>
+              <div class="ldot" style="background:var(--l9)">9</div>
+            </div>
+          </div>
+        </div>
+        <div class="vhbox">
+          <div class="vhlbl">🔊 <span id="vgl">음성 안내</span></div>
+          <div class="vhtxt" id="vgt">"추천은 2호선이에요. 교대에서 3호선으로 갈아타면 강남 도착해요."</div>
+        </div>
+      </div>
+
+      <!-- 노선도 모달 -->
+      <div class="modal" id="modal">
+        <div class="msheet">
+          <div class="mhandle"></div>
+          <div class="mhdr">
+            <span class="mhdr-title" id="mt">🗺️ 전체 지하철 노선도</span>
+            <button class="mcls" onclick="closeModal()">✕</button>
+          </div>
+          <div class="mbody">
+            <div style="font-size:11px;color:var(--g4);margin-bottom:2px" id="mr">현재 경로: 신림 → 강남</div>
+            <div class="mlrow cur">
+              <div class="mlbadge" style="background:var(--l2)">2</div>
+              <div class="mlinfo"><div class="mlname" id="ml2">2호선 · 순환선</div><div class="mlrange">시청 — 시청</div>
+              <div class="mlstops"><span class="stp hi" id="ms1">신림 출발</span><span class="stp" id="ms2">서울대입구</span><span class="stp" id="ms3">낙성대</span><span class="stp hi" id="ms4">교대 환승</span><span class="stp hi" id="ms5">강남 도착</span></div></div>
+            </div>
+            <div class="mlrow">
+              <div class="mlbadge" style="background:var(--l3)">3</div>
+              <div class="mlinfo"><div class="mlname" id="ml3">3호선</div><div class="mlrange">대화 — 오금</div>
+              <div class="mlstops"><span class="stp hi" id="ms6">교대 환승</span><span class="stp" id="ms7">남부터미널</span><span class="stp" id="ms8">양재</span></div></div>
+            </div>
+            <div class="mlrow">
+              <div class="mlbadge" style="background:#1269B5">4</div>
+              <div class="mlinfo"><div class="mlname" id="ml4">4호선</div><div class="mlrange">당고개 — 오이도</div></div>
+            </div>
+            <div class="mlrow">
+              <div class="mlbadge" style="background:var(--l9)">9</div>
+              <div class="mlinfo"><div class="mlname" id="ml9">9호선 · 급행</div><div class="mlrange">개화 — 중앙보훈병원</div>
+              <div class="mlstops"><span class="stp" id="ms9">신논현</span><span class="stp" id="ms10">언주</span><span class="stp" id="ms11">선정릉</span></div></div>
+            </div>
+            <div class="mlrow">
+              <div class="mlbadge" style="background:#CD7C2F">수인</div>
+              <div class="mlinfo"><div class="mlname" id="mlsu">수인·분당선</div><div class="mlrange">수원 — 왕십리</div></div>
+            </div>
+            <div class="mtip" id="mtp">✕ 누르면 경로 선택으로 돌아가요</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S3 탑승 안내 -->
+    <div class="scr" id="s3">
+      <div class="sbar"><div class="sbar-time" id="clk3">9:41</div><div class="sbar-icons" style="color:rgba(255,255,255,.6)">● ● ● 🔋</div></div>
+      <div class="nav">
+        <button class="nbk" onclick="goBack()">←</button>
+        <span class="ntitle" id="s3t">탑승 안내</span>
+        <button class="nreset" onclick="goReset()" id="r3">재설정</button>
+      </div>
+      <div class="linestrip">
+        <div class="lstxt" id="lsl">🚇 2호선 탑승 중</div>
+        <div class="lsbadge" id="lsb">강남까지 3정거장</div>
+      </div>
+      <div class="s3body">
+        <div class="stcard">
+          <div class="stlbl" id="nl">다음 역</div>
+          <div class="stname" id="ns">교대</div>
+          <div class="stsub" id="nsb">환승역 — 3호선 갈아타세요</div>
+        </div>
+        <div class="cdwrap">
+          <div class="cdlbl" id="cdl">도착까지</div>
+          <div class="cdnum" id="cdn">2:30</div>
+          <div class="cdsub" id="cds">약 2분 30초 후 도착</div>
+        </div>
+        <div class="doorcard">
+          <div><div class="dmain" id="dm">🚪 왼쪽 문</div><div class="dhint" id="dh">에스컬레이터 가까운 쪽</div></div>
+          <div style="font-size:26px">⬅️</div>
+        </div>
+        <div class="xfercta" onclick="goTo(4)">
+          <div class="xctop" id="xt">⚡ 환승 알림 — 버스 연계 보기</div>
+          <div class="xcbody" id="xb">교대역에서 3호선으로 갈아타세요.<br>강남역 도착 후 연계 버스를 확인하세요.</div>
+          <div class="xctap" id="xtp">👉 눌러서 버스 연계 확인하기</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S4 버스 연계 -->
+    <div class="scr" id="s4">
+      <div class="sbar"><div class="sbar-time" id="clk4">9:41</div><div class="sbar-icons">● ● ● 🔋</div></div>
+      <div class="nav">
+        <button class="nbk" onclick="goBack()">←</button>
+        <span class="ntitle" id="s4t">버스 연계</span>
+        <button class="nreset" onclick="goReset()" id="r4">재설정</button>
+      </div>
+      <div class="s4hdr">
+        <div class="s4title" id="s4ti">🚌 강남역 연계 버스</div>
+        <div class="s4sub" id="s4su">목적지 방향 버스만 보여드려요</div>
+      </div>
+      <div class="buslist" id="busList">
+        <div class="bcard"><div class="btop"><div><div class="bnum" style="color:var(--blue)">140</div><div class="bdest" id="bd1">→ 서울역 · 시청 방향</div></div><div class="barr arr-red" id="ba1">곧도착</div></div><div class="bstop" id="bs1">📍 4번 출구 앞 · 도보 1분</div></div>
+        <div class="bcard"><div class="btop"><div><div class="bnum" style="color:var(--orange)">3412</div><div class="bdest" id="bd2">→ 논현 · 신사 방향</div></div><div class="barr arr-ora" id="ba2">4분</div></div><div class="bstop" id="bs2">📍 10번 출구 · 도보 2분</div></div>
+        <div class="bcard"><div class="btop"><div><div class="bnum" style="color:var(--purple)">9407</div><div class="bdest" id="bd3">→ 판교 · 분당 방향</div></div><div class="barr arr-grn" id="ba3">8분</div></div><div class="bstop" id="bs3">📍 2번 출구 · 도보 3분</div></div>
+        <div class="bcard"><div class="btop"><div><div class="bnum" style="color:var(--green)">4412</div><div class="bdest" id="bd4">→ 역삼 · 선릉 방향</div></div><div class="barr arr-grn" id="ba4">12분</div></div><div class="bstop" id="bs4">📍 1번 출구 · 도보 2분</div></div>
+      </div>
+      <div class="bvcta"><span>🎙️</span><span id="bvb">"가장 빠른 버스 알려줘"</span></div>
+    </div>
+
+  </div>
+  <div class="hbar"><div class="hpill"></div></div>
+</div>
+
+<!-- 토스트 -->
+<div class="toast" id="toast"></div>
+
+<!-- 외부 JS -->
+<script src="js/config.example.js"></script>
+<script src="js/api.js"></script>
+<script src="js/speech.js"></script>
+<script>
+/* ══════════════════════════════
+   다국어 텍스트
+══════════════════════════════ */
+const T={
+  ko:{an:'말하면 바로 가요 🚇',s1t:'말하면 바로가요',s1h:'어디 가세요?\n말씀해 주세요',s1s:'마이크를 누르거나 아래 예시를 눌러보세요',ml:'탭하여 말하기',lis:'🎙️ 듣고 있어요...',rec:'✅ 인식됨',ch:['"강남역 가고 싶어"','"서울역까지 어떻게 가?"','"잠실 가는 급행 있어?"'],s2t:'경로 선택',rst:'재설정',fr:'신림',to:'강남',meta:'경로 2개 · 지금 출발 기준',ban:'탑승할 경로를 선택하셨으면 눌러주세요!',rb1:'✅ 추천 · 일반열차',rb2:'⚡ 급행열차 · 빠름',msuf:' 분',rp1:'환승 1회',rp2:'3분 후 출발',lxf:'교대환승',rp3:'환승 없음',rp4:'8분 후 출발',vgl:'음성 안내',vgt:'"추천은 2호선이에요. 교대에서 3호선으로 갈아타면 강남 도착해요."',mt:'🗺️ 전체 지하철 노선도',mr:'현재 경로: 신림 → 강남',mtp:'✕ 누르면 경로 선택으로 돌아가요',ml2:'2호선 · 순환선',ml3:'3호선',ml4:'4호선',ml9:'9호선 · 급행',mlsu:'수인·분당선',ms1:'신림 출발',ms2:'서울대입구',ms3:'낙성대',ms4:'교대 환승',ms5:'강남 도착',ms6:'교대 환승',ms7:'남부터미널',ms8:'양재',ms9:'신논현',ms10:'언주',ms11:'선정릉',s3t:'탑승 안내',lsl:'🚇 2호선 탑승 중',lsb:'강남까지 3정거장',nl:'다음 역',ns:'교대',nsb:'환승역 — 3호선 갈아타세요',cdl:'도착까지',cds:'약 2분 30초 후 도착',dm:'🚪 왼쪽 문',dh:'에스컬레이터 가까운 쪽',xt:'⚡ 환승 알림 — 버스 연계 보기',xb:'교대역에서 3호선으로 갈아타세요.\n강남역 도착 후 연계 버스를 확인하세요.',xtp:'👉 눌러서 버스 연계 확인하기',s4t:'버스 연계',s4ti:'🚌 강남역 연계 버스',s4su:'목적지 방향 버스만 보여드려요',bd1:'→ 서울역 · 시청 방향',ba1:'곧도착',bs1:'📍 4번 출구 앞 · 도보 1분',bd2:'→ 논현 · 신사 방향',ba2:'4분',bs2:'📍 10번 출구 · 도보 2분',bd3:'→ 판교 · 분당 방향',ba3:'8분',bs3:'📍 2번 출구 · 도보 3분',bd4:'→ 역삼 · 선릉 방향',ba4:'12분',bs4:'📍 1번 출구 · 도보 2분',bvb:'"가장 빠른 버스 알려줘"',demo:'🔧 데모 모드 · API 키 설정하기',font:"'Noto Sans KR','Inter',sans-serif"},
+  en:{an:'Go When You Say It 🚇',s1t:'Transit Voice',s1h:'Where are you\nheaded today?',s1s:'Tap the mic or choose an example below',ml:'Tap to speak',lis:'🎙️ Listening...',rec:'✅ Got it!',ch:['"Take me to Gangnam"','"How do I get to Seoul Station?"','"Is there an express to Jamsil?"'],s2t:'Choose Route',rst:'Reset',fr:'Sinrim',to:'Gangnam',meta:'2 routes · Departing now',ban:'Tap a route to confirm your selection!',rb1:'✅ Recommended · Local',rb2:'⚡ Express · Faster',msuf:' min',rp1:'1 transfer',rp2:'Departs in 3 min',lxf:'Gyodae Xfer',rp3:'No transfer',rp4:'Departs in 8 min',vgl:'Voice Guide',vgt:'"Take Line 2. Transfer at Gyodae to Line 3 for Gangnam."',mt:'🗺️ Full Subway Map',mr:'Route: Sinrim → Gangnam',mtp:'Tap ✕ to return to route selection',ml2:'Line 2 · Circle',ml3:'Line 3',ml4:'Line 4',ml9:'Line 9 · Express',mlsu:'Suinbundang Line',ms1:'Sinrim (Depart)',ms2:'SNU Station',ms3:'Nakseongdae',ms4:'Gyodae (Xfer)',ms5:'Gangnam (Arrive)',ms6:'Gyodae (Xfer)',ms7:'Nambu Terminal',ms8:'Yangjae',ms9:'Sinnonhyeon',ms10:'Eonju',ms11:'Seonjeongneung',s3t:'On Board',lsl:'🚇 Line 2 — On Board',lsb:'3 stops to Gangnam',nl:'Next Station',ns:'Gyodae',nsb:'Transfer — Switch to Line 3',cdl:'Arrives in',cds:'approx. 2 min 30 sec',dm:'🚪 Left Door',dh:'Closer to escalator',xt:'⚡ Transfer Alert — Bus Connections',xb:'Transfer to Line 3 at Gyodae.\nCheck connecting buses at Gangnam.',xtp:'👉 Tap to see bus connections',s4t:'Bus Connections',s4ti:'🚌 Buses from Gangnam Station',s4su:'Filtered for your destination',bd1:'→ Seoul Station · City Hall',ba1:'Arriving',bs1:'📍 Exit 4 · 1 min walk',bd2:'→ Nonhyeon · Sinsa',ba2:'4 min',bs2:'📍 Exit 10 · 2 min walk',bd3:'→ Pangyo · Bundang',ba3:'8 min',bs3:'📍 Exit 2 · 3 min walk',bd4:'→ Yeoksam · Seolleung',ba4:'12 min',bs4:'📍 Exit 1 · 2 min walk',bvb:'"Which bus is fastest?"',demo:'🔧 Demo Mode · Set up API keys',font:"'Inter',sans-serif"},
+  zh:{an:'说走就走 🚇',s1t:'语音乘车助手',s1h:'您好！\n请问您要去哪里？',s1s:'点击麦克风或选择下方示例',ml:'点击说话',lis:'🎙️ 正在聆听...',rec:'✅ 已识别',ch:['"我想去江南站"','"怎么去首尔站？"','"有去蚕室的急行吗？"'],s2t:'选择路线',rst:'重置',fr:'新林',to:'江南',meta:'2条路线 · 即时出发',ban:'请选择要乘坐的路线并点击确认！',rb1:'✅ 推荐 · 普通列车',rb2:'⚡ 急行列车 · 更快',msuf:' 分钟',rp1:'换乘1次',rp2:'3分钟后发车',lxf:'教大换乘',rp3:'无需换乘',rp4:'8分钟后发车',vgl:'语音提示',vgt:'"请乘坐2号线，在教大站换乘3号线到达江南。"',mt:'🗺️ 完整地铁路线图',mr:'当前路线：新林 → 江南',mtp:'点击 ✕ 返回路线选择',ml2:'2号线 · 循环线',ml3:'3号线',ml4:'4号线',ml9:'9号线 · 急行',mlsu:'水仁·盆唐线',ms1:'新林（出发）',ms2:'首尔大学站',ms3:'落星台',ms4:'教大（换乘）',ms5:'江南（到达）',ms6:'教大（换乘）',ms7:'南部客运站',ms8:'良才',ms9:'新论铉',ms10:'彦主',ms11:'宣靖陵',s3t:'乘车导航',lsl:'🚇 正在乘坐2号线',lsb:'距江南还有3站',nl:'下一站',ns:'教大',nsb:'换乘站 — 请换乘3号线',cdl:'到站时间',cds:'约2分30秒后到达',dm:'🚪 左侧车门',dh:'靠近自动扶梯一侧',xt:'⚡ 换乘提醒 — 查看接驳公交',xb:'请在教大站换乘3号线。\n到达江南站后可查看接驳公交。',xtp:'👉 点击查看公交信息',s4t:'接驳公交',s4ti:'🚌 江南站接驳公交',s4su:'仅显示您目的地方向的公交',bd1:'→ 首尔站 · 市厅方向',ba1:'即将到站',bs1:'📍 4号出口前 · 步行1分钟',bd2:'→ 论铉 · 新沙方向',ba2:'4分钟',bs2:'📍 10号出口 · 步行2分钟',bd3:'→ 板桥 · 盆唐方向',ba3:'8分钟',bs3:'📍 2号出口 · 步行3分钟',bd4:'→ 驿三 · 宣陵方向',ba4:'12分钟',bs4:'📍 1号出口 · 步行2分钟',bvb:'"哪班公交最快？"',demo:'🔧 演示模式 · 设置API密钥',font:"'Noto Sans SC','Inter',sans-serif"},
+  ja:{an:'話せばすぐ行ける 🚇',s1t:'音声乗車ガイド',s1h:'どこへ\n行きますか？',s1s:'マイクをタップするか下の例を選んでください',ml:'タップして話す',lis:'🎙️ 聞いています...',rec:'✅ 認識しました',ch:['"江南駅に行きたい"','"ソウル駅までどう行く？"','"蚕室行きの急行はある？"'],s2t:'経路選択',rst:'リセット',fr:'新林',to:'江南',meta:'2つの経路 · 今すぐ出発',ban:'乗車する経路を選んでタップしてください！',rb1:'✅ おすすめ · 普通列車',rb2:'⚡ 急行列車 · 速い',msuf:' 分',rp1:'乗換1回',rp2:'3分後発車',lxf:'教大乗換',rp3:'乗換なし',rp4:'8分後発車',vgl:'音声案内',vgt:'"2号線にお乗りください。教大で3号線に乗り換えて江南に到着します。"',mt:'🗺️ 全路線図',mr:'現在の経路：新林 → 江南',mtp:'✕ を押すと経路選択に戻ります',ml2:'2号線 · 環状線',ml3:'3号線',ml4:'4号線',ml9:'9号線 · 急行',mlsu:'水仁・盆唐線',ms1:'新林（出発）',ms2:'ソウル大学駅',ms3:'落星台',ms4:'教大（乗換）',ms5:'江南（到着）',ms6:'教大（乗換）',ms7:'南部ターミナル',ms8:'良才',ms9:'新論峴',ms10:'彦州',ms11:'宣靖陵',s3t:'乗車案内',lsl:'🚇 2号線に乗車中',lsb:'江南まで3駅',nl:'次の駅',ns:'教大',nsb:'乗換駅 — 3号線に乗り換えてください',cdl:'到着まで',cds:'約2分30秒後に到着',dm:'🚪 左側のドア',dh:'エスカレーター寄り',xt:'⚡ 乗換案内 — バス連絡を見る',xb:'教大駅で3号線に乗り換えてください。\n江南駅到着後、連絡バスをご確認ください。',xtp:'👉 タップしてバス情報を確認',s4t:'バス連絡',s4ti:'🚌 江南駅 連絡バス',s4su:'目的地方向のバスのみ表示',bd1:'→ ソウル駅・市庁方面',ba1:'まもなく到着',bs1:'📍 4番出口前 · 徒歩1分',bd2:'→ 論峴・新沙方面',ba2:'4分',bs2:'📍 10番出口 · 徒歩2分',bd3:'→ 板橋・盆唐方面',ba3:'8分',bs3:'📍 2番出口 · 徒歩3分',bd4:'→ 駅三・宣陵方面',ba4:'12分',bs4:'📍 1番出口 · 徒歩2分',bvb:'"一番早いバスはどれ？"',demo:'🔧 デモモード · APIキーを設定',font:"'Noto Sans JP','Inter',sans-serif"},
+};
+
+/* ══ 상태 ══ */
+let lang='ko', hist=[1], cur=1;
+
+/* ══ 언어 ══ */
+function setLang(l,el){
+  lang=l;
+  document.querySelectorAll('.lt').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  document.body.style.fontFamily=T[l].font;
+  apply();
+}
+const ids=['an','s1t','s1h','s1s','ml','c0','c1','c2','s2t','r2','r3','r4','fr','to','meta','ban','rb1','rb2','msu','msu2','rp1','rp2','lxf','rp3','rp4','vgl','vgt','mt','mr','mtp','ml2','ml3','ml4','ml9','mlsu','ms1','ms2','ms3','ms4','ms5','ms6','ms7','ms8','ms9','ms10','ms11','s3t','lsl','lsb','nl','ns','nsb','cdl','cds','dm','dh','xt','xb','xtp','s4t','s4ti','s4su','bd1','ba1','bs1','bd2','ba2','bs2','bd3','ba3','bs3','bd4','ba4','bs4','bvb','demo'];
+const keys=['an','s1t','s1h','s1s','ml','ch.0','ch.1','ch.2','s2t','rst','rst','rst','fr','to','meta','ban','rb1','rb2','msuf','msuf','rp1','rp2','lxf','rp3','rp4','vgl','vgt','mt','mr','mtp','ml2','ml3','ml4','ml9','mlsu','ms1','ms2','ms3','ms4','ms5','ms6','ms7','ms8','ms9','ms10','ms11','s3t','lsl','lsb','nl','ns','nsb','cdl','cds','dm','dh','xt','xb','xtp','s4t','s4ti','s4su','bd1','ba1','bs1','bd2','ba2','bs2','bd3','ba3','bs3','bd4','ba4','bs4','bvb','demo'];
+function apply(){
+  const t=T[lang];
+  ids.forEach((id,i)=>{
+    const el=document.getElementById(id);
+    if(!el) return;
+    const key=keys[i];
+    let val;
+    if(key.includes('.')){const[k,j]=key.split('.');val=t[k][+j];}else val=t[key];
+    if(val===undefined) return;
+    el.innerHTML=val.replace(/\n/g,'<br>');
+  });
+  document.getElementById('appName').textContent=t.an;
+}
+
+/* ══ 화면 전환 ══ */
+function goTo(n,back){
+  const ps=document.getElementById('s'+cur);
+  const ns=document.getElementById('s'+n);
+  ps.classList.remove('on');
+  ns.classList.remove('back');
+  if(back) ns.classList.add('back');
+  ns.classList.add('on');
+  cur=n;
+  if(!back&&hist[hist.length-1]!==n) hist.push(n);
+}
+function goBack(){
+  if(hist.length<=1) return;
+  hist.pop();
+  goTo(hist[hist.length-1],true);
+}
+function goReset(){
+  hist=[1];
+  document.getElementById('vst').textContent='';
+  document.getElementById('micOuter').classList.remove('on');
+  goTo(1,true);
+}
+
+/* ══ 음성인식 ══ */
+const SpeechRec=window.SpeechRecognition||window.webkitSpeechRecognition;
+const langMap={ko:'ko-KR',en:'en-US',zh:'zh-CN',ja:'ja-JP'};
+
+function doListen(){
+  if(!SpeechRec){
+    showToast('🔧 크롬 브라우저에서 음성인식이 됩니다');
+    simulateListen();
+    return;
+  }
+  const rec=new SpeechRec();
+  rec.lang=langMap[lang]||'ko-KR';
+  rec.continuous=false;
+  rec.interimResults=true;
+
+  const mic=document.getElementById('micOuter');
+  const vst=document.getElementById('vst');
+
+  rec.onstart=()=>{
+    mic.classList.add('on');
+    vst.style.color='var(--green)';
+    vst.textContent=T[lang].lis;
+  };
+  rec.onresult=(e)=>{
+    const txt=e.results[0][0].transcript;
+    const fin=e.results[0].isFinal;
+    vst.textContent=(fin?T[lang].rec+' ':'')+'"'+txt+'"';
+    if(fin){
+      mic.classList.remove('on');
+      setTimeout(()=>goTo(2),700);
+    }
+  };
+  rec.onerror=(e)=>{
+    mic.classList.remove('on');
+    if(e.error==='not-allowed') showToast('⚠️ 마이크 권한을 허용해주세요');
+    else if(e.error==='no-speech') showToast('🎙️ 음성이 감지되지 않았어요');
+    else simulateListen();
+  };
+  rec.start();
+}
+
+function simulateListen(){
+  const mic=document.getElementById('micOuter');
+  const vst=document.getElementById('vst');
+  mic.classList.add('on');
+  vst.style.color='var(--green)';
+  vst.textContent=T[lang].lis;
+  setTimeout(()=>{
+    mic.classList.remove('on');
+    vst.textContent=T[lang].rec+' '+T[lang].ch[0];
+    setTimeout(()=>goTo(2),700);
+  },1800);
+}
+
+function doChip(i){
+  const vst=document.getElementById('vst');
+  vst.style.color='var(--blue)';
+  vst.textContent=T[lang].rec+' '+T[lang].ch[i];
+  setTimeout(()=>goTo(2),600);
+}
+
+/* ══ 모달 ══ */
+function openModal(){document.getElementById('modal').classList.add('on');}
+function closeModal(){document.getElementById('modal').classList.remove('on');}
+
+/* ══ 토스트 ══ */
+function showToast(msg,dur=2800){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),dur);
+}
+
+/* ══ API 가이드 ══ */
+function showApiGuide(){
+  showToast('data.seoul.go.kr 에서 무료 API 키를 발급받으세요!',4000);
+}
+
+/* ══ 시계 ══ */
+function tick(){
+  const n=new Date(),h=String(n.getHours()).padStart(2,'0'),m=String(n.getMinutes()).padStart(2,'0'),t=h+':'+m;
+  ['clk','clk2','clk3','clk4'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=t;});
+}
+tick();setInterval(tick,15000);
+
+/* ══ 카운트다운 ══ */
+let sec=150;
+setInterval(()=>{
+  if(sec>0)sec--;
+  const m=Math.floor(sec/60),s=String(sec%60).padStart(2,'0');
+  const e=document.getElementById('cdn');
+  if(e)e.textContent=m+':'+s;
+},1000);
+
+/* ══ 버스 실시간 (API 연동) ══ */
+async function refreshBus(){
+  if(typeof API==='undefined') return;
+  const list=await API.getBusArrival('22350');
+  const el=document.getElementById('busList');
+  if(!el||!list.length) return;
+  list.slice(0,4).forEach((b,i)=>{
+    const an=document.getElementById('ba'+(i+1));
+    if(an){
+      const min=b.remainMin;
+      an.textContent=min<=1?T[lang].ba1:min+'분';
+      an.className='barr '+(min<=1?'arr-red':min<=5?'arr-ora':'arr-grn');
+    }
+  });
+}
+setInterval(refreshBus,30000);
+
+/* 초기 적용 */
+apply();
+</script>
+</body>
+</html>
