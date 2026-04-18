@@ -2,504 +2,1013 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <title>말하면 바로 가요</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Noto+Sans+KR:wght@400;500;700;900&family=Noto+Sans+SC:wght@400;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=SF+Pro+Display:wght@700;800&display=swap" rel="stylesheet">
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
-  --blue:#007AFF;--blt:#e8f2ff;--green:#34C759;--ora:#FF9500;
-  --red:#FF3B30;--ylw:#FFD60A;--pur:#AF52DE;
-  --g1:#F2F2F7;--g2:#E5E5EA;--g4:#8E8E93;--g5:#636366;--g6:#3A3A3C;
-  --bk:#1C1C1E;--wh:#FFFFFF;--l2:#00A650;--l3:#EF7C1C;--l9:#8B5CF6;
+  --blue:#007AFF;--blt:#EBF3FF;--green:#34C759;--ora:#FF9500;
+  --red:#FF3B30;--ylw:#FFCC00;--pur:#AF52DE;
+  --g1:#F2F2F7;--g2:#E5E5EA;--g3:#C7C7CC;--g4:#8E8E93;--g5:#636366;
+  --bk:#1C1C1E;--wh:#FFFFFF;
+  --l1:#0052A4;--l2:#00A650;--l3:#EF7C1C;--l4:#00A0E9;
+  --l5:#996CAC;--l6:#CD7C2F;--l7:#747F00;--l8:#E6186C;--l9:#BDB092;
 }
-body{background:#F2F2F7;font-family:'Inter','Noto Sans KR',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:28px 16px 56px;-webkit-font-smoothing:antialiased}
-.top{text-align:center;margin-bottom:22px;width:100%;max-width:380px}
-.wm{font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--blue);text-transform:uppercase;margin-bottom:4px}
-.an{font-size:23px;font-weight:800;color:var(--bk);letter-spacing:-.02em;margin-bottom:14px}
-.ltabs{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
-.lt{padding:6px 13px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--g2);background:var(--wh);color:var(--g5);transition:all .18s}
-.lt:hover{border-color:var(--blue);color:var(--blue)}
-.lt.on{background:var(--blue);border-color:var(--blue);color:var(--wh)}
-.shell{width:320px;background:#1C1C1E;border-radius:46px;padding:13px;box-shadow:0 36px 72px rgba(0,0,0,.22),0 0 0 1px rgba(255,255,255,.05)}
-.notch{width:88px;height:6px;background:#0a0a0a;border-radius:10px;margin:0 auto 9px}
-.sw{width:100%;height:620px;background:var(--wh);border-radius:34px;overflow:hidden;position:relative}
-.hbar{height:20px;display:flex;align-items:center;justify-content:center;margin-top:5px}
-.hpill{width:100px;height:4px;background:rgba(255,255,255,.2);border-radius:2px}
-.scr{position:absolute;inset:0;display:none;flex-direction:column;background:var(--wh)}
-.scr.on{display:flex;animation:sIn .22s ease}
-@keyframes sIn{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:translateX(0)}}
-.scr.bk{animation:sBk .22s ease}
-@keyframes sBk{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:translateX(0)}}
-.sb{display:flex;justify-content:space-between;align-items:center;padding:10px 18px 3px;flex-shrink:0}
-.sbt{font-size:13px;font-weight:700;font-family:'Inter',sans-serif}
-.sbi{font-size:11px}
-.nav{display:flex;align-items:center;justify-content:space-between;padding:5px 14px 9px;flex-shrink:0}
-.nbk{width:32px;height:32px;border-radius:50%;background:var(--g1);border:none;cursor:pointer;font-size:16px;color:var(--blue);display:flex;align-items:center;justify-content:center;transition:background .15s}
-.nbk:hover{background:var(--g2)}
-.nbk.inv{opacity:0;pointer-events:none}
-.ntt{font-size:14px;font-weight:700;color:var(--bk);flex:1;text-align:center}
-.nrs{font-size:11px;font-weight:700;color:var(--red);cursor:pointer;padding:4px 8px;border-radius:7px;background:rgba(255,59,48,.08);border:none;white-space:nowrap;transition:background .15s}
-.nrs:hover{background:rgba(255,59,48,.15)}
-.nrs.inv{opacity:0;pointer-events:none}
+html,body{
+  width:100%;height:100%;
+  overflow:hidden;
+  background:var(--wh);
+  font-family:'Noto Sans KR','Apple SD Gothic Neo',-apple-system,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  color:var(--bk);
+}
+
+/* ─── 화면 공통 ─── */
+.scr{
+  position:fixed;inset:0;
+  display:none;flex-direction:column;
+  background:var(--wh);
+  overflow:hidden;
+}
+.scr.on{display:flex;animation:sIn .3s cubic-bezier(.4,0,.2,1)}
+.scr.back{animation:sBk .3s cubic-bezier(.4,0,.2,1)}
+@keyframes sIn{from{opacity:0;transform:translateX(32px)}to{opacity:1;transform:none}}
+@keyframes sBk{from{opacity:0;transform:translateX(-32px)}to{opacity:1;transform:none}}
+
+/* 안전 영역 */
+.safe{
+  height:max(env(safe-area-inset-top,0px),44px);
+  flex-shrink:0;
+}
+
+/* ─── 네비 바 ─── */
+.nav{
+  height:52px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 16px;
+  border-bottom:1px solid var(--g2);
+  background:rgba(255,255,255,.94);
+  backdrop-filter:blur(24px);
+  -webkit-backdrop-filter:blur(24px);
+}
+.nav-btn{
+  width:38px;height:38px;border-radius:50%;
+  border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;transition:background .15s;
+}
+.nav-btn-back{background:var(--g1);color:var(--blue)}
+.nav-btn-back:active{background:var(--g2)}
+.nav-btn-reset{background:rgba(255,59,48,.1);color:var(--red);font-size:13px;font-weight:700;width:auto;padding:0 12px;border-radius:10px}
+.nav-btn-reset:active{background:rgba(255,59,48,.2)}
+.nav-btn.hide{opacity:0;pointer-events:none}
+.nav-title{font-size:17px;font-weight:700;color:var(--bk);letter-spacing:-.3px}
+
+/* ═══════════════════════════════
+   S1 — 홈
+═══════════════════════════════ */
 #s1{background:var(--wh)}
-.s1h{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:0 24px}
-.aico{width:68px;height:68px;border-radius:16px;background:linear-gradient(145deg,#0055FF,#00A8FF);display:flex;align-items:center;justify-content:center;font-size:34px;box-shadow:0 8px 22px rgba(0,100,255,.28)}
-.s1hd{font-size:25px;font-weight:800;color:var(--bk);text-align:center;line-height:1.25;letter-spacing:-.02em}
-.s1sb{font-size:13px;color:var(--g4);text-align:center;line-height:1.5}
-.mwrap{display:flex;flex-direction:column;align-items:center;gap:8px;margin-top:2px}
-.mout{width:82px;height:82px;border-radius:50%;background:var(--blt);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .15s;position:relative}
-.mout::before{content:'';position:absolute;inset:-7px;border-radius:50%;border:2px solid rgba(0,122,255,.18);animation:rp 2s ease-in-out infinite}
-.mout::after{content:'';position:absolute;inset:-16px;border-radius:50%;border:1.5px solid rgba(0,122,255,.08);animation:rp 2s ease-in-out infinite .5s}
-@keyframes rp{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0;transform:scale(1.1)}}
-.mout:hover{transform:scale(1.06)}
-.mout.on{background:rgba(52,199,89,.12)}
-.mout.on::before{border-color:rgba(52,199,89,.3);animation:rpg .7s ease-in-out infinite alternate}
-@keyframes rpg{from{opacity:.6;transform:scale(.98)}to{opacity:1;transform:scale(1.04)}}
-.mbtn{width:60px;height:60px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 4px 14px rgba(0,122,255,.38);transition:background .2s}
-.mout.on .mbtn{background:var(--green)}
-.mlbl{font-size:11px;font-weight:600;color:var(--g4)}
-.vst{font-size:13px;font-weight:600;color:var(--blue);min-height:18px;text-align:center}
-.s1bot{padding:14px 20px 18px;display:flex;flex-direction:column;gap:6px}
-.chips{display:flex;flex-direction:column;gap:6px}
-.chip{background:var(--g1);border-radius:13px;padding:10px 13px;font-size:13px;font-weight:500;color:var(--g6);cursor:pointer;transition:background .15s;display:flex;align-items:center;gap:7px;border:1px solid transparent}
-.chip:hover{background:var(--blt);border-color:rgba(0,122,255,.2);color:var(--blue)}
+.s1-scroll{
+  flex:1;overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  padding-bottom:72px;/* 언어 탭 높이 */
+}
+.s1-scroll::-webkit-scrollbar{display:none}
+
+/* 앱 타이틀 */
+.s1-head{
+  padding:28px 24px 12px;
+  text-align:center;
+}
+.s1-appname{
+  font-size:30px;font-weight:900;
+  color:var(--bk);letter-spacing:-.5px;
+  line-height:1.15;
+}
+.s1-sub{
+  font-size:15px;color:var(--g4);
+  margin-top:6px;font-weight:400;
+}
+
+/* GPS 뱃지 */
+.gps-pill{
+  display:inline-flex;align-items:center;gap:7px;
+  background:var(--g1);border-radius:24px;
+  padding:9px 16px;margin-top:10px;
+  font-size:14px;font-weight:500;color:var(--g5);
+  cursor:pointer;border:none;
+  transition:background .15s;
+}
+.gps-pill:active{background:var(--g2)}
+.gps-pulse{
+  width:9px;height:9px;border-radius:50%;
+  background:var(--green);flex-shrink:0;
+  box-shadow:0 0 0 0 rgba(52,199,89,.5);
+  animation:pulse 2s infinite;
+}
+@keyframes pulse{
+  0%{box-shadow:0 0 0 0 rgba(52,199,89,.4)}
+  70%{box-shadow:0 0 0 7px rgba(52,199,89,0)}
+  100%{box-shadow:0 0 0 0 rgba(52,199,89,0)}
+}
+
+/* 마이크 */
+.mic-zone{
+  padding:24px 24px 10px;
+  display:flex;flex-direction:column;align-items:center;gap:14px;
+}
+.mic-wrap{
+  position:relative;
+  width:148px;height:148px;
+  display:flex;align-items:center;justify-content:center;
+}
+.mic-ring{
+  position:absolute;inset:0;border-radius:50%;
+  border:2.5px solid rgba(0,122,255,.15);
+  animation:ring1 2.8s ease-in-out infinite;
+}
+.mic-ring2{
+  position:absolute;inset:-14px;border-radius:50%;
+  border:2px solid rgba(0,122,255,.07);
+  animation:ring1 2.8s ease-in-out infinite .7s;
+}
+@keyframes ring1{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.15;transform:scale(1.07)}}
+.mic-btn{
+  width:122px;height:122px;border-radius:50%;
+  background:var(--blue);border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-size:52px;
+  box-shadow:0 8px 28px rgba(0,122,255,.4),0 2px 8px rgba(0,122,255,.2);
+  transition:transform .12s,box-shadow .12s;
+  -webkit-user-select:none;user-select:none;
+}
+.mic-btn:active{transform:scale(.94);box-shadow:0 4px 12px rgba(0,122,255,.3)}
+.mic-btn.on{background:var(--green);box-shadow:0 8px 28px rgba(52,199,89,.4)}
+.mic-hint{font-size:16px;font-weight:500;color:var(--g4)}
+.mic-status{
+  font-size:15px;font-weight:600;color:var(--blue);
+  min-height:22px;text-align:center;padding:0 24px;
+}
+
+/* 예시 칩 */
+.chips-section{padding:4px 20px 0}
+.section-label{
+  font-size:13px;font-weight:600;color:var(--g4);
+  margin-bottom:10px;
+  text-transform:uppercase;letter-spacing:.04em;
+}
+.chips{display:flex;flex-direction:column;gap:9px}
+.chip{
+  width:100%;background:var(--g1);border:1.5px solid transparent;
+  border-radius:16px;padding:15px 16px;
+  display:flex;align-items:center;gap:11px;
+  font-size:17px;font-weight:500;color:var(--bk);
+  cursor:pointer;text-align:left;
+  transition:all .15s;
+}
+.chip:active{background:var(--blt);border-color:rgba(0,122,255,.25);color:var(--blue)}
+.chip-icon{font-size:22px;flex-shrink:0}
+
+/* 자주 가는 노선 */
+.favs-section{padding:20px 20px 0}
+.favs-header{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:10px;
+}
+.fav-edit-btn{
+  font-size:14px;font-weight:600;color:var(--blue);
+  background:none;border:none;cursor:pointer;
+}
+.fav-list{display:flex;flex-direction:column;gap:9px}
+.fav-row{
+  width:100%;background:var(--g1);border-radius:16px;
+  padding:14px 16px;
+  display:flex;align-items:center;gap:12px;
+  cursor:pointer;border:1.5px solid transparent;
+  transition:all .15s;text-align:left;
+}
+.fav-row:active{background:var(--blt);border-color:rgba(0,122,255,.25)}
+.fav-badge{
+  width:36px;height:36px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;font-weight:900;color:var(--wh);flex-shrink:0;
+}
+.fav-text{flex:1}
+.fav-route{font-size:17px;font-weight:600;color:var(--bk)}
+.fav-memo{font-size:13px;color:var(--g4);margin-top:2px}
+.fav-chevron{color:var(--g3);font-size:18px;font-weight:300}
+.fav-add{
+  width:100%;background:none;
+  border:1.5px dashed var(--g3);border-radius:16px;
+  padding:15px 16px;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  font-size:16px;font-weight:500;color:var(--g4);
+  cursor:pointer;margin-top:9px;
+  transition:all .15s;
+}
+.fav-add:active{background:var(--g1);color:var(--blue);border-color:var(--blue)}
+
+/* 언어 탭 — 맨 아래 고정 */
+.lang-bar{
+  position:fixed;bottom:0;left:0;right:0;
+  background:rgba(255,255,255,.96);
+  backdrop-filter:blur(24px);
+  -webkit-backdrop-filter:blur(24px);
+  border-top:1px solid var(--g2);
+  padding:8px 20px calc(8px + env(safe-area-inset-bottom,0px));
+  display:flex;justify-content:center;gap:7px;
+  z-index:100;
+}
+.lt{
+  padding:7px 16px;border-radius:20px;
+  font-size:13px;font-weight:600;
+  cursor:pointer;
+  border:1.5px solid var(--g2);
+  background:var(--wh);color:var(--g5);
+  transition:all .18s;
+}
+.lt:active{border-color:var(--blue);color:var(--blue)}
+.lt.on{background:var(--blue);border-color:var(--blue);color:var(--wh)}
+
+/* ═══════════════════════════════
+   S2 — 경로 선택
+═══════════════════════════════ */
 #s2{background:var(--g1)}
-.dp{margin:0 14px 10px;background:var(--wh);border-radius:14px;padding:11px 13px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 1px 4px rgba(0,0,0,.06);flex-shrink:0}
-.dft{display:flex;align-items:center;gap:7px;font-size:17px;font-weight:800;color:var(--bk);letter-spacing:-.02em}
-.dar{color:var(--blue)}
-.dmt{font-size:11px;color:var(--g4);margin-top:2px}
-.mfab{width:38px;height:38px;border-radius:11px;background:var(--blt);border:none;cursor:pointer;font-size:17px;display:flex;align-items:center;justify-content:center;transition:background .15s;flex-shrink:0}
-.mfab:hover{background:rgba(0,122,255,.18)}
-.ban{margin:0 14px 10px;background:var(--blue);border-radius:11px;padding:9px 13px;font-size:13px;font-weight:700;color:var(--wh);text-align:center;flex-shrink:0}
-.rts{flex:1;overflow-y:auto;padding:0 14px 14px;display:flex;flex-direction:column;gap:9px}
-.rts::-webkit-scrollbar{display:none}
-.rc{background:var(--wh);border-radius:18px;overflow:hidden;cursor:pointer;border:2px solid transparent;box-shadow:0 2px 8px rgba(0,0,0,.06);transition:border-color .18s,box-shadow .18s,transform .12s}
-.rc:hover{border-color:var(--blue);box-shadow:0 5px 18px rgba(0,122,255,.14);transform:translateY(-1px)}
-.rc.rec{border-color:var(--blue)}
-.rb{padding:6px 13px;font-size:11px;font-weight:700;display:block;letter-spacing:.02em}
-.rb.bl{background:var(--blue);color:var(--wh)}
-.rb.yl{background:var(--ylw);color:var(--bk)}
-.rco{padding:11px 15px 13px}
-.rmin{font-size:36px;font-weight:800;color:var(--bk);line-height:1;letter-spacing:-.03em}
-.rmin span{font-size:15px;font-weight:500;color:var(--g4)}
-.rps{display:flex;gap:5px;margin-top:7px;flex-wrap:wrap}
-.rp{background:var(--g1);border-radius:7px;padding:3px 8px;font-size:11px;color:var(--g5);font-weight:500}
-.lv{display:flex;align-items:center;gap:4px;margin-top:9px}
-.ld{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:var(--wh)}
-.lb{flex:1;height:3px;border-radius:2px}
-.lx{font-size:10px;color:var(--ora);font-weight:700;background:rgba(239,124,28,.1);border-radius:5px;padding:2px 6px}
-.vh{margin:0 14px 14px;background:var(--wh);border-radius:13px;padding:10px 13px;box-shadow:0 1px 4px rgba(0,0,0,.06);flex-shrink:0}
-.vhl{font-size:10px;font-weight:600;color:var(--g4);text-transform:uppercase;letter-spacing:.04em}
-.vht{font-size:13px;color:var(--g6);margin-top:3px;line-height:1.5}
-.modal{position:absolute;inset:0;background:rgba(0,0,0,.46);z-index:200;display:none;flex-direction:column;justify-content:flex-end;border-radius:34px;overflow:hidden}
-.modal.on{display:flex}
-.msh{background:var(--wh);border-radius:22px 22px 34px 34px;height:88%;display:flex;flex-direction:column;overflow:hidden;animation:shUp .26s cubic-bezier(.34,1.56,.64,1)}
+
+.dest-strip{
+  background:var(--wh);padding:14px 20px;
+  border-bottom:1px solid var(--g2);flex-shrink:0;
+}
+.dest-row{
+  display:flex;align-items:center;
+  justify-content:space-between;gap:12px;
+}
+.dest-stations{
+  display:flex;align-items:center;gap:8px;
+  font-size:22px;font-weight:800;letter-spacing:-.3px;
+}
+.dest-arrow{color:var(--blue);font-weight:300}
+.dest-meta{font-size:13px;color:var(--g4);margin-top:4px}
+.map-fab{
+  width:42px;height:42px;border-radius:13px;
+  background:var(--blt);border:none;cursor:pointer;
+  font-size:20px;display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;transition:background .15s;
+}
+.map-fab:active{background:rgba(0,122,255,.2)}
+
+.pick-hint{
+  margin:10px 16px 0;
+  background:var(--blue);border-radius:14px;
+  padding:13px 16px;
+  font-size:16px;font-weight:700;color:var(--wh);
+  text-align:center;flex-shrink:0;
+}
+
+.route-list{
+  flex:1;overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  padding:12px 16px 20px;
+  display:flex;flex-direction:column;gap:10px;
+}
+.route-list::-webkit-scrollbar{display:none}
+
+.rcard{
+  background:var(--wh);border-radius:20px;
+  cursor:pointer;border:2px solid transparent;
+  box-shadow:0 2px 12px rgba(0,0,0,.07);
+  transition:all .18s;overflow:hidden;
+}
+.rcard:active{transform:scale(.99);border-color:var(--blue)}
+.rcard.rec{border-color:var(--blue)}
+.rbadge{padding:9px 16px;font-size:13px;font-weight:700;display:block}
+.rb-blue{background:var(--blue);color:var(--wh)}
+.rb-yel{background:var(--ylw);color:var(--bk)}
+.rcont{padding:14px 18px 18px}
+.r-min{
+  font-size:50px;font-weight:900;color:var(--bk);
+  line-height:1;letter-spacing:-.04em;
+}
+.r-min span{font-size:20px;font-weight:400;color:var(--g4);margin-left:3px}
+.r-pills{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.rpill{
+  background:var(--g1);border-radius:9px;
+  padding:5px 11px;font-size:13px;color:var(--g5);font-weight:500;
+}
+.r-line{
+  display:flex;align-items:center;gap:5px;
+  margin-top:14px;
+}
+.rldot{
+  width:28px;height:28px;border-radius:9px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:900;color:var(--wh);
+}
+.rlbar{flex:1;height:4px;border-radius:2px}
+.rl-xfer{
+  font-size:12px;color:var(--ora);font-weight:700;
+  background:rgba(255,149,0,.1);border-radius:7px;padding:3px 9px;
+}
+
+.voice-box{
+  margin:0 16px 16px;background:var(--wh);
+  border-radius:16px;padding:14px 16px;
+  box-shadow:0 2px 12px rgba(0,0,0,.07);flex-shrink:0;
+}
+.vb-label{font-size:12px;font-weight:600;color:var(--g4);text-transform:uppercase;letter-spacing:.04em}
+.vb-text{font-size:15px;color:var(--bk);margin-top:5px;line-height:1.6}
+
+/* 노선도 모달 */
+.mdl{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,.48);
+  z-index:500;display:none;
+  flex-direction:column;justify-content:flex-end;
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+}
+.mdl.on{display:flex}
+.msheet{
+  background:var(--wh);
+  border-radius:28px 28px 0 0;
+  max-height:82vh;display:flex;flex-direction:column;
+  overflow:hidden;
+  animation:shUp .3s cubic-bezier(.34,1.56,.64,1);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
 @keyframes shUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
-.mhd{width:38px;height:4px;background:var(--g2);border-radius:2px;margin:9px auto 5px;flex-shrink:0}
-.mhdr{display:flex;align-items:center;justify-content:space-between;padding:0 16px 11px;flex-shrink:0;border-bottom:1px solid var(--g2)}
-.mhtl{font-size:16px;font-weight:700;color:var(--bk)}
-.mcl{width:28px;height:28px;border-radius:50%;background:var(--g1);border:none;cursor:pointer;font-size:13px;font-weight:700;color:var(--g5);display:flex;align-items:center;justify-content:center}
-.mcl:hover{background:var(--g2)}
-.mbd{flex:1;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:7px}
+.mhandle{width:40px;height:5px;background:var(--g2);border-radius:3px;margin:12px auto 6px;flex-shrink:0}
+.mhdr{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 20px 14px;flex-shrink:0;border-bottom:1px solid var(--g2);
+}
+.mhtl{font-size:18px;font-weight:700}
+.mcl{
+  width:30px;height:30px;border-radius:50%;
+  background:var(--g1);border:none;cursor:pointer;
+  font-size:14px;color:var(--g5);
+  display:flex;align-items:center;justify-content:center;
+}
+.mbd{flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
 .mbd::-webkit-scrollbar{display:none}
-.mlr{display:flex;align-items:flex-start;gap:11px;padding:10px 12px;border-radius:12px;background:var(--g1)}
+.mlr{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border-radius:14px;background:var(--g1)}
 .mlr.cur{background:var(--blt)}
-.mlb{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:var(--wh);flex-shrink:0;margin-top:1px}
-.mli{flex:1}
-.mln{font-size:13px;font-weight:700;color:var(--bk)}
-.mlrg{font-size:11px;color:var(--g4);margin-top:1px}
-.mls{display:flex;gap:4px;flex-wrap:wrap;margin-top:5px}
-.sp{font-size:10px;padding:2px 6px;border-radius:5px;background:var(--wh);color:var(--g5);border:1px solid var(--g2);font-weight:500}
+.mlb{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:var(--wh);flex-shrink:0}
+.mln{font-size:14px;font-weight:700}
+.mlrg{font-size:12px;color:var(--g4);margin-top:2px}
+.mls{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px}
+.sp{font-size:11px;padding:3px 8px;border-radius:6px;background:var(--wh);color:var(--g5);border:1px solid var(--g2);font-weight:500}
 .sp.hi{background:var(--blue);color:var(--wh);border-color:var(--blue)}
-.mtp2{font-size:11px;color:var(--g4);text-align:center;padding:5px 0}
-#s3{background:#090A12}
-#s3 .sbt{color:var(--wh)}
-#s3 .sbi{color:rgba(255,255,255,.6)}
-#s3 .nbk{background:rgba(255,255,255,.1);color:var(--wh)}
-#s3 .ntt{color:var(--wh)}
-#s3 .nrs{background:rgba(255,59,48,.15);color:#ff6a63}
-.ls{background:var(--blue);padding:8px 16px;flex-shrink:0;display:flex;justify-content:space-between;align-items:center}
-.lst{font-size:13px;font-weight:700;color:var(--wh)}
-.lsb{background:rgba(255,255,255,.2);border-radius:20px;padding:3px 9px;font-size:11px;color:var(--wh);font-weight:600}
-.s3b{flex:1;overflow-y:auto;padding:13px 14px;display:flex;flex-direction:column;gap:10px}
-.s3b::-webkit-scrollbar{display:none}
-.stc{background:rgba(0,122,255,.1);border:1px solid rgba(0,122,255,.2);border-radius:18px;padding:18px 14px;text-align:center}
-.stl{font-size:11px;font-weight:600;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px}
-.stn{font-size:38px;font-weight:800;color:var(--wh);letter-spacing:-.02em;line-height:1}
-.sts{font-size:13px;color:rgba(255,255,255,.4);margin-top:6px}
-.cdw{text-align:center}
-.cdl{font-size:11px;font-weight:600;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
-.cdn{font-size:52px;font-weight:800;color:var(--ylw);font-family:'Inter',sans-serif;line-height:1;letter-spacing:-.03em}
-.cds{font-size:12px;color:rgba(255,255,255,.35);margin-top:2px}
-.dc{background:rgba(52,199,89,.1);border:1px solid rgba(52,199,89,.24);border-radius:13px;padding:11px 14px;display:flex;justify-content:space-between;align-items:center}
-.dm{font-size:15px;font-weight:700;color:var(--green)}
-.dh{font-size:11px;color:rgba(255,255,255,.3);margin-top:2px}
-.xc{background:rgba(255,214,10,.08);border:1px solid rgba(255,214,10,.2);border-radius:14px;padding:13px 14px;cursor:pointer;transition:background .15s}
-.xc:hover{background:rgba(255,214,10,.15)}
-.xct{font-size:14px;font-weight:700;color:var(--ylw)}
-.xcb{font-size:13px;color:rgba(255,255,255,.4);margin-top:4px;line-height:1.5}
-.xcp{font-size:11px;color:var(--ylw);margin-top:6px;font-weight:600}
+
+/* ═══════════════════════════════
+   S3 — 탑승 안내  (흰 배경)
+═══════════════════════════════ */
+#s3{background:var(--wh)}
+
+/* 현재 노선 히어로 — 크게! */
+.line-hero{
+  flex-shrink:0;
+  padding:18px 20px 16px;
+  border-bottom:1px solid var(--g2);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.lh-left{display:flex;align-items:center;gap:14px}
+.lh-badge{
+  width:68px;height:68px;border-radius:18px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:30px;font-weight:900;color:var(--wh);
+  flex-shrink:0;
+  box-shadow:0 5px 16px rgba(0,0,0,.22);
+}
+.lh-name{font-size:26px;font-weight:900;color:var(--bk);letter-spacing:-.4px}
+.lh-remain{font-size:15px;color:var(--g4);margin-top:4px;font-weight:400}
+.lh-status{
+  background:var(--green);color:var(--wh);
+  border-radius:12px;padding:7px 14px;
+  font-size:14px;font-weight:700;flex-shrink:0;
+}
+
+.s3-body{
+  flex:1;overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  padding:16px 20px 24px;
+  display:flex;flex-direction:column;gap:12px;
+}
+.s3-body::-webkit-scrollbar{display:none}
+
+/* 다음 역 */
+.nxt-card{
+  background:var(--g1);border-radius:20px;
+  padding:22px 20px;text-align:center;
+}
+.nxt-lbl{font-size:13px;font-weight:600;color:var(--g4);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+.nxt-name{font-size:52px;font-weight:900;color:var(--bk);letter-spacing:-.04em;line-height:1}
+.nxt-sub{font-size:16px;color:var(--g4);margin-top:10px;font-weight:400}
+
+/* 카운트다운 */
+.cd-zone{text-align:center;padding:6px 0}
+.cd-lbl{font-size:13px;font-weight:600;color:var(--g4);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.cd-num{font-size:72px;font-weight:900;color:var(--bk);letter-spacing:-.05em;line-height:1}
+.cd-sub{font-size:15px;color:var(--g4);margin-top:8px;font-weight:400}
+
+/* 내릴 문 */
+.door-card{
+  background:rgba(52,199,89,.08);
+  border:1.5px solid rgba(52,199,89,.2);
+  border-radius:18px;padding:16px 20px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.door-left{}
+.door-main{font-size:19px;font-weight:700;color:var(--green)}
+.door-hint{font-size:14px;color:var(--g4);margin-top:3px}
+.door-icon{font-size:34px}
+
+/* 환승 버튼 */
+.xfer-card{
+  background:var(--bk);border-radius:18px;
+  padding:18px 20px;cursor:pointer;
+  transition:opacity .15s;border:none;width:100%;
+  text-align:left;
+}
+.xfer-card:active{opacity:.82}
+.xf-title{font-size:17px;font-weight:700;color:var(--wh)}
+.xf-body{font-size:14px;color:rgba(255,255,255,.45);margin-top:6px;line-height:1.55}
+.xf-cta{font-size:13px;color:rgba(255,255,255,.35);margin-top:8px;font-weight:600}
+
+/* ═══════════════════════════════
+   S4 — 버스 연계
+═══════════════════════════════ */
 #s4{background:var(--g1)}
-.s4h{margin:0 14px 9px;background:var(--wh);border-radius:13px;padding:10px 13px;flex-shrink:0;box-shadow:0 1px 4px rgba(0,0,0,.06)}
-.s4t{font-size:15px;font-weight:700;color:var(--bk)}
-.s4s{font-size:11px;color:var(--g4);margin-top:1px}
-.bl{flex:1;overflow-y:auto;padding:0 14px;display:flex;flex-direction:column;gap:7px}
-.bl::-webkit-scrollbar{display:none}
-.bc{background:var(--wh);border-radius:16px;padding:12px 13px;cursor:pointer;border:2px solid transparent;box-shadow:0 2px 7px rgba(0,0,0,.06);transition:border-color .15s,transform .12s}
-.bc:hover{border-color:var(--blue);transform:translateY(-1px)}
-.btp{display:flex;justify-content:space-between;align-items:flex-start}
-.bn{font-size:24px;font-weight:800;line-height:1;font-family:'Inter',sans-serif;letter-spacing:-.02em}
-.ba{font-size:21px;font-weight:800;line-height:1;font-family:'Inter',sans-serif}
+.bus-header{
+  background:var(--wh);padding:14px 20px;
+  border-bottom:1px solid var(--g2);flex-shrink:0;
+}
+.bus-title{font-size:19px;font-weight:700}
+.bus-sub{font-size:13px;color:var(--g4);margin-top:3px}
+.bus-list{
+  flex:1;overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  padding:12px 16px;
+  display:flex;flex-direction:column;gap:9px;
+}
+.bus-list::-webkit-scrollbar{display:none}
+.bcard{
+  background:var(--wh);border-radius:18px;
+  padding:16px 18px;cursor:pointer;
+  border:2px solid transparent;
+  box-shadow:0 2px 10px rgba(0,0,0,.06);
+  transition:all .15s;
+}
+.bcard:active{border-color:var(--blue);transform:scale(.99)}
+.btop{display:flex;justify-content:space-between;align-items:flex-start}
+.bnum{font-size:32px;font-weight:900;line-height:1;letter-spacing:-.03em}
+.barr{font-size:28px;font-weight:900;line-height:1}
 .ar{color:var(--red)}.ao{color:var(--ora)}.ag{color:var(--green)}
-.bd{font-size:12px;color:var(--g5);margin-top:3px;font-weight:500}
-.bs{font-size:11px;color:var(--g4);margin-top:4px}
-.bvc{margin:8px 14px 14px;background:var(--blue);border-radius:13px;padding:11px 14px;display:flex;align-items:center;gap:9px;font-size:13px;font-weight:700;color:var(--wh);cursor:pointer;flex-shrink:0;transition:opacity .15s}
-.bvc:hover{opacity:.88}
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.82);color:var(--wh);padding:9px 18px;border-radius:20px;font-size:12px;font-weight:600;z-index:999;opacity:0;transition:opacity .3s;white-space:nowrap}
+.bdest{font-size:15px;color:var(--g5);margin-top:5px;font-weight:500}
+.bstop{font-size:13px;color:var(--g4);margin-top:5px}
+.bvc-wrap{
+  flex-shrink:0;padding:0 16px 16px;
+}
+.bvc{
+  width:100%;background:var(--blue);color:var(--wh);
+  border-radius:16px;padding:17px;
+  display:flex;align-items:center;gap:10px;
+  font-size:16px;font-weight:700;
+  cursor:pointer;border:none;transition:opacity .15s;
+}
+.bvc:active{opacity:.85}
+
+/* ═══════════════════════════════
+   자주가는 노선 편집 모달
+═══════════════════════════════ */
+.fav-mdl{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,.48);
+  z-index:600;display:none;
+  flex-direction:column;justify-content:flex-end;
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+}
+.fav-mdl.on{display:flex}
+.fav-sheet{
+  background:var(--wh);
+  border-radius:28px 28px 0 0;
+  max-height:75vh;display:flex;flex-direction:column;
+  overflow:hidden;
+  animation:shUp .3s cubic-bezier(.34,1.56,.64,1);
+  padding-bottom:env(safe-area-inset-bottom,20px);
+}
+.fav-shdr{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 20px 14px;border-bottom:1px solid var(--g2);flex-shrink:0;
+}
+.fav-stitle{font-size:19px;font-weight:700}
+.fav-scl{
+  width:30px;height:30px;border-radius:50%;
+  background:var(--g1);border:none;cursor:pointer;
+  font-size:14px;color:var(--g5);
+  display:flex;align-items:center;justify-content:center;
+}
+.fav-sbody{flex:1;overflow-y:auto;padding:18px 20px}
+.fav-sbody::-webkit-scrollbar{display:none}
+.inp-group{margin-bottom:14px}
+.inp-label{font-size:13px;font-weight:600;color:var(--g4);margin-bottom:6px}
+.inp{
+  width:100%;background:var(--g1);border:none;
+  border-radius:12px;padding:15px 16px;
+  font-size:17px;color:var(--bk);outline:none;
+  font-family:inherit;
+}
+.inp:focus{background:var(--blt);box-shadow:0 0 0 2px var(--blue)}
+.inp::placeholder{color:var(--g3)}
+.save-btn{
+  width:100%;background:var(--blue);color:var(--wh);
+  border:none;border-radius:14px;padding:17px;
+  font-size:17px;font-weight:700;cursor:pointer;
+  font-family:inherit;transition:opacity .15s;margin-top:4px;
+}
+.save-btn:active{opacity:.85}
+.saved-section{margin-top:22px}
+.saved-label{font-size:13px;font-weight:600;color:var(--g4);margin-bottom:10px}
+.saved-item{
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--g1);border-radius:13px;
+  padding:12px 14px;margin-bottom:8px;
+}
+.si-info{display:flex;align-items:center;gap:10px}
+.si-badge{
+  width:32px;height:32px;border-radius:9px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:900;color:var(--wh);flex-shrink:0;
+}
+.si-route{font-size:16px;font-weight:600}
+.si-memo{font-size:12px;color:var(--g4);margin-top:2px}
+.del-btn{
+  background:rgba(255,59,48,.1);color:var(--red);
+  border:none;border-radius:9px;padding:6px 12px;
+  font-size:13px;font-weight:600;cursor:pointer;
+}
+
+/* 토스트 */
+.toast{
+  position:fixed;bottom:85px;left:50%;
+  transform:translateX(-50%);
+  background:rgba(28,28,30,.9);color:var(--wh);
+  padding:11px 22px;border-radius:22px;
+  font-size:14px;font-weight:600;z-index:999;
+  opacity:0;transition:opacity .3s;
+  white-space:nowrap;pointer-events:none;
+  backdrop-filter:blur(10px);
+}
 .toast.on{opacity:1}
 </style>
 </head>
 <body>
 
-<div class="top">
-  <div class="wm">Transit Voice Guide</div>
-  <div class="an" id="AN">말하면 바로 가요 🚇</div>
-  <div class="ltabs">
-    <div class="lt on" onclick="setLang('ko',this)">🇰🇷 한국어</div>
-    <div class="lt" onclick="setLang('en',this)">🇺🇸 English</div>
-    <div class="lt" onclick="setLang('zh',this)">🇨🇳 中文</div>
-    <div class="lt" onclick="setLang('ja',this)">🇯🇵 日本語</div>
+<!-- ═══ S1: 홈 ═══ -->
+<div class="scr on" id="s1">
+  <div class="safe"></div>
+  <div class="s1-scroll">
+
+    <div class="s1-head">
+      <div class="s1-appname" id="S1H">말하면 바로 가요 🚇</div>
+      <div class="s1-sub" id="S1S">어디든, 말 한마디면</div>
+      <button class="gps-pill" onclick="getGPS()">
+        <div class="gps-pulse"></div>
+        <span id="gpsText">내 위치 확인하기</span>
+      </button>
+    </div>
+
+    <div class="mic-zone">
+      <div class="mic-wrap">
+        <div class="mic-ring"></div>
+        <div class="mic-ring2"></div>
+        <button class="mic-btn" id="MIC" onclick="doListen()">🎙️</button>
+      </div>
+      <div class="mic-hint" id="MLB">탭하여 말하기</div>
+      <div class="mic-status" id="VST"></div>
+    </div>
+
+    <div class="chips-section">
+      <div class="section-label" id="CL">예시</div>
+      <div class="chips">
+        <button class="chip" onclick="doChip(0)"><span class="chip-icon">💬</span><span id="C0">"강남역 가고 싶어"</span></button>
+        <button class="chip" onclick="doChip(1)"><span class="chip-icon">💬</span><span id="C1">"서울역까지 어떻게 가?"</span></button>
+        <button class="chip" onclick="doChip(2)"><span class="chip-icon">💬</span><span id="C2">"잠실 가는 급행 있어?"</span></button>
+      </div>
+    </div>
+
+    <div class="favs-section">
+      <div class="favs-header">
+        <div class="section-label" id="FL" style="margin-bottom:0">자주 가는 노선</div>
+        <button class="fav-edit-btn" onclick="openFavMdl()" id="FE">편집</button>
+      </div>
+      <div class="fav-list" id="favList"></div>
+      <button class="fav-add" onclick="openFavMdl()">
+        <span style="font-size:22px;line-height:1">＋</span>
+        <span id="FA">노선 추가</span>
+      </button>
+    </div>
+
+  </div><!-- /s1-scroll -->
+
+  <!-- 언어 탭 — 맨 아래 고정 -->
+  <div class="lang-bar">
+    <div class="lt on" onclick="setLang('ko',this)">한국어</div>
+    <div class="lt" onclick="setLang('en',this)">English</div>
+    <div class="lt" onclick="setLang('zh',this)">中文</div>
+    <div class="lt" onclick="setLang('ja',this)">日本語</div>
   </div>
 </div>
 
-<div class="shell">
-  <div class="notch"></div>
-  <div class="sw">
-
-    <!-- S1 홈 -->
-    <div class="scr on" id="s1">
-      <div class="sb"><div class="sbt" id="CLK" style="color:var(--bk)">9:41</div><div class="sbi" style="color:var(--bk)">● ● ● 🔋</div></div>
-      <div class="nav">
-        <button class="nbk inv">←</button>
-        <span class="ntt" id="S1T">말하면 바로가요</span>
-        <button class="nrs inv">-</button>
-      </div>
-      <div class="s1h">
-        <div class="aico">🚇</div>
-        <div class="s1hd" id="S1H">어디 가세요?<br>말씀해 주세요</div>
-        <div class="s1sb" id="S1S">마이크를 누르거나 아래 예시를 눌러보세요</div>
-        <div class="mwrap">
-          <div class="mout" id="MIC" onclick="doListen()">
-            <div class="mbtn">🎙️</div>
-          </div>
-          <div class="mlbl" id="MLB">탭하여 말하기</div>
-          <div class="vst" id="VST"></div>
-        </div>
-      </div>
-      <div class="s1bot">
-        <div class="chips">
-          <div class="chip" onclick="doChip(0)"><span>💬</span><span id="C0">"강남역 가고 싶어"</span></div>
-          <div class="chip" onclick="doChip(1)"><span>💬</span><span id="C1">"서울역까지 어떻게 가?"</span></div>
-          <div class="chip" onclick="doChip(2)"><span>💬</span><span id="C2">"잠실 가는 급행 있어?"</span></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- S2 경로 선택 -->
-    <div class="scr" id="s2">
-      <div class="sb"><div class="sbt" id="CLK2">9:41</div><div class="sbi">● ● ● 🔋</div></div>
-      <div class="nav">
-        <button class="nbk" onclick="goBack()">←</button>
-        <span class="ntt" id="S2T">경로 선택</span>
-        <button class="nrs" onclick="goReset()" id="RS2">재설정</button>
-      </div>
-      <div class="dp">
-        <div>
-          <div class="dft"><span id="DFR">신림</span><span class="dar">→</span><span id="DTO">강남</span></div>
-          <div class="dmt" id="DMT">경로 2개 · 지금 출발 기준</div>
-        </div>
-        <button class="mfab" onclick="openModal()">🗺️</button>
-      </div>
-      <div class="ban" id="BAN">탑승할 경로를 선택하셨으면 눌러주세요!</div>
-      <div class="rts">
-        <div class="rc rec" onclick="pickRoute()">
-          <div class="rb bl" id="RB1">✅ 추천 · 일반열차</div>
-          <div class="rco">
-            <div class="rmin">23<span id="MN1"> 분</span></div>
-            <div class="rps">
-              <span class="rp" id="RP1">환승 1회</span>
-              <span class="rp">1,600원</span>
-              <span class="rp" id="RP2">3분 후 출발</span>
-            </div>
-            <div class="lv">
-              <div class="ld" style="background:var(--l2)">2</div>
-              <div class="lb" style="background:var(--l2)"></div>
-              <div class="lx" id="LXF">교대환승</div>
-              <div class="lb" style="background:var(--l3)"></div>
-              <div class="ld" style="background:var(--l3)">3</div>
-            </div>
-          </div>
-        </div>
-        <div class="rc" onclick="pickRoute()">
-          <div class="rb yl" id="RB2">⚡ 급행열차 · 빠름</div>
-          <div class="rco">
-            <div class="rmin">15<span id="MN2"> 분</span></div>
-            <div class="rps">
-              <span class="rp" id="RP3">환승 없음</span>
-              <span class="rp">1,600원</span>
-              <span class="rp" id="RP4">8분 후 출발</span>
-            </div>
-            <div class="lv">
-              <div class="ld" style="background:var(--l9)">9</div>
-              <div class="lb" style="background:var(--l9)"></div>
-              <div class="ld" style="background:var(--l9)">9</div>
-            </div>
-          </div>
-        </div>
-        <div class="vh">
-          <div class="vhl">🔊 <span id="VGL">음성 안내</span></div>
-          <div class="vht" id="VGT">"추천은 2호선이에요. 교대에서 3호선으로 갈아타면 강남 도착해요."</div>
-        </div>
-      </div>
-      <!-- 노선도 모달 -->
-      <div class="modal" id="MDL">
-        <div class="msh">
-          <div class="mhd"></div>
-          <div class="mhdr">
-            <span class="mhtl" id="MTL">🗺️ 전체 지하철 노선도</span>
-            <button class="mcl" onclick="closeModal()">✕</button>
-          </div>
-          <div class="mbd">
-            <div style="font-size:11px;color:var(--g4);margin-bottom:2px" id="MRT">현재 경로: 신림 → 강남</div>
-            <div class="mlr cur">
-              <div class="mlb" style="background:var(--l2)">2</div>
-              <div class="mli">
-                <div class="mln" id="ML2">2호선 · 순환선</div>
-                <div class="mlrg">시청 — 시청</div>
-                <div class="mls">
-                  <span class="sp hi" id="MS1">신림 출발</span>
-                  <span class="sp" id="MS2">서울대입구</span>
-                  <span class="sp" id="MS3">낙성대</span>
-                  <span class="sp hi" id="MS4">교대 환승</span>
-                  <span class="sp hi" id="MS5">강남 도착</span>
-                </div>
-              </div>
-            </div>
-            <div class="mlr">
-              <div class="mlb" style="background:var(--l3)">3</div>
-              <div class="mli">
-                <div class="mln" id="ML3">3호선</div>
-                <div class="mlrg">대화 — 오금</div>
-                <div class="mls">
-                  <span class="sp hi" id="MS6">교대 환승</span>
-                  <span class="sp" id="MS7">남부터미널</span>
-                  <span class="sp" id="MS8">양재</span>
-                </div>
-              </div>
-            </div>
-            <div class="mlr">
-              <div class="mlb" style="background:#1269B5">4</div>
-              <div class="mli"><div class="mln" id="ML4">4호선</div><div class="mlrg">당고개 — 오이도</div></div>
-            </div>
-            <div class="mlr">
-              <div class="mlb" style="background:var(--l9)">9</div>
-              <div class="mli">
-                <div class="mln" id="ML9">9호선 · 급행</div>
-                <div class="mlrg">개화 — 중앙보훈병원</div>
-                <div class="mls">
-                  <span class="sp" id="MS9">신논현</span>
-                  <span class="sp" id="MS10">언주</span>
-                  <span class="sp" id="MS11">선정릉</span>
-                </div>
-              </div>
-            </div>
-            <div class="mlr">
-              <div class="mlb" style="background:#CD7C2F">수인</div>
-              <div class="mli"><div class="mln" id="MLSU">수인·분당선</div><div class="mlrg">수원 — 왕십리</div></div>
-            </div>
-            <div class="mtp2" id="MTP">✕ 누르면 경로 선택으로 돌아가요</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- S3 탑승 안내 -->
-    <div class="scr" id="s3">
-      <div class="sb"><div class="sbt" id="CLK3" style="color:var(--wh)">9:41</div><div class="sbi" style="color:rgba(255,255,255,.6)">● ● ● 🔋</div></div>
-      <div class="nav">
-        <button class="nbk" onclick="goBack()">←</button>
-        <span class="ntt" id="S3T">탑승 안내</span>
-        <button class="nrs" onclick="goReset()" id="RS3">재설정</button>
-      </div>
-      <div class="ls">
-        <div class="lst" id="LST">🚇 2호선 탑승 중</div>
-        <div class="lsb" id="LSB">강남까지 3정거장</div>
-      </div>
-      <div class="s3b">
-        <div class="stc">
-          <div class="stl" id="NXL">다음 역</div>
-          <div class="stn" id="NXS">교대</div>
-          <div class="sts" id="NXB">환승역 — 3호선 갈아타세요</div>
-        </div>
-        <div class="cdw">
-          <div class="cdl" id="CDL">도착까지</div>
-          <div class="cdn" id="CDN">2:30</div>
-          <div class="cds" id="CDS">약 2분 30초 후 도착</div>
-        </div>
-        <div class="dc">
-          <div>
-            <div class="dm" id="DM">🚪 왼쪽 문</div>
-            <div class="dh" id="DH">에스컬레이터 가까운 쪽</div>
-          </div>
-          <div style="font-size:26px">⬅️</div>
-        </div>
-        <div class="xc" onclick="goTo(4)">
-          <div class="xct" id="XCT">⚡ 환승 알림 — 버스 연계 보기</div>
-          <div class="xcb" id="XCB">교대역에서 3호선으로 갈아타세요.<br>강남역 도착 후 연계 버스를 확인하세요.</div>
-          <div class="xcp" id="XCP">👉 눌러서 버스 연계 확인하기</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- S4 버스 연계 -->
-    <div class="scr" id="s4">
-      <div class="sb"><div class="sbt" id="CLK4">9:41</div><div class="sbi">● ● ● 🔋</div></div>
-      <div class="nav">
-        <button class="nbk" onclick="goBack()">←</button>
-        <span class="ntt" id="S4T">버스 연계</span>
-        <button class="nrs" onclick="goReset()" id="RS4">재설정</button>
-      </div>
-      <div class="s4h">
-        <div class="s4t" id="S4TI">🚌 강남역 연계 버스</div>
-        <div class="s4s" id="S4SU">목적지 방향 버스만 보여드려요</div>
-      </div>
-      <div class="bl">
-        <div class="bc"><div class="btp"><div><div class="bn" style="color:var(--blue)">140</div><div class="bd" id="BD1">→ 서울역 · 시청 방향</div></div><div class="ba ar" id="BA1">곧도착</div></div><div class="bs" id="BS1">📍 4번 출구 앞 · 도보 1분</div></div>
-        <div class="bc"><div class="btp"><div><div class="bn" style="color:var(--ora)">3412</div><div class="bd" id="BD2">→ 논현 · 신사 방향</div></div><div class="ba ao" id="BA2">4분</div></div><div class="bs" id="BS2">📍 10번 출구 · 도보 2분</div></div>
-        <div class="bc"><div class="btp"><div><div class="bn" style="color:var(--pur)">9407</div><div class="bd" id="BD3">→ 판교 · 분당 방향</div></div><div class="ba ag" id="BA3">8분</div></div><div class="bs" id="BS3">📍 2번 출구 · 도보 3분</div></div>
-        <div class="bc"><div class="btp"><div><div class="bn" style="color:var(--green)">4412</div><div class="bd" id="BD4">→ 역삼 · 선릉 방향</div></div><div class="ba ag" id="BA4">12분</div></div><div class="bs" id="BS4">📍 1번 출구 · 도보 2분</div></div>
-      </div>
-      <div class="bvc">🎙️ <span id="BVB">"가장 빠른 버스 알려줘"</span></div>
-    </div>
-
+<!-- ═══ S2: 경로 선택 ═══ -->
+<div class="scr" id="s2">
+  <div class="safe"></div>
+  <div class="nav">
+    <button class="nav-btn nav-btn-back" onclick="goBack()">←</button>
+    <span class="nav-title" id="S2T">경로 선택</span>
+    <button class="nav-btn nav-btn-reset" onclick="goReset()" id="RS2">재설정</button>
   </div>
-  <div class="hbar"><div class="hpill"></div></div>
+  <div class="dest-strip">
+    <div class="dest-row">
+      <div>
+        <div class="dest-stations">
+          <span id="DFR">신림</span>
+          <span class="dest-arrow"> → </span>
+          <span id="DTO">강남</span>
+        </div>
+        <div class="dest-meta" id="DMT">경로 2개 · 지금 출발 기준</div>
+      </div>
+      <button class="map-fab" onclick="openMdl()">🗺️</button>
+    </div>
+  </div>
+  <div class="pick-hint" id="BAN">탑승할 경로를 선택해 주세요</div>
+  <div class="route-list">
+    <div class="rcard rec" onclick="pickRoute()">
+      <div class="rbadge rb-blue" id="RB1">✅ 추천 · 일반열차</div>
+      <div class="rcont">
+        <div class="r-min">23<span id="MN1"> 분</span></div>
+        <div class="r-pills">
+          <span class="rpill" id="RP1">환승 1회</span>
+          <span class="rpill">1,600원</span>
+          <span class="rpill" id="RP2">3분 후 출발</span>
+        </div>
+        <div class="r-line">
+          <div class="rldot" style="background:var(--l2)">2</div>
+          <div class="rlbar" style="background:var(--l2)"></div>
+          <div class="rl-xfer" id="LXF">교대환승</div>
+          <div class="rlbar" style="background:var(--l3)"></div>
+          <div class="rldot" style="background:var(--l3)">3</div>
+        </div>
+      </div>
+    </div>
+    <div class="rcard" onclick="pickRoute()">
+      <div class="rbadge rb-yel" id="RB2">⚡ 급행열차 · 빠름</div>
+      <div class="rcont">
+        <div class="r-min">15<span id="MN2"> 분</span></div>
+        <div class="r-pills">
+          <span class="rpill" id="RP3">환승 없음</span>
+          <span class="rpill">1,600원</span>
+          <span class="rpill" id="RP4">8분 후 출발</span>
+        </div>
+        <div class="r-line">
+          <div class="rldot" style="background:var(--l9)">9</div>
+          <div class="rlbar" style="background:var(--l9)"></div>
+          <div class="rldot" style="background:var(--l9)">9</div>
+        </div>
+      </div>
+    </div>
+    <div class="voice-box">
+      <div class="vb-label">🔊 <span id="VGL">음성 안내</span></div>
+      <div class="vb-text" id="VGT">"추천은 2호선이에요. 교대에서 3호선으로 갈아타면 강남 도착해요."</div>
+    </div>
+  </div>
+
+  <!-- 노선도 모달 -->
+  <div class="mdl" id="MDL" onclick="closeMdl()">
+    <div class="msheet" onclick="event.stopPropagation()">
+      <div class="mhandle"></div>
+      <div class="mhdr">
+        <span class="mhtl" id="MTL">🗺️ 지하철 노선도</span>
+        <button class="mcl" onclick="closeMdl()">✕</button>
+      </div>
+      <div class="mbd">
+        <div style="font-size:12px;color:var(--g4);margin-bottom:6px" id="MRT">현재 경로: 신림 → 강남</div>
+        <div class="mlr cur">
+          <div class="mlb" style="background:var(--l2)">2</div>
+          <div style="flex:1">
+            <div class="mln" id="ML2">2호선 · 순환선</div><div class="mlrg">시청 — 시청</div>
+            <div class="mls"><span class="sp hi" id="MS1">신림</span><span class="sp" id="MS2">서울대입구</span><span class="sp" id="MS3">낙성대</span><span class="sp hi" id="MS4">교대</span><span class="sp hi" id="MS5">강남</span></div>
+          </div>
+        </div>
+        <div class="mlr"><div class="mlb" style="background:var(--l3)">3</div>
+          <div style="flex:1"><div class="mln" id="ML3">3호선</div><div class="mlrg">대화 — 오금</div>
+          <div class="mls"><span class="sp hi" id="MS6">교대</span><span class="sp" id="MS7">남부터미널</span><span class="sp" id="MS8">양재</span></div></div>
+        </div>
+        <div class="mlr"><div class="mlb" style="background:#1269B5">4</div>
+          <div style="flex:1"><div class="mln" id="ML4">4호선</div><div class="mlrg">당고개 — 오이도</div></div>
+        </div>
+        <div class="mlr"><div class="mlb" style="background:var(--l9)">9</div>
+          <div style="flex:1"><div class="mln" id="ML9">9호선 · 급행</div><div class="mlrg">개화 — 중앙보훈병원</div>
+          <div class="mls"><span class="sp" id="MS9">신논현</span><span class="sp" id="MS10">언주</span><span class="sp" id="MS11">선정릉</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
-<div class="toast" id="TST"></div>
+<!-- ═══ S3: 탑승 안내 (흰 배경) ═══ -->
+<div class="scr" id="s3">
+  <div class="safe"></div>
+  <div class="nav">
+    <button class="nav-btn nav-btn-back" onclick="goBack()">←</button>
+    <span class="nav-title" id="S3T">탑승 안내</span>
+    <button class="nav-btn nav-btn-reset" onclick="goReset()" id="RS3">재설정</button>
+  </div>
+
+  <!-- 노선 히어로 — 크게! -->
+  <div class="line-hero">
+    <div class="lh-left">
+      <div class="lh-badge" id="lineBadge" style="background:var(--l2)">2</div>
+      <div>
+        <div class="lh-name" id="LST">2호선 탑승 중</div>
+        <div class="lh-remain" id="LSB">강남까지 3정거장</div>
+      </div>
+    </div>
+    <div class="lh-status">탑승중</div>
+  </div>
+
+  <div class="s3-body">
+    <div class="nxt-card">
+      <div class="nxt-lbl" id="NXL">다음 역</div>
+      <div class="nxt-name" id="NXS">교대</div>
+      <div class="nxt-sub" id="NXB">환승역 — 3호선 갈아타세요</div>
+    </div>
+    <div class="cd-zone">
+      <div class="cd-lbl" id="CDL">도착까지</div>
+      <div class="cd-num" id="CDN">2:30</div>
+      <div class="cd-sub" id="CDS">약 2분 30초 후 도착</div>
+    </div>
+    <div class="door-card">
+      <div class="door-left">
+        <div class="door-main" id="DM">🚪 왼쪽 문</div>
+        <div class="door-hint" id="DH">에스컬레이터 가까운 쪽</div>
+      </div>
+      <div class="door-icon">⬅️</div>
+    </div>
+    <button class="xfer-card" onclick="goTo(4)">
+      <div class="xf-title" id="XCT">⚡ 환승 알림 — 버스 연계 보기</div>
+      <div class="xf-body" id="XCB">교대역에서 3호선으로 갈아타세요. 강남역 도착 후 연계 버스를 확인하세요.</div>
+      <div class="xf-cta" id="XCP">눌러서 버스 연계 확인하기 →</div>
+    </button>
+  </div>
+</div>
+
+<!-- ═══ S4: 버스 연계 ═══ -->
+<div class="scr" id="s4">
+  <div class="safe"></div>
+  <div class="nav">
+    <button class="nav-btn nav-btn-back" onclick="goBack()">←</button>
+    <span class="nav-title" id="S4T">버스 연계</span>
+    <button class="nav-btn nav-btn-reset" onclick="goReset()" id="RS4">재설정</button>
+  </div>
+  <div class="bus-header">
+    <div class="bus-title" id="S4TI">🚌 강남역 연계 버스</div>
+    <div class="bus-sub" id="S4SU">목적지 방향 버스만 보여드려요</div>
+  </div>
+  <div class="bus-list">
+    <div class="bcard"><div class="btop"><div><div class="bnum" style="color:var(--blue)">140</div><div class="bdest" id="BD1">→ 서울역 · 시청 방향</div></div><div class="barr ar" id="BA1">곧도착</div></div><div class="bstop" id="BS1">📍 4번 출구 앞 · 도보 1분</div></div>
+    <div class="bcard"><div class="btop"><div><div class="bnum" style="color:var(--ora)">3412</div><div class="bdest" id="BD2">→ 논현 · 신사 방향</div></div><div class="barr ao" id="BA2">4분</div></div><div class="bstop" id="BS2">📍 10번 출구 · 도보 2분</div></div>
+    <div class="bcard"><div class="btop"><div><div class="bnum" style="color:var(--pur)">9407</div><div class="bdest" id="BD3">→ 판교 · 분당 방향</div></div><div class="barr ag" id="BA3">8분</div></div><div class="bstop" id="BS3">📍 2번 출구 · 도보 3분</div></div>
+    <div class="bcard"><div class="btop"><div><div class="bnum" style="color:var(--green)">4412</div><div class="bdest" id="BD4">→ 역삼 · 선릉 방향</div></div><div class="barr ag" id="BA4">12분</div></div><div class="bstop" id="BS4">📍 1번 출구 · 도보 2분</div></div>
+  </div>
+  <div class="bvc-wrap">
+    <button class="bvc">🎙️ <span id="BVB">"가장 빠른 버스 알려줘"</span></button>
+  </div>
+</div>
+
+<!-- 자주가는 노선 편집 모달 -->
+<div class="fav-mdl" id="favMdl" onclick="closeFavMdl()">
+  <div class="fav-sheet" onclick="event.stopPropagation()">
+    <div class="fav-shdr">
+      <span class="fav-stitle">자주 가는 노선 설정</span>
+      <button class="fav-scl" onclick="closeFavMdl()">✕</button>
+    </div>
+    <div class="fav-sbody">
+      <div class="inp-group"><div class="inp-label">출발역</div><input class="inp" id="favFrom" placeholder="예: 신림역"></div>
+      <div class="inp-group"><div class="inp-label">도착역</div><input class="inp" id="favTo" placeholder="예: 강남역"></div>
+      <div class="inp-group"><div class="inp-label">이름 (선택)</div><input class="inp" id="favName" placeholder="예: 출퇴근"></div>
+      <button class="save-btn" onclick="saveFav()">저장</button>
+      <div id="savedList"></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
 
 <script>
+// ── 다국어 ──────────────────────────────
 var T={
-  ko:{an:'말하면 바로 가요 🚇',s1t:'말하면 바로가요',s1h:'어디 가세요?<br>말씀해 주세요',s1s:'마이크를 누르거나 아래 예시를 눌러보세요',mlb:'탭하여 말하기',lis:'🎙️ 듣고 있어요...',rec:'✅ 인식됨',c0:'"강남역 가고 싶어"',c1:'"서울역까지 어떻게 가?"',c2:'"잠실 가는 급행 있어?"',s2t:'경로 선택',rst:'재설정',dfr:'신림',dto:'강남',dmt:'경로 2개 · 지금 출발 기준',ban:'탑승할 경로를 선택하셨으면 눌러주세요!',rb1:'✅ 추천 · 일반열차',rb2:'⚡ 급행열차 · 빠름',mn:' 분',rp1:'환승 1회',rp2:'3분 후 출발',lxf:'교대환승',rp3:'환승 없음',rp4:'8분 후 출발',vgl:'음성 안내',vgt:'"추천은 2호선이에요. 교대에서 3호선으로 갈아타면 강남 도착해요."',mtl:'🗺️ 전체 지하철 노선도',mrt:'현재 경로: 신림 → 강남',mtp:'✕ 누르면 경로 선택으로 돌아가요',ml2:'2호선 · 순환선',ml3:'3호선',ml4:'4호선',ml9:'9호선 · 급행',mlsu:'수인·분당선',ms1:'신림 출발',ms2:'서울대입구',ms3:'낙성대',ms4:'교대 환승',ms5:'강남 도착',ms6:'교대 환승',ms7:'남부터미널',ms8:'양재',ms9:'신논현',ms10:'언주',ms11:'선정릉',s3t:'탑승 안내',lst:'🚇 2호선 탑승 중',lsb:'강남까지 3정거장',nxl:'다음 역',nxs:'교대',nxb:'환승역 — 3호선 갈아타세요',cdl:'도착까지',cds:'약 2분 30초 후 도착',dm:'🚪 왼쪽 문',dh:'에스컬레이터 가까운 쪽',xct:'⚡ 환승 알림 — 버스 연계 보기',xcb:'교대역에서 3호선으로 갈아타세요.<br>강남역 도착 후 연계 버스를 확인하세요.',xcp:'👉 눌러서 버스 연계 확인하기',s4t:'버스 연계',s4ti:'🚌 강남역 연계 버스',s4su:'목적지 방향 버스만 보여드려요',bd1:'→ 서울역 · 시청 방향',ba1:'곧도착',bs1:'📍 4번 출구 앞 · 도보 1분',bd2:'→ 논현 · 신사 방향',ba2:'4분',bs2:'📍 10번 출구 · 도보 2분',bd3:'→ 판교 · 분당 방향',ba3:'8분',bs3:'📍 2번 출구 · 도보 3분',bd4:'→ 역삼 · 선릉 방향',ba4:'12분',bs4:'📍 1번 출구 · 도보 2분',bvb:'"가장 빠른 버스 알려줘"'},
-  en:{an:'Go When You Say It 🚇',s1t:'Transit Voice',s1h:'Where are you<br>headed today?',s1s:'Tap the mic or choose an example below',mlb:'Tap to speak',lis:'🎙️ Listening...',rec:'✅ Got it!',c0:'"Take me to Gangnam"',c1:'"How do I get to Seoul Station?"',c2:'"Is there an express to Jamsil?"',s2t:'Choose Route',rst:'Reset',dfr:'Sinrim',dto:'Gangnam',dmt:'2 routes · Departing now',ban:'Tap a route to confirm your selection!',rb1:'✅ Recommended · Local',rb2:'⚡ Express · Faster',mn:' min',rp1:'1 transfer',rp2:'Departs in 3 min',lxf:'Gyodae Xfer',rp3:'No transfer',rp4:'Departs in 8 min',vgl:'Voice Guide',vgt:'"Take Line 2. Transfer at Gyodae to Line 3 for Gangnam."',mtl:'🗺️ Full Subway Map',mrt:'Route: Sinrim → Gangnam',mtp:'Tap ✕ to return',ml2:'Line 2 · Circle',ml3:'Line 3',ml4:'Line 4',ml9:'Line 9 · Express',mlsu:'Suinbundang',ms1:'Sinrim (Depart)',ms2:'SNU Station',ms3:'Nakseongdae',ms4:'Gyodae (Xfer)',ms5:'Gangnam (Arrive)',ms6:'Gyodae (Xfer)',ms7:'Nambu Terminal',ms8:'Yangjae',ms9:'Sinnonhyeon',ms10:'Eonju',ms11:'Seonjeongneung',s3t:'On Board',lst:'🚇 Line 2 — On Board',lsb:'3 stops to Gangnam',nxl:'Next Station',nxs:'Gyodae',nxb:'Transfer — Switch to Line 3',cdl:'Arrives in',cds:'approx. 2 min 30 sec',dm:'🚪 Left Door',dh:'Closer to escalator',xct:'⚡ Transfer Alert — Bus Connections',xcb:'Transfer to Line 3 at Gyodae.<br>Check connecting buses at Gangnam.',xcp:'👉 Tap to see bus connections',s4t:'Bus Connections',s4ti:'🚌 Buses from Gangnam',s4su:'Filtered for your destination',bd1:'→ Seoul Station · City Hall',ba1:'Arriving',bs1:'📍 Exit 4 · 1 min walk',bd2:'→ Nonhyeon · Sinsa',ba2:'4 min',bs2:'📍 Exit 10 · 2 min walk',bd3:'→ Pangyo · Bundang',ba3:'8 min',bs3:'📍 Exit 2 · 3 min walk',bd4:'→ Yeoksam · Seolleung',ba4:'12 min',bs4:'📍 Exit 1 · 2 min walk',bvb:'"Which bus is fastest?"'},
-  zh:{an:'说走就走 🚇',s1t:'语音乘车助手',s1h:'您好！<br>请问您要去哪里？',s1s:'点击麦克风或选择下方示例',mlb:'点击说话',lis:'🎙️ 正在聆听...',rec:'✅ 已识别',c0:'"我想去江南站"',c1:'"怎么去首尔站？"',c2:'"有去蚕室的急行吗？"',s2t:'选择路线',rst:'重置',dfr:'新林',dto:'江南',dmt:'2条路线 · 即时出发',ban:'请选择要乘坐的路线并点击确认！',rb1:'✅ 推荐 · 普通列车',rb2:'⚡ 急行列车 · 更快',mn:' 分钟',rp1:'换乘1次',rp2:'3分钟后发车',lxf:'教大换乘',rp3:'无需换乘',rp4:'8分钟后发车',vgl:'语音提示',vgt:'"请乘坐2号线，在教大站换乘3号线到达江南。"',mtl:'🗺️ 完整地铁路线图',mrt:'当前路线：新林 → 江南',mtp:'点击 ✕ 返回',ml2:'2号线 · 循环线',ml3:'3号线',ml4:'4号线',ml9:'9号线 · 急行',mlsu:'水仁·盆唐线',ms1:'新林（出发）',ms2:'首尔大学站',ms3:'落星台',ms4:'教大（换乘）',ms5:'江南（到达）',ms6:'教大（换乘）',ms7:'南部客运站',ms8:'良才',ms9:'新论铉',ms10:'彦主',ms11:'宣靖陵',s3t:'乘车导航',lst:'🚇 正在乘坐2号线',lsb:'距江南还有3站',nxl:'下一站',nxs:'教大',nxb:'换乘站 — 请换乘3号线',cdl:'到站时间',cds:'约2分30秒后到达',dm:'🚪 左侧车门',dh:'靠近自动扶梯一侧',xct:'⚡ 换乘提醒 — 查看接驳公交',xcb:'请在教大站换乘3号线。<br>到达江南站后可查看接驳公交。',xcp:'👉 点击查看公交信息',s4t:'接驳公交',s4ti:'🚌 江南站接驳公交',s4su:'仅显示您目的地方向的公交',bd1:'→ 首尔站 · 市厅方向',ba1:'即将到站',bs1:'📍 4号出口前 · 步行1分钟',bd2:'→ 论铉 · 新沙方向',ba2:'4分钟',bs2:'📍 10号出口 · 步行2分钟',bd3:'→ 板桥 · 盆唐方向',ba3:'8分钟',bs3:'📍 2号出口 · 步行3分钟',bd4:'→ 驿三 · 宣陵方向',ba4:'12分钟',bs4:'📍 1号出口 · 步行2分钟',bvb:'"哪班公交最快？"'},
-  ja:{an:'話せばすぐ行ける 🚇',s1t:'音声乗車ガイド',s1h:'どこへ<br>行きますか？',s1s:'マイクをタップするか下の例を選んでください',mlb:'タップして話す',lis:'🎙️ 聞いています...',rec:'✅ 認識しました',c0:'"江南駅に行きたい"',c1:'"ソウル駅までどう行く？"',c2:'"蚕室行きの急行はある？"',s2t:'経路選択',rst:'リセット',dfr:'新林',dto:'江南',dmt:'2つの経路 · 今すぐ出発',ban:'乗車する経路を選んでタップしてください！',rb1:'✅ おすすめ · 普通列車',rb2:'⚡ 急行列車 · 速い',mn:' 分',rp1:'乗換1回',rp2:'3分後発車',lxf:'教大乗換',rp3:'乗換なし',rp4:'8分後発車',vgl:'音声案内',vgt:'"2号線にお乗りください。教大で3号線に乗り換えて江南に到着します。"',mtl:'🗺️ 全路線図',mrt:'現在の経路：新林 → 江南',mtp:'✕ を押すと戻ります',ml2:'2号線 · 環状線',ml3:'3号線',ml4:'4号線',ml9:'9号線 · 急行',mlsu:'水仁・盆唐線',ms1:'新林（出発）',ms2:'ソウル大学駅',ms3:'落星台',ms4:'教大（乗換）',ms5:'江南（到着）',ms6:'教大（乗換）',ms7:'南部ターミナル',ms8:'良才',ms9:'新論峴',ms10:'彦州',ms11:'宣靖陵',s3t:'乗車案内',lst:'🚇 2号線に乗車中',lsb:'江南まで3駅',nxl:'次の駅',nxs:'教大',nxb:'乗換駅 — 3号線に乗り換えてください',cdl:'到着まで',cds:'約2分30秒後に到着',dm:'🚪 左側のドア',dh:'エスカレーター寄り',xct:'⚡ 乗換案内 — バス連絡を見る',xcb:'教大駅で3号線に乗り換えてください。<br>江南駅到着後、連絡バスをご確認ください。',xcp:'👉 タップしてバス情報を確認',s4t:'バス連絡',s4ti:'🚌 江南駅 連絡バス',s4su:'目的地方向のバスのみ表示',bd1:'→ ソウル駅・市庁方面',ba1:'まもなく到着',bs1:'📍 4番出口前 · 徒歩1分',bd2:'→ 論峴・新沙方面',ba2:'4分',bs2:'📍 10番出口 · 徒歩2分',bd3:'→ 板橋・盆唐方面',ba3:'8分',bs3:'📍 2番出口 · 徒歩3分',bd4:'→ 駅三・宣陵方面',ba4:'12分',bs4:'📍 1番出口 · 徒歩2分',bvb:'"一番早いバスはどれ？"'}
+  ko:{s1h:'말하면 바로 가요 🚇',s1s:'어디든, 말 한마디면',mlb:'탭하여 말하기',cl:'예시',lis:'🎙️ 듣고 있어요...',rec:'✅',c0:'"강남역 가고 싶어"',c1:'"서울역까지 어떻게 가?"',c2:'"잠실 가는 급행 있어?"',fl:'자주 가는 노선',fe:'편집',fa:'노선 추가',gps:'내 위치 확인하기',
+    s2t:'경로 선택',rst:'재설정',dfr:'신림',dto:'강남',dmt:'경로 2개 · 지금 출발 기준',ban:'탑승할 경로를 선택해 주세요',rb1:'✅ 추천 · 일반열차',rb2:'⚡ 급행열차 · 빠름',mn:' 분',rp1:'환승 1회',rp2:'3분 후 출발',lxf:'교대환승',rp3:'환승 없음',rp4:'8분 후 출발',vgl:'음성 안내',vgt:'"추천은 2호선이에요. 교대에서 3호선으로 갈아타면 강남 도착해요."',
+    mtl:'🗺️ 지하철 노선도',mrt:'현재 경로: 신림 → 강남',ml2:'2호선 · 순환선',ml3:'3호선',ml4:'4호선',ml9:'9호선 · 급행',ms1:'신림',ms2:'서울대입구',ms3:'낙성대',ms4:'교대',ms5:'강남',ms6:'교대',ms7:'남부터미널',ms8:'양재',ms9:'신논현',ms10:'언주',ms11:'선정릉',
+    s3t:'탑승 안내',lst:'2호선 탑승 중',lsb:'강남까지 3정거장',nxl:'다음 역',nxs:'교대',nxb:'환승역 — 3호선 갈아타세요',cdl:'도착까지',cds:'약 2분 30초 후 도착',dm:'🚪 왼쪽 문',dh:'에스컬레이터 가까운 쪽',xct:'⚡ 환승 알림 — 버스 연계 보기',xcb:'교대역에서 3호선으로 갈아타세요. 강남역 도착 후 연계 버스를 확인하세요.',xcp:'눌러서 버스 연계 확인하기 →',
+    s4t:'버스 연계',s4ti:'🚌 강남역 연계 버스',s4su:'목적지 방향 버스만 보여드려요',bd1:'→ 서울역 · 시청 방향',ba1:'곧도착',bs1:'📍 4번 출구 앞 · 도보 1분',bd2:'→ 논현 · 신사 방향',ba2:'4분',bs2:'📍 10번 출구 · 도보 2분',bd3:'→ 판교 · 분당 방향',ba3:'8분',bs3:'📍 2번 출구 · 도보 3분',bd4:'→ 역삼 · 선릉 방향',ba4:'12분',bs4:'📍 1번 출구 · 도보 2분',bvb:'"가장 빠른 버스 알려줘"'},
+  en:{s1h:'Go When You Say It 🚇',s1s:'Just say where to go',mlb:'Tap to speak',cl:'Examples',lis:'🎙️ Listening...',rec:'✅',c0:'"Take me to Gangnam"',c1:'"How to Seoul Station?"',c2:'"Express to Jamsil?"',fl:'Frequent Routes',fe:'Edit',fa:'Add route',gps:'Find my location',
+    s2t:'Choose Route',rst:'Reset',dfr:'Sinrim',dto:'Gangnam',dmt:'2 routes · Now',ban:'Select a route',rb1:'✅ Recommended · Local',rb2:'⚡ Express · Faster',mn:' min',rp1:'1 transfer',rp2:'In 3 min',lxf:'Gyodae Xfer',rp3:'No transfer',rp4:'In 8 min',vgl:'Voice',vgt:'"Take Line 2. Transfer at Gyodae to Line 3."',
+    mtl:'🗺️ Subway Map',mrt:'Route: Sinrim → Gangnam',ml2:'Line 2 · Circle',ml3:'Line 3',ml4:'Line 4',ml9:'Line 9 · Express',ms1:'Sinrim',ms2:'SNU',ms3:'Nakseongdae',ms4:'Gyodae',ms5:'Gangnam',ms6:'Gyodae',ms7:'Nambu T',ms8:'Yangjae',ms9:'Sinnonhyeon',ms10:'Eonju',ms11:'Seonjeongneung',
+    s3t:'On Board',lst:'Line 2 — On Board',lsb:'3 stops to Gangnam',nxl:'Next Station',nxs:'Gyodae',nxb:'Transfer — Switch to Line 3',cdl:'Arrives in',cds:'approx. 2 min 30 sec',dm:'🚪 Left Door',dh:'Near escalator',xct:'⚡ Transfer — See Buses',xcb:'Transfer at Gyodae to Line 3. Check buses at Gangnam.',xcp:'Tap to see bus connections →',
+    s4t:'Buses',s4ti:'🚌 Buses from Gangnam',s4su:'Filtered for your destination',bd1:'→ Seoul Station',ba1:'Arriving',bs1:'📍 Exit 4 · 1 min',bd2:'→ Nonhyeon',ba2:'4 min',bs2:'📍 Exit 10 · 2 min',bd3:'→ Pangyo',ba3:'8 min',bs3:'📍 Exit 2 · 3 min',bd4:'→ Yeoksam',ba4:'12 min',bs4:'📍 Exit 1 · 2 min',bvb:'"Which bus is fastest?"'},
+  zh:{s1h:'说走就走 🚇',s1s:'说出目的地，马上出发',mlb:'点击说话',cl:'示例',lis:'🎙️ 聆听中...',rec:'✅',c0:'"去江南站"',c1:'"怎么去首尔站？"',c2:'"有蚕室急行吗？"',fl:'常用路线',fe:'编辑',fa:'添加路线',gps:'获取我的位置',
+    s2t:'选择路线',rst:'重置',dfr:'新林',dto:'江南',dmt:'2条路线 · 现在出发',ban:'请选择路线',rb1:'✅ 推荐 · 普通',rb2:'⚡ 急行 · 快',mn:' 分',rp1:'换乘1次',rp2:'3分钟后',lxf:'教大换',rp3:'无换乘',rp4:'8分钟后',vgl:'语音',vgt:'"乘2号线，教大换3号线到江南。"',
+    mtl:'🗺️ 路线图',mrt:'新林 → 江南',ml2:'2号线·循环',ml3:'3号线',ml4:'4号线',ml9:'9号线·急行',ms1:'新林',ms2:'首尔大学',ms3:'落星台',ms4:'教大',ms5:'江南',ms6:'教大',ms7:'南部',ms8:'良才',ms9:'新论铉',ms10:'彦主',ms11:'宣靖陵',
+    s3t:'乘车导航',lst:'2号线 乘车中',lsb:'距江南3站',nxl:'下一站',nxs:'教大',nxb:'换乘站—换3号线',cdl:'到站',cds:'约2分30秒后',dm:'🚪 左侧车门',dh:'靠近扶梯',xct:'⚡ 换乘提醒',xcb:'教大换3号线。江南查看公交。',xcp:'点击查看公交 →',
+    s4t:'接驳公交',s4ti:'🚌 江南站公交',s4su:'仅目的地方向',bd1:'→ 首尔站',ba1:'即将到',bs1:'📍 4号出口·1分',bd2:'→ 论铉',ba2:'4分',bs2:'📍 10号·2分',bd3:'→ 板桥',ba3:'8分',bs3:'📍 2号·3分',bd4:'→ 驿三',ba4:'12分',bs4:'📍 1号·2分',bvb:'"最快的公交？"'},
+  ja:{s1h:'話せばすぐ行ける 🚇',s1s:'どこへでも、ひと言で',mlb:'タップして話す',cl:'例',lis:'🎙️ 聞いています...',rec:'✅',c0:'"江南駅へ行きたい"',c1:'"ソウル駅まで教えて"',c2:'"蚕室の急行は？"',fl:'よく使う路線',fe:'編集',fa:'路線を追加',gps:'現在地を確認',
+    s2t:'経路選択',rst:'リセット',dfr:'新林',dto:'江南',dmt:'2経路 · 今すぐ',ban:'経路を選んでください',rb1:'✅ おすすめ · 普通',rb2:'⚡ 急行 · 速い',mn:' 分',rp1:'乗換1回',rp2:'3分後',lxf:'教大乗換',rp3:'乗換なし',rp4:'8分後',vgl:'音声',vgt:'"2号線。教大で3号線へ。"',
+    mtl:'🗺️ 路線図',mrt:'新林→江南',ml2:'2号線·環状',ml3:'3号線',ml4:'4号線',ml9:'9号線·急行',ms1:'新林',ms2:'ソウル大',ms3:'落星台',ms4:'教大',ms5:'江南',ms6:'教大',ms7:'南部T',ms8:'良才',ms9:'新論峴',ms10:'彦州',ms11:'宣靖陵',
+    s3t:'乗車案内',lst:'2号線 乗車中',lsb:'江南まで3駅',nxl:'次の駅',nxs:'教大',nxb:'乗換—3号線へ',cdl:'到着まで',cds:'約2分30秒後',dm:'🚪 左のドア',dh:'エスカレーター寄り',xct:'⚡ 乗換—バス確認',xcb:'教大で3号線。江南でバス確認。',xcp:'タップしてバスを見る →',
+    s4t:'バス連絡',s4ti:'🚌 江南駅 バス',s4su:'目的地方向のみ',bd1:'→ ソウル駅',ba1:'まもなく',bs1:'📍 4番出口·1分',bd2:'→ 論峴',ba2:'4分',bs2:'📍 10番·2分',bd3:'→ 板橋',ba3:'8分',bs3:'📍 2番·3分',bd4:'→ 駅三',ba4:'12分',bs4:'📍 1番·2分',bvb:'"一番早いバスは？"'}
 };
 
+// ── 상태 ──────────────────────────────
 var lang='ko', hist=[1], cur=1;
+var LC={'1':'#0052A4','2':'#00A650','3':'#EF7C1C','4':'#00A0E9','5':'#996CAC','6':'#CD7C2F','7':'#747F00','8':'#E6186C','9':'#BDB092'};
+var favs=[];
+try{favs=JSON.parse(localStorage.getItem('mbrg_favs')||'[]')}catch(e){}
 
+// ── 언어 적용 ──────────────────────────
 function setLang(l,el){
   lang=l;
-  document.querySelectorAll('.lt').forEach(function(t){t.classList.remove('on');});
+  document.querySelectorAll('.lt').forEach(t=>t.classList.remove('on'));
   el.classList.add('on');
   applyText();
 }
-
 function applyText(){
   var t=T[lang];
-  var m={AN:t.an,S1T:t.s1t,S1H:t.s1h,S1S:t.s1s,MLB:t.mlb,C0:t.c0,C1:t.c1,C2:t.c2,S2T:t.s2t,RS2:t.rst,RS3:t.rst,RS4:t.rst,DFR:t.dfr,DTO:t.dto,DMT:t.dmt,BAN:t.ban,RB1:t.rb1,RB2:t.rb2,MN1:t.mn,MN2:t.mn,RP1:t.rp1,RP2:t.rp2,LXF:t.lxf,RP3:t.rp3,RP4:t.rp4,VGL:t.vgl,VGT:t.vgt,MTL:t.mtl,MRT:t.mrt,MTP:t.mtp,ML2:t.ml2,ML3:t.ml3,ML4:t.ml4,ML9:t.ml9,MLSU:t.mlsu,MS1:t.ms1,MS2:t.ms2,MS3:t.ms3,MS4:t.ms4,MS5:t.ms5,MS6:t.ms6,MS7:t.ms7,MS8:t.ms8,MS9:t.ms9,MS10:t.ms10,MS11:t.ms11,S3T:t.s3t,LST:t.lst,LSB:t.lsb,NXL:t.nxl,NXS:t.nxs,NXB:t.nxb,CDL:t.cdl,CDS:t.cds,DM:t.dm,DH:t.dh,XCT:t.xct,XCB:t.xcb,XCP:t.xcp,S4T:t.s4t,S4TI:t.s4ti,S4SU:t.s4su,BD1:t.bd1,BA1:t.ba1,BS1:t.bs1,BD2:t.bd2,BA2:t.ba2,BS2:t.bs2,BD3:t.bd3,BA3:t.ba3,BS3:t.bs3,BD4:t.bd4,BA4:t.ba4,BS4:t.bs4,BVB:t.bvb};
-  Object.keys(m).forEach(function(id){var e=document.getElementById(id);if(e)e.innerHTML=m[id];});
+  var m={
+    S1H:t.s1h,S1S:t.s1s,MLB:t.mlb,CL:t.cl,C0:t.c0,C1:t.c1,C2:t.c2,
+    FL:t.fl,FE:t.fe,FA:t.fa,
+    S2T:t.s2t,RS2:t.rst,RS3:t.rst,RS4:t.rst,
+    DFR:t.dfr,DTO:t.dto,DMT:t.dmt,BAN:t.ban,
+    RB1:t.rb1,RB2:t.rb2,MN1:t.mn,MN2:t.mn,
+    RP1:t.rp1,RP2:t.rp2,LXF:t.lxf,RP3:t.rp3,RP4:t.rp4,
+    VGL:t.vgl,VGT:t.vgt,
+    MTL:t.mtl,MRT:t.mrt,ML2:t.ml2,ML3:t.ml3,ML4:t.ml4,ML9:t.ml9,
+    MS1:t.ms1,MS2:t.ms2,MS3:t.ms3,MS4:t.ms4,MS5:t.ms5,
+    MS6:t.ms6,MS7:t.ms7,MS8:t.ms8,MS9:t.ms9,MS10:t.ms10,MS11:t.ms11,
+    S3T:t.s3t,LST:t.lst,LSB:t.lsb,
+    NXL:t.nxl,NXS:t.nxs,NXB:t.nxb,CDL:t.cdl,CDS:t.cds,
+    DM:t.dm,DH:t.dh,XCT:t.xct,XCB:t.xcb,XCP:t.xcp,
+    S4T:t.s4t,S4TI:t.s4ti,S4SU:t.s4su,
+    BD1:t.bd1,BA1:t.ba1,BS1:t.bs1,BD2:t.bd2,BA2:t.ba2,BS2:t.bs2,
+    BD3:t.bd3,BA3:t.ba3,BS3:t.bs3,BD4:t.bd4,BA4:t.ba4,BS4:t.bs4,
+    BVB:t.bvb
+  };
+  Object.keys(m).forEach(id=>{var e=document.getElementById(id);if(e)e.innerHTML=m[id]||'';});
+  renderFavs();
 }
 
+// ── 화면 전환 ──────────────────────────
 function goTo(n,isBack){
   var ps=document.getElementById('s'+cur);
   var ns=document.getElementById('s'+n);
-  ps.classList.remove('on','bk');
-  ns.classList.remove('on','bk');
-  if(isBack)ns.classList.add('bk');
+  ps.classList.remove('on','back');
+  ns.classList.remove('on','back');
+  if(isBack)ns.classList.add('back');
   ns.classList.add('on');
   cur=n;
   if(!isBack&&hist[hist.length-1]!==n)hist.push(n);
 }
-
-function goBack(){
-  if(hist.length<=1)return;
-  hist.pop();
-  goTo(hist[hist.length-1],true);
-}
-
+function goBack(){if(hist.length<=1)return;hist.pop();goTo(hist[hist.length-1],true);}
 function goReset(){
   hist=[1];cur=1;
   document.getElementById('VST').textContent='';
   document.getElementById('MIC').classList.remove('on');
-  document.querySelectorAll('.scr').forEach(function(s){s.classList.remove('on','bk');});
+  document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on','back'));
   document.getElementById('s1').classList.add('on');
 }
-
 function pickRoute(){goTo(3);}
-function openModal(){document.getElementById('MDL').classList.add('on');}
-function closeModal(){document.getElementById('MDL').classList.remove('on');}
+function openMdl(){document.getElementById('MDL').classList.add('on');}
+function closeMdl(){document.getElementById('MDL').classList.remove('on');}
 
-var lmap={ko:'ko-KR',en:'en-US',zh:'zh-CN',ja:'ja-JP'};
+// ── GPS ────────────────────────────────
+function getGPS(){
+  var txt=document.getElementById('gpsText');
+  txt.textContent='위치 확인 중...';
+  if(!navigator.geolocation){txt.textContent='GPS를 지원하지 않아요';return;}
+  navigator.geolocation.getCurrentPosition(
+    pos=>{
+      // 실제 API 연동 시 가장 가까운 역 조회
+      txt.textContent='📍 현재 위치 확인됨';
+      document.getElementById('DFR').textContent='현재위치';
+      showToast('📍 현재 위치를 출발지로 설정했어요');
+    },
+    ()=>{txt.textContent='위치 허용을 눌러주세요';}
+  );
+}
 
+// ── 음성인식 ───────────────────────────
+var LM={ko:'ko-KR',en:'en-US',zh:'zh-CN',ja:'ja-JP'};
 function doListen(){
   var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  if(!SR){simulateListen();return;}
-  var rec=new SR();
-  rec.lang=lmap[lang]||'ko-KR';
-  rec.continuous=false;rec.interimResults=true;
+  if(!SR){simListen();return;}
+  var r=new SR();r.lang=LM[lang]||'ko-KR';r.continuous=false;r.interimResults=true;
   var mic=document.getElementById('MIC'),vst=document.getElementById('VST');
-  rec.onstart=function(){mic.classList.add('on');vst.style.color='var(--green)';vst.textContent=T[lang].lis;};
-  rec.onresult=function(e){
-    var txt=e.results[0][0].transcript,fin=e.results[0].isFinal;
-    vst.textContent=(fin?T[lang].rec+' ':'')+'"'+txt+'"';
-    if(fin){mic.classList.remove('on');setTimeout(function(){goTo(2);},700);}
+  r.onstart=()=>{mic.classList.add('on');vst.style.color='var(--green)';vst.textContent=T[lang].lis;};
+  r.onresult=(e)=>{
+    var tx=e.results[0][0].transcript,fin=e.results[0].isFinal;
+    vst.textContent=(fin?T[lang].rec+' ':'')+'"'+tx+'"';
+    if(fin){mic.classList.remove('on');setTimeout(()=>goTo(2),700);}
   };
-  rec.onerror=function(e){
-    mic.classList.remove('on');
-    if(e.error==='not-allowed')showToast('⚠️ 마이크 권한을 허용해주세요');
-    else simulateListen();
-  };
-  try{rec.start();}catch(e){simulateListen();}
+  r.onerror=(e)=>{mic.classList.remove('on');e.error==='not-allowed'?showToast('마이크 권한을 허용해주세요'):simListen();};
+  try{r.start();}catch(e){simListen();}
 }
-
-function simulateListen(){
+function simListen(){
   var mic=document.getElementById('MIC'),vst=document.getElementById('VST');
   mic.classList.add('on');vst.style.color='var(--green)';vst.textContent=T[lang].lis;
-  setTimeout(function(){
-    mic.classList.remove('on');
-    vst.textContent=T[lang].rec+' '+T[lang].c0;
-    setTimeout(function(){goTo(2);},700);
-  },1800);
+  setTimeout(()=>{mic.classList.remove('on');vst.textContent=T[lang].rec+' '+T[lang].c0;setTimeout(()=>goTo(2),700);},1800);
 }
-
 function doChip(i){
   var vst=document.getElementById('VST');
-  vst.style.color='var(--blue)';
-  vst.textContent=T[lang].rec+' '+T[lang]['c'+i];
-  setTimeout(function(){goTo(2);},600);
+  vst.style.color='var(--blue)';vst.textContent=T[lang].rec+' '+T[lang]['c'+i];
+  setTimeout(()=>goTo(2),600);
 }
 
+// ── 자주가는 노선 ──────────────────────
+function renderFavs(){
+  var el=document.getElementById('favList');if(!el)return;
+  el.innerHTML=favs.map((f,i)=>`
+    <button class="fav-row" onclick="useFav(${i})">
+      <div class="fav-badge" style="background:${LC[f.line]||'#8E8E93'}">${f.line||'?'}</div>
+      <div class="fav-text">
+        <div class="fav-route">${f.from} → ${f.to}</div>
+        ${f.name?'<div class="fav-memo">'+f.name+'</div>':''}
+      </div>
+      <div class="fav-chevron">›</div>
+    </button>`).join('');
+}
+function useFav(i){
+  var f=favs[i];
+  var vst=document.getElementById('VST');
+  vst.style.color='var(--blue)';vst.textContent=T[lang].rec+' "'+f.from+' → '+f.to+'"';
+  document.getElementById('DFR').textContent=f.from;
+  document.getElementById('DTO').textContent=f.to;
+  setTimeout(()=>goTo(2),600);
+}
+function openFavMdl(){
+  document.getElementById('favMdl').classList.add('on');
+  renderSaved();
+}
+function closeFavMdl(){document.getElementById('favMdl').classList.remove('on');}
+function renderSaved(){
+  var el=document.getElementById('savedList');if(!el)return;
+  if(!favs.length){el.innerHTML='';return;}
+  el.innerHTML='<div class="saved-section"><div class="saved-label">저장된 노선</div>'+
+    favs.map((f,i)=>`
+    <div class="saved-item">
+      <div class="si-info">
+        <div class="si-badge" style="background:${LC[f.line]||'#8E8E93'}">${f.line||'?'}</div>
+        <div><div class="si-route">${f.from} → ${f.to}</div>${f.name?'<div class="si-memo">'+f.name+'</div>':''}</div>
+      </div>
+      <button class="del-btn" onclick="delFav(${i})">삭제</button>
+    </div>`).join('')+'</div>';
+}
+function saveFav(){
+  var from=document.getElementById('favFrom').value.trim();
+  var to=document.getElementById('favTo').value.trim();
+  var name=document.getElementById('favName').value.trim();
+  if(!from||!to){showToast('출발역과 도착역을 입력해주세요');return;}
+  var m=(from+to).match(/[1-9]/);
+  favs.push({from,to,name,line:m?m[0]:'?'});
+  try{localStorage.setItem('mbrg_favs',JSON.stringify(favs));}catch(e){}
+  ['favFrom','favTo','favName'].forEach(id=>document.getElementById(id).value='');
+  renderFavs();renderSaved();
+  showToast('✅ 저장됐어요');
+}
+function delFav(i){
+  favs.splice(i,1);
+  try{localStorage.setItem('mbrg_favs',JSON.stringify(favs));}catch(e){}
+  renderFavs();renderSaved();
+}
+
+// ── 토스트 ──────────────────────────────
 function showToast(msg){
-  var t=document.getElementById('TST');
+  var t=document.getElementById('toast');
   t.textContent=msg;t.classList.add('on');
-  setTimeout(function(){t.classList.remove('on');},3000);
+  setTimeout(()=>t.classList.remove('on'),3000);
 }
 
-function tick(){
-  var n=new Date(),h=String(n.getHours()).padStart(2,'0'),m=String(n.getMinutes()).padStart(2,'0'),t=h+':'+m;
-  ['CLK','CLK2','CLK3','CLK4'].forEach(function(id){var e=document.getElementById(id);if(e)e.textContent=t;});
-}
-tick();setInterval(tick,15000);
-
+// ── 카운트다운 ─────────────────────────
 var sec=150;
-setInterval(function(){
+setInterval(()=>{
   if(sec>0)sec--;
-  var m=Math.floor(sec/60),s=String(sec%60).padStart(2,'0');
-  var e=document.getElementById('CDN');if(e)e.textContent=m+':'+s;
+  var e=document.getElementById('CDN');
+  if(e)e.textContent=Math.floor(sec/60)+':'+String(sec%60).padStart(2,'0');
 },1000);
 
+// ── 초기화 ─────────────────────────────
 applyText();
 </script>
 </body>
