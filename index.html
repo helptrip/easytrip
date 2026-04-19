@@ -112,7 +112,7 @@ html,body{
 /* 마이크 섹션 */
 .mic-section{
   flex:1;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;gap:8px;
+  align-items:center;justify-content:center;gap:6px;
   min-height:0;
 }
 /* 2: 마이크 버튼 1cm 더 크게 (기존 122px → 148px) */
@@ -394,25 +394,15 @@ html,body{
   border-radius:18px;padding:18px 16px 14px;text-align:center;
   margin:0 16px;/* 좌우 1cm씩 좁힘 */
 }
-.nxt-lbl{font-size:11px;font-weight:700;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
-.nxt-name{font-size:48px;font-weight:900;color:#fff;letter-spacing:-.04em;line-height:1}
-.nxt-sub{font-size:14px;color:rgba(0,122,255,.9);margin-top:6px;font-weight:600;background:rgba(0,122,255,.12);border-radius:8px;padding:4px 12px;display:inline-block}
-/* 도착시간 — 통합카드 안에 */
-.cd-divider{height:1px;background:rgba(255,255,255,.08);margin:12px 0}
+.nxt-lbl{font-size:12px;font-weight:700;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+.nxt-name{font-size:56px;font-weight:900;color:#fff;letter-spacing:-.04em;line-height:1}
+.nxt-sub{font-size:16px;color:rgba(0,122,255,.9);margin-top:8px;font-weight:600;background:rgba(0,122,255,.12);border-radius:8px;padding:5px 14px;display:inline-block}
+.cd-divider{height:1px;background:rgba(255,255,255,.08);margin:14px 0}
 .cd-zone{text-align:center;padding:0}
-.cd-lbl{font-size:11px;font-weight:700;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
-.cd-num{font-size:56px;font-weight:900;color:var(--ylw);letter-spacing:-.05em;line-height:1}
-.cd-sub{font-size:12px;color:rgba(255,255,255,.3);margin-top:4px}
-/* 왼쪽 문 카드 — 화살표 왼쪽, 글씨 오른쪽 */
-.door-card{
-  background:rgba(52,199,89,.08);border:1.5px solid rgba(52,199,89,.22);
-  border-radius:16px;padding:13px 16px;
-  display:flex;align-items:center;gap:14px;
-}
-.door-arrow{font-size:36px;flex-shrink:0}
-.door-right{flex:1}
-.door-main{font-size:17px;font-weight:700;color:var(--green)}
-.door-hint{font-size:13px;color:var(--g4);margin-top:2px}
+.cd-lbl{font-size:12px;font-weight:700;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+.cd-num{font-size:64px;font-weight:900;color:var(--ylw);letter-spacing:-.05em;line-height:1}
+.cd-sub{font-size:15px;color:rgba(255,255,255,.35);margin-top:6px;font-weight:500}
+/* door 관련 — nxt-card 안에 통합됨 */
 
 /* 13: 환승 알림 더 눈에 띄게 */
 .xfer-card{
@@ -475,7 +465,7 @@ html,body{
 /* 자주가는 노선 모달 */
 .fav-mdl{position:fixed;inset:0;background:rgba(0,0,0,.48);z-index:600;display:none;flex-direction:column;justify-content:flex-end;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
 .fav-mdl.on{display:flex}
-.fav-sheet{background:var(--wh);border-radius:28px 28px 0 0;max-height:75vh;display:flex;flex-direction:column;overflow:hidden;animation:shUp .3s cubic-bezier(.34,1.56,.64,1);padding-bottom:env(safe-area-inset-bottom,20px)}
+.fav-sheet{background:var(--wh);border-radius:28px 28px 0 0;max-height:88vh;display:flex;flex-direction:column;overflow:hidden;animation:shUp .3s cubic-bezier(.34,1.56,.64,1);padding-bottom:env(safe-area-inset-bottom,20px)}
 .fav-shdr{display:flex;align-items:center;justify-content:space-between;padding:18px 20px 14px;border-bottom:1px solid var(--g2);flex-shrink:0}
 .fav-stitle{font-size:19px;font-weight:700}
 .fav-scl{width:30px;height:30px;border-radius:50%;background:var(--g1);border:none;cursor:pointer;font-size:14px;color:var(--g5);display:flex;align-items:center;justify-content:center}
@@ -550,10 +540,13 @@ html,body{
     <div class="favs-wrap">
       <div class="favs-header">
         <div class="favs-label" id="FL">자주 가는 노선</div>
-        <button class="fav-edit-btn" onclick="openFavMdl()" id="FE">편집</button>
+        <button class="fav-edit-btn" onclick="openFavMdl()" id="FE">추가</button>
       </div>
       <div class="fav-list" id="favList"></div>
-      <button class="fav-add" onclick="openFavMdl()">＋ <span id="FA">노선 추가</span></button>
+      <button class="fav-add" onclick="openFavMdl()">
+        ＋ <span id="FA">자주가는 노선 목록</span>
+        <span id="favCount" style="margin-left:6px;background:var(--green);color:#fff;border-radius:10px;padding:1px 8px;font-size:11px;font-weight:700;display:none">0</span>
+      </button>
     </div>
   </div>
 
@@ -702,32 +695,32 @@ html,body{
   </div>
 
   <div class="s3-body">
-    <!-- 다음역 + 도착시간 통합 카드 (가로 좌우 1cm 좁힘, 어두운 배경) -->
+    <!-- 다음역 + 도착시간 + 문방향 통합 카드 -->
     <div class="nxt-card">
-      <div class="nxt-lbl" id="NXL">다음 역</div>
-      <div class="nxt-name" id="NXS">교대</div>
-      <div class="nxt-sub" id="NXB">환승역 — 3호선 갈아타세요</div>
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
+        <div style="flex:1;text-align:center">
+          <div class="nxt-lbl" id="NXL">다음 역</div>
+          <div class="nxt-name" id="NXS">교대</div>
+          <div class="nxt-sub" id="NXB">환승역 — 3호선 갈아타세요</div>
+        </div>
+        <!-- 내리는 문 방향 — 오른쪽 -->
+        <div style="background:rgba(52,199,89,.15);border-radius:14px;padding:10px 12px;text-align:center;flex-shrink:0;min-width:72px;border:1px solid rgba(52,199,89,.25)">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" style="display:block;margin:0 auto 5px">
+            <rect x="2" y="4" width="28" height="24" rx="3" stroke="#34C759" stroke-width="1.8" fill="rgba(52,199,89,.08)"/>
+            <line x1="16" y1="4" x2="16" y2="28" stroke="#34C759" stroke-width="1.4"/>
+            <circle cx="12" cy="16" r="1.4" fill="#34C759"/>
+            <circle cx="20" cy="16" r="1.4" fill="#34C759"/>
+            <path d="M10 16 L5 16 M5 16 L8 13 M5 16 L8 19" stroke="#34C759" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <div style="font-size:13px;font-weight:700;color:var(--green)" id="DM">왼쪽 문</div>
+          <div style="font-size:10px;color:rgba(52,199,89,.7);margin-top:2px" id="DH">에스컬레이터</div>
+        </div>
+      </div>
       <div class="cd-divider"></div>
       <div class="cd-zone">
         <div class="cd-lbl" id="CDL">도착까지</div>
         <div class="cd-num" id="CDN">2:30</div>
         <div class="cd-sub" id="CDS">약 2분 30초 후 도착</div>
-      </div>
-    </div>
-    <!-- 왼쪽 문 — 화살표 왼쪽, 지하철 도어 SVG, 글씨 오른쪽 -->
-    <div class="door-card">
-      <div class="door-arrow">
-        <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
-          <rect x="3" y="5" width="30" height="26" rx="3" stroke="#34C759" stroke-width="2" fill="rgba(52,199,89,.08)"/>
-          <line x1="18" y1="5" x2="18" y2="31" stroke="#34C759" stroke-width="1.5"/>
-          <circle cx="14" cy="18" r="1.6" fill="#34C759"/>
-          <circle cx="22" cy="18" r="1.6" fill="#34C759"/>
-          <path d="M11 18 L6 18 M6 18 L9 15 M6 18 L9 21" stroke="#34C759" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </div>
-      <div class="door-right">
-        <div class="door-main" id="DM">왼쪽 문</div>
-        <div class="door-hint" id="DH">에스컬레이터 가까운 쪽</div>
       </div>
     </div>
     <!-- 버스 환승 알림 카드 -->
@@ -778,16 +771,15 @@ html,body{
     </div>
   </div>
   <div class="bus-header">
-    <div style="display:flex;align-items:center;gap:8px">
-      <!-- 레이더 (경로선택 화면과 동일) -->
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
       <div class="radar-wrap" style="flex-shrink:0">
         <div class="radar-core"></div>
         <div class="radar-r1"></div>
         <div class="radar-r2"></div>
       </div>
       <div class="bus-title" id="S4TI">강남역 연계 버스</div>
+      <div class="bus-sub" id="S4SU" style="margin:0;font-size:12px">· 목적지 방향만</div>
     </div>
-    <div class="bus-sub" id="S4SU">목적지 방향 버스만 보여드려요</div>
   </div>
   <!-- 16: 음성 버튼 리스트 위로 -->
   <button class="bvc-top" onclick="doListen()">
@@ -805,15 +797,20 @@ html,body{
 <div class="fav-mdl" id="favMdl" onclick="closeFavMdl()">
   <div class="fav-sheet" onclick="event.stopPropagation()">
     <div class="fav-shdr">
-      <span class="fav-stitle">자주 가는 노선 설정</span>
+      <span class="fav-stitle">자주 가는 노선</span>
       <button class="fav-scl" onclick="closeFavMdl()">✕</button>
     </div>
     <div class="fav-sbody">
+      <!-- 저장된 노선 목록 (스크롤) -->
+      <div id="savedList"></div>
+      <!-- 구분선 -->
+      <div style="height:1px;background:var(--g2);margin:14px 0"></div>
+      <!-- 노선 추가 폼 -->
+      <div style="font-size:13px;font-weight:700;color:var(--g4);margin-bottom:10px">＋ 새 노선 추가</div>
       <div class="inp-g"><div class="inp-lbl">출발역</div><input class="inp" id="favFrom" placeholder="예: 신림역"></div>
       <div class="inp-g"><div class="inp-lbl">도착역</div><input class="inp" id="favTo" placeholder="예: 강남역"></div>
       <div class="inp-g"><div class="inp-lbl">이름 (선택)</div><input class="inp" id="favName" placeholder="예: 출퇴근"></div>
       <button class="save-btn" onclick="saveFav()">저장</button>
-      <div id="savedList"></div>
     </div>
   </div>
 </div>
@@ -1211,6 +1208,12 @@ function doChip(i){
 // ── 자주가는 노선 ──────────────────────
 function renderFavs(){
   var el=document.getElementById('favList');if(!el)return;
+  // 저장된 노선 수 뱃지 업데이트
+  var cnt=document.getElementById('favCount');
+  if(cnt){
+    if(favs.length>0){cnt.textContent=favs.length;cnt.style.display='inline';}
+    else{cnt.style.display='none';}
+  }
   el.innerHTML=favs.map((f,i)=>`
     <button class="fav-row" onclick="useFav(${i})">
       <div class="fav-badge" style="background:${LC[f.line]||'#8E8E93'}">${f.line||'?'}</div>
@@ -1233,13 +1236,20 @@ function openFavMdl(){document.getElementById('favMdl').classList.add('on');rend
 function closeFavMdl(){document.getElementById('favMdl').classList.remove('on');}
 function renderSaved(){
   var el=document.getElementById('savedList');if(!el)return;
-  if(!favs.length){el.innerHTML='';return;}
-  el.innerHTML='<div class="saved-sec"><div class="saved-lbl">저장된 노선</div>'+
-    favs.map((f,i)=>`
+  if(!favs.length){
+    el.innerHTML='<div style="text-align:center;padding:20px 0;color:var(--g4);font-size:14px">저장된 노선이 없어요<br><span style="font-size:12px">아래에서 노선을 추가해보세요!</span></div>';
+    return;
+  }
+  el.innerHTML='<div class="saved-sec">'
+    +'<div class="saved-lbl">저장된 노선 ('+favs.length+'개)</div>'
+    +favs.map((f,i)=>`
     <div class="saved-item">
       <div class="si-l">
         <div class="si-b" style="background:${LC[f.line]||'#8E8E93'}">${f.line||'?'}</div>
-        <div><div class="si-r">${f.from} → ${f.to}</div>${f.name?'<div class="si-m">'+f.name+'</div>':''}</div>
+        <div>
+          <div class="si-r">${f.from} → ${f.to}</div>
+          ${f.name?'<div class="si-m">'+f.name+'</div>':''}
+        </div>
       </div>
       <button class="del-btn" onclick="delFav(${i})">삭제</button>
     </div>`).join('')+'</div>';
@@ -1324,8 +1334,9 @@ async function updateSubwayArrivals(stationName){
   const data = await fetchSubway(stationName);
 
   if(!data || !data.ok){
+    // API 오류시 조용히 출발→도착만 표시
     dmt.textContent = document.getElementById('DFR').textContent +
-      ' → ' + document.getElementById('DTO').textContent + ' · 데모 모드';
+      ' → ' + document.getElementById('DTO').textContent;
     return;
   }
 
@@ -1395,32 +1406,35 @@ async function updateBusArrivals(stationName){
 }
 
 // ── 장소검색 → 가장 가까운 역 설정 ──────
+// GPS 없어도 카카오 장소검색은 작동함 (서울 내 장소면 OK)
 async function searchPlaceAndSetRoute(placeName, gpsLat, gpsLng){
   const vst = document.getElementById('VST');
   vst.style.color = 'var(--blue)';
-  vst.textContent = '🔍 "' + placeName + '" 검색 중...';
+  vst.textContent = '🔍 "' + placeName + '" 찾는 중...';
 
+  // GPS 없어도 카카오 API는 전국 검색 가능
   const data = await fetchPlace(placeName, gpsLat, gpsLng);
 
   if(!data || !data.ok || !data.places || data.places.length === 0){
-    vst.textContent = '장소를 찾지 못했어요. 역 이름으로 다시 말해보세요.';
-    showToast('❌ 장소를 찾지 못했어요');
+    // 장소 못 찾으면 입력값 자체를 도착역으로 사용 (역명일 수 있음)
+    vst.style.color = 'var(--g4)';
+    vst.textContent = '"' + placeName + '" → 역명으로 검색할게요';
+    document.getElementById('DTO').textContent = placeName;
     return false;
   }
 
   const place = data.places[0];
   const nearest = getNearestStation(place.lat, place.lng);
 
-  // 도착지를 가장 가까운 역으로 설정
   document.getElementById('DTO').textContent = nearest.station.name;
-  document.getElementById('MapInfo').textContent =
-    '📍 ' + place.name + ' → 가장 가까운 역: ' + nearest.station.name +
-    ' (' + nearest.dist + 'm)';
+  const mapInfo = document.getElementById('MapInfo');
+  if(mapInfo) mapInfo.textContent =
+    '📍 ' + place.name + ' → 가장 가까운 역: ' +
+    nearest.station.name + ' (' + nearest.dist + 'm)';
 
   vst.style.color = 'var(--green)';
   vst.textContent = '✅ "' + place.name + '" → ' + nearest.station.name + '역';
-
-  showToast('📍 ' + place.name + '\n→ ' + nearest.station.name + '역 (' + nearest.dist + 'm)');
+  showToast('📍 ' + place.name + ' → ' + nearest.station.name + '역 (' + nearest.dist + 'm)');
   return true;
 }
 
