@@ -809,6 +809,48 @@ html,body{
 
 <script>
 // ── 다국어 ──────────────────────────────
+// ════════════════════════════════════════
+// API — Vercel 서버함수를 통해 호출
+// 키는 Vercel 환경변수에만 있음 (앱에 없음)
+// ════════════════════════════════════════
+
+// 지하철 실시간 도착 조회
+async function fetchSubway(stationName) {
+  try {
+    const res = await fetch(`/api/subway?station=${encodeURIComponent(stationName)}`);
+    const data = await res.json();
+    return data;
+  } catch(e) {
+    console.error('지하철 API 오류', e);
+    return null;
+  }
+}
+
+// 버스 실시간 도착 조회 (정류장 이름)
+async function fetchBusByName(stationName) {
+  try {
+    const res = await fetch(`/api/bus?stationName=${encodeURIComponent(stationName)}`);
+    const data = await res.json();
+    return data;
+  } catch(e) {
+    console.error('버스 API 오류', e);
+    return null;
+  }
+}
+
+// 버스 실시간 도착 조회 (정류장 ID)
+async function fetchBusById(stationId) {
+  try {
+    const res = await fetch(`/api/bus?stationId=${encodeURIComponent(stationId)}`);
+    const data = await res.json();
+    return data;
+  } catch(e) {
+    console.error('버스 API 오류', e);
+    return null;
+  }
+}
+// ════════════════════════════════════════
+
 var T={
   ko:{s1h:'말하면 바로 가요 🚇',s1s:'어디든, 말 한마디면',mlb:'탭하여 말하기',cl:'예시',lis:'🎙️ 듣고 있어요...',rec:'✅',c0:'"강남역 가고 싶어"',c1:'"서울역까지 어떻게 가?"',c2:'"잠실 가는 급행 있어?"',fl:'자주 가는 노선',fe:'편집',fa:'노선 추가',gps:'내 위치 확인하기',
     s2t:'경로 선택',rst:'재설정',dfr:'신림',dto:'강남',dmt:'경로 2개 · 지금 출발 기준',ban:'탑승할 경로를 선택해 주세요',rb1:'✅ 추천 · 일반열차',rb2:'⚡ 급행열차 · 빠름',mn:' 분',rp1:'환승 1회',rp2:'3분 후 출발',lxf:'교대환승',rp3:'환승 없음',rp4:'8분 후 출발',vgl:'음성 안내',vgt:'"추천은 2호선이에요. 교대에서 3호선으로 갈아타면 강남 도착해요."',
