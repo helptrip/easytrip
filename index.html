@@ -61,8 +61,9 @@ html,body{
 #s1{background:var(--wh)}
 .s1-wrap{
   flex:1;display:flex;flex-direction:column;
-  padding:0 20px calc(56px + env(safe-area-inset-bottom,0px));
+  padding:0 20px calc(52px + env(safe-area-inset-bottom,0px));
   overflow:hidden;
+  min-height:0;
 }
 
 /* 상단 헤더 영역 */
@@ -225,10 +226,11 @@ html,body{
 .dest-from{display:flex;align-items:center;gap:10px}
 /* 레이더 */
 .radar-wrap{position:relative;width:28px;height:28px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
-.radar-core{width:10px;height:10px;border-radius:50%;background:var(--blue);position:relative;z-index:2}
-.radar-r1{position:absolute;inset:-5px;border-radius:50%;border:1.5px solid rgba(0,122,255,.5);animation:radar 2s ease-out infinite}
-.radar-r2{position:absolute;inset:-11px;border-radius:50%;border:1.5px solid rgba(0,122,255,.3);animation:radar 2s ease-out infinite .5s}
-@keyframes radar{0%{opacity:1;transform:scale(.6)}100%{opacity:0;transform:scale(1.6)}}
+.radar-core{width:10px;height:10px;border-radius:50%;background:var(--red);position:relative;z-index:2;box-shadow:0 0 0 0 rgba(255,59,48,.4);animation:radarPulse 1.4s ease-in-out infinite}
+.radar-r1{position:absolute;inset:-5px;border-radius:50%;border:2px solid rgba(255,59,48,.7);animation:radarBlink 1.4s ease-in-out infinite}
+.radar-r2{position:absolute;inset:-11px;border-radius:50%;border:1.5px solid rgba(255,59,48,.35);animation:radarBlink 1.4s ease-in-out infinite .35s}
+@keyframes radarPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,59,48,.4)}50%{box-shadow:0 0 0 4px rgba(255,59,48,.0)}}
+@keyframes radarBlink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.2;transform:scale(.92)}}
 .dest-stations{display:flex;align-items:center;gap:8px;font-size:20px;font-weight:800;letter-spacing:-.3px}
 .dest-arrow-txt{color:var(--blue);font-weight:300}
 .dest-meta{font-size:13px;color:var(--g4);margin-top:4px}
@@ -281,20 +283,66 @@ html,body{
 .vb-label{font-size:12px;font-weight:600;color:var(--g4);text-transform:uppercase;letter-spacing:.04em}
 .vb-text{font-size:15px;color:var(--bk);margin-top:5px;line-height:1.6}
 
-/* 9: 노선도 모달 — 실제 노선도 이미지 + 출발역 표시 */
-.mdl{position:fixed;inset:0;background:rgba(0,0,0,.52);z-index:500;display:none;flex-direction:column;justify-content:flex-end;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+/* 노선도 — 전체화면 모달 */
+.mdl{position:fixed;inset:0;background:#000;z-index:500;display:none;flex-direction:column;}
 .mdl.on{display:flex}
-.msheet{background:var(--wh);border-radius:28px 28px 0 0;max-height:88vh;display:flex;flex-direction:column;overflow:hidden;animation:shUp .3s cubic-bezier(.34,1.56,.64,1);padding-bottom:env(safe-area-inset-bottom,0px)}
-@keyframes shUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
-.mhandle{width:40px;height:5px;background:var(--g2);border-radius:3px;margin:12px auto 6px;flex-shrink:0}
-.mhdr{display:flex;align-items:center;justify-content:space-between;padding:0 20px 14px;flex-shrink:0;border-bottom:1px solid var(--g2)}
-.mhtl{font-size:18px;font-weight:700}
-.mcl{width:30px;height:30px;border-radius:50%;background:var(--g1);border:none;cursor:pointer;font-size:14px;color:var(--g5);display:flex;align-items:center;justify-content:center}
-.mcl:active{background:var(--g2)}
-.map-body{flex:1;overflow:hidden;position:relative;background:#f0f0f0;display:flex;flex-direction:column}
-#mapZoomWrap{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;background:#f0f0f0}
-.map-info{padding:12px 16px;background:var(--blt);border-top:1px solid var(--g2);flex-shrink:0}
-.map-info-text{font-size:13px;color:var(--blue);font-weight:600}
+.msheet{
+  width:100%;height:100%;
+  display:flex;flex-direction:column;
+  overflow:hidden;background:#1a1a2e;
+  animation:fadeIn .22s ease;
+}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.mhandle{display:none}
+.mhdr{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:max(env(safe-area-inset-top,0px),44px) 20px 12px;
+  flex-shrink:0;
+  background:rgba(26,26,46,.95);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+}
+.mhtl{font-size:17px;font-weight:700;color:#fff}
+.mcl{
+  width:32px;height:32px;border-radius:50%;
+  background:rgba(255,255,255,.15);border:none;cursor:pointer;
+  font-size:15px;color:#fff;
+  display:flex;align-items:center;justify-content:center;
+}
+.mcl:active{background:rgba(255,255,255,.25)}
+.map-body{
+  flex:1;overflow:hidden;position:relative;
+  background:#f8f9fa;
+  touch-action:pan-x pan-y pinch-zoom;
+}
+#mapZoomWrap{
+  width:100%;height:100%;
+  overflow:auto;
+  -webkit-overflow-scrolling:touch;
+  background:#f8f9fa;
+  cursor:grab;
+}
+#mapZoomWrap:active{cursor:grabbing}
+#mapImgWrap{
+  display:inline-block;
+  min-width:100%;
+  position:relative;
+}
+#subwayMapImg{
+  display:block;
+  width:200%; /* 초기에 2배 크기로 — 손가락으로 당겨서 볼 수 있게 */
+  max-width:none;
+  height:auto;
+  user-select:none;
+  -webkit-user-drag:none;
+}
+.map-info{
+  padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));
+  background:rgba(26,26,46,.95);
+  flex-shrink:0;
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+}
+.map-info-text{font-size:13px;color:#60a5fa;font-weight:600}
+.map-tip{font-size:11px;color:rgba(255,255,255,.4);margin-top:3px}
 
 /* ══════════════════════════════
    S3 — 탑승 안내 (흰 배경)
@@ -568,37 +616,30 @@ html,body{
     </div>
   </div>
 
-  <!-- 9: 노선도 모달 — 실제 노선도 형태 -->
-  <div class="mdl" id="MDL" onclick="closeMdl()">
-    <div class="msheet" onclick="event.stopPropagation()">
-      <div class="mhandle"></div>
+
+  <!-- 노선도 모달 — 전체화면 -->
+  <div class="mdl" id="MDL">
+    <div class="msheet">
       <div class="mhdr">
         <span class="mhtl" id="MTL">🗺️ 서울 지하철 노선도</span>
         <button class="mcl" onclick="closeMdl()">✕</button>
       </div>
       <div class="map-body" id="mapBody">
-        <!-- 실제 서울 지하철 노선도 이미지 (핀치줌/드래그 가능) -->
-        <div id="mapZoomWrap" style="width:100%;height:100%;overflow:auto;-webkit-overflow-scrolling:touch;background:#f0f0f0;display:flex;align-items:flex-start;justify-content:center;">
-          <div id="mapImgWrap" style="position:relative;display:inline-block;min-width:100%;">
+        <div id="mapZoomWrap">
+          <div id="mapImgWrap">
+            <!-- 서울교통공사 공식 노선도 이미지 -->
             <img
               id="subwayMapImg"
-              src="https://www.seoulmetro.co.kr/image/common/metro_map.png"
+              src="https://www.seoulmetro.co.kr/image/common/routeMap2.jpg"
               alt="서울 지하철 노선도"
-              style="width:100%;max-width:none;display:block;touch-action:pan-x pan-y;"
-              onerror="this.onerror=null;loadFallbackMap()"
+              onerror="loadFallbackMap()"
             />
-            <!-- 출발역 표시 핀 (JS로 위치 동적 조정) -->
-            <div id="mapPin" style="display:none;position:absolute;z-index:10;pointer-events:none;transform:translate(-50%,-100%)">
-              <div style="background:#007AFF;color:white;border-radius:20px;padding:4px 10px;font-size:12px;font-weight:700;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.3)">
-                📍 <span id="mapPinLabel">출발</span>
-              </div>
-              <div style="width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:8px solid #007AFF;margin:0 auto;"></div>
-            </div>
           </div>
         </div>
       </div>
       <div class="map-info">
-        <div class="map-info-text" id="MapInfo">📍 출발역: 신림 (2호선) → 도착역: 강남</div>
+        <div class="map-info-text" id="MapInfo">📍 출발역 확인 중...</div>
+        <div class="map-tip">손가락으로 드래그하여 전체 노선도를 볼 수 있어요</div>
       </div>
     </div>
   </div>
@@ -647,13 +688,26 @@ html,body{
       </div>
       <div class="door-icon">⬅️</div>
     </div>
-    <!-- 13: 눈에 띄는 환승 카드 -->
+    <!-- 환승 안내 카드 -->
     <button class="xfer-card" onclick="goTo(4)">
       <div class="xf-badge">⚡ 환승 알림</div>
       <div class="xf-title" id="XCT">버스 연계 정보 보기</div>
       <div class="xf-body" id="XCB">교대역에서 3호선으로 갈아타세요. 강남역 도착 후 연계 버스를 확인하세요.</div>
       <div class="xf-cta"><span id="XCP">지금 확인하기</span> →</div>
     </button>
+    <!-- 환승 놓쳤을 때 버튼 -->
+    <button onclick="missedTransfer()" style="
+      background:rgba(255,59,48,.12);
+      border:1.5px solid rgba(255,59,48,.3);
+      border-radius:16px;padding:14px 18px;
+      width:100%;text-align:left;cursor:pointer;
+      font-family:inherit;transition:opacity .15s;
+    ">
+      <div style="font-size:14px;font-weight:700;color:var(--red)">😰 환승을 놓쳤어요</div>
+      <div style="font-size:13px;color:rgba(255,59,48,.6);margin-top:3px">현재 위치에서 대안 경로를 찾아드릴게요</div>
+    </button>
+    <!-- 환승 놓쳤을 때 대안 카드 (JS로 채워짐) -->
+    <div id="missedXferCard" class="xfer-card" style="display:none"></div>
   </div>
 </div>
 
@@ -800,22 +854,270 @@ function openMdl(){document.getElementById('MDL').classList.add('on');}
 function closeMdl(){document.getElementById('MDL').classList.remove('on');}
 
 // ── 6: GPS ──────────────────────────────
+// ── 서울 주요 지하철역 좌표 데이터 ──────
+// 실제 위경도 기준 (추후 API로 확장 가능)
+var STATIONS = [
+  {name:'서울역',lat:37.5547,lng:126.9706,line:'1'},
+  {name:'시청',lat:37.5651,lng:126.9770,line:'1'},
+  {name:'종각',lat:37.5700,lng:126.9828,line:'1'},
+  {name:'종로3가',lat:37.5715,lng:126.9919,line:'1'},
+  {name:'동대문',lat:37.5714,lng:127.0099,line:'1'},
+  {name:'홍대입구',lat:37.5572,lng:126.9255,line:'2'},
+  {name:'합정',lat:37.5497,lng:126.9146,line:'2'},
+  {name:'당산',lat:37.5340,lng:126.9011,line:'2'},
+  {name:'신촌',lat:37.5554,lng:126.9368,line:'2'},
+  {name:'이대',lat:37.5567,lng:126.9462,line:'2'},
+  {name:'아현',lat:37.5553,lng:126.9567,line:'2'},
+  {name:'충정로',lat:37.5598,lng:126.9644,line:'2'},
+  {name:'시청',lat:37.5651,lng:126.9770,line:'2'},
+  {name:'을지로입구',lat:37.5660,lng:126.9825,line:'2'},
+  {name:'을지로3가',lat:37.5663,lng:126.9918,line:'2'},
+  {name:'을지로4가',lat:37.5664,lng:127.0006,line:'2'},
+  {name:'동대문역사문화공원',lat:37.5651,lng:127.0090,line:'2'},
+  {name:'신당',lat:37.5639,lng:127.0196,line:'2'},
+  {name:'상왕십리',lat:37.5617,lng:127.0286,line:'2'},
+  {name:'왕십리',lat:37.5613,lng:127.0374,line:'2'},
+  {name:'한양대',lat:37.5557,lng:127.0445,line:'2'},
+  {name:'뚝섬',lat:37.5474,lng:127.0476,line:'2'},
+  {name:'성수',lat:37.5446,lng:127.0557,line:'2'},
+  {name:'건대입구',lat:37.5401,lng:127.0699,line:'2'},
+  {name:'구의',lat:37.5379,lng:127.0854,line:'2'},
+  {name:'강변',lat:37.5353,lng:127.0942,line:'2'},
+  {name:'잠실나루',lat:37.5144,lng:127.0958,line:'2'},
+  {name:'잠실',lat:37.5131,lng:127.1001,line:'2'},
+  {name:'잠실새내',lat:37.5058,lng:127.1044,line:'2'},
+  {name:'종합운동장',lat:37.5110,lng:127.0731,line:'2'},
+  {name:'삼성',lat:37.5088,lng:127.0631,line:'2'},
+  {name:'선릉',lat:37.5047,lng:127.0491,line:'2'},
+  {name:'역삼',lat:37.5008,lng:127.0361,line:'2'},
+  {name:'강남',lat:37.4979,lng:127.0276,line:'2'},
+  {name:'교대',lat:37.4935,lng:127.0138,line:'2'},
+  {name:'서초',lat:37.4836,lng:127.0116,line:'2'},
+  {name:'방배',lat:37.4812,lng:126.9973,line:'2'},
+  {name:'사당',lat:37.4765,lng:126.9816,line:'2'},
+  {name:'낙성대',lat:37.4773,lng:126.9624,line:'2'},
+  {name:'서울대입구',lat:37.4812,lng:126.9527,line:'2'},
+  {name:'봉천',lat:37.4840,lng:126.9427,line:'2'},
+  {name:'신림',lat:37.4847,lng:126.9295,line:'2'},
+  {name:'신대방',lat:37.4870,lng:126.9137,line:'2'},
+  {name:'구로디지털단지',lat:37.4853,lng:126.9011,line:'2'},
+  {name:'대림',lat:37.4928,lng:126.8954,line:'2'},
+  {name:'신도림',lat:37.5085,lng:126.8913,line:'2'},
+  {name:'문래',lat:37.5179,lng:126.8964,line:'2'},
+  {name:'영등포구청',lat:37.5259,lng:126.8966,line:'2'},
+  {name:'당산',lat:37.5340,lng:126.9011,line:'2'},
+  {name:'숭실대입구',lat:37.4957,lng:126.9581,line:'7'},
+  {name:'상도',lat:37.4976,lng:126.9493,line:'7'},
+  {name:'장승배기',lat:37.5008,lng:126.9388,line:'7'},
+  {name:'신대방삼거리',lat:37.4996,lng:126.9143,line:'7'},
+  {name:'보라매',lat:37.4961,lng:126.9224,line:'7'},
+  {name:'이수',lat:37.4851,lng:126.9815,line:'4'},
+  {name:'사당',lat:37.4765,lng:126.9816,line:'4'},
+  {name:'남태령',lat:37.4645,lng:126.9796,line:'4'},
+  {name:'선바위',lat:37.4544,lng:127.0001,line:'4'},
+  {name:'경마공원',lat:37.4398,lng:127.0141,line:'4'},
+  {name:'대공원',lat:37.4370,lng:127.0252,line:'4'},
+  {name:'과천',lat:37.4275,lng:127.0135,line:'4'},
+  {name:'정부과천청사',lat:37.4310,lng:126.9898,line:'4'},
+  {name:'인덕원',lat:37.3947,lng:126.9783,line:'4'},
+  {name:'평촌',lat:37.3908,lng:126.9614,line:'4'},
+  {name:'범계',lat:37.3960,lng:126.9533,line:'4'},
+  {name:'금정',lat:37.3818,lng:126.9398,line:'4'},
+  {name:'명동',lat:37.5607,lng:126.9857,line:'4'},
+  {name:'회현',lat:37.5582,lng:126.9795,line:'4'},
+  {name:'서울역',lat:37.5547,lng:126.9706,line:'4'},
+  {name:'숙대입구',lat:37.5449,lng:126.9723,line:'4'},
+  {name:'삼각지',lat:37.5374,lng:126.9716,line:'4'},
+  {name:'신용산',lat:37.5303,lng:126.9648,line:'4'},
+  {name:'이촌',lat:37.5220,lng:126.9611,line:'4'},
+  {name:'동작',lat:37.5119,lng:126.9799,line:'4'},
+  {name:'총신대입구',lat:37.5002,lng:126.9820,line:'4'},
+  {name:'여의도',lat:37.5219,lng:126.9240,line:'5'},
+  {name:'여의나루',lat:37.5263,lng:126.9323,line:'5'},
+  {name:'마포',lat:37.5429,lng:126.9512,line:'5'},
+  {name:'공덕',lat:37.5441,lng:126.9513,line:'5'},
+  {name:'애오개',lat:37.5512,lng:126.9574,line:'5'},
+  {name:'충정로',lat:37.5598,lng:126.9644,line:'5'},
+  {name:'서대문',lat:37.5716,lng:126.9663,line:'5'},
+  {name:'광화문',lat:37.5714,lng:126.9769,line:'5'},
+  {name:'종로3가',lat:37.5715,lng:126.9919,line:'5'},
+  {name:'을지로4가',lat:37.5664,lng:127.0006,line:'5'},
+  {name:'동대문역사문화공원',lat:37.5651,lng:127.0090,line:'5'},
+  {name:'청구',lat:37.5610,lng:127.0179,line:'5'},
+  {name:'신금호',lat:37.5540,lng:127.0233,line:'5'},
+  {name:'행당',lat:37.5543,lng:127.0368,line:'5'},
+  {name:'왕십리',lat:37.5613,lng:127.0374,line:'5'},
+  {name:'마장',lat:37.5621,lng:127.0508,line:'5'},
+  {name:'답십리',lat:37.5656,lng:127.0570,line:'5'},
+  {name:'장한평',lat:37.5657,lng:127.0683,line:'5'},
+  {name:'군자',lat:37.5588,lng:127.0792,line:'5'},
+  {name:'강동',lat:37.5302,lng:127.1251,line:'5'},
+  {name:'길동',lat:37.5322,lng:127.1350,line:'5'},
+  {name:'굽은다리',lat:37.5366,lng:127.1439,line:'5'},
+  {name:'명일',lat:37.5437,lng:127.1494,line:'5'},
+  {name:'고덕',lat:37.5484,lng:127.1564,line:'5'},
+  {name:'상일동',lat:37.5503,lng:127.1679,line:'5'},
+  {name:'압구정',lat:37.5274,lng:127.0283,line:'3'},
+  {name:'신사',lat:37.5164,lng:127.0199,line:'3'},
+  {name:'잠원',lat:37.5124,lng:127.0120,line:'3'},
+  {name:'고속터미널',lat:37.5047,lng:127.0050,line:'3'},
+  {name:'교대',lat:37.4935,lng:127.0138,line:'3'},
+  {name:'남부터미널',lat:37.4854,lng:127.0163,line:'3'},
+  {name:'양재',lat:37.4834,lng:127.0343,line:'3'},
+  {name:'매봉',lat:37.4844,lng:127.0457,line:'3'},
+  {name:'도곡',lat:37.4939,lng:127.0425,line:'3'},
+  {name:'대치',lat:37.4938,lng:127.0617,line:'3'},
+  {name:'학여울',lat:37.4916,lng:127.0688,line:'3'},
+  {name:'대청',lat:37.4905,lng:127.0812,line:'3'},
+  {name:'일원',lat:37.4854,lng:127.0876,line:'3'},
+  {name:'수서',lat:37.4875,lng:127.1009,line:'3'},
+  {name:'개포동',lat:37.4906,lng:127.0543,line:'3'},
+  {name:'구룡',lat:37.4926,lng:127.0646,line:'3'},
+  {name:'신논현',lat:37.5048,lng:127.0249,line:'9'},
+  {name:'언주',lat:37.5098,lng:127.0394,line:'9'},
+  {name:'선정릉',lat:37.5100,lng:127.0484,line:'9'},
+  {name:'삼성중앙',lat:37.5088,lng:127.0597,line:'9'},
+  {name:'봉은사',lat:37.5147,lng:127.0593,line:'9'},
+  {name:'종합운동장',lat:37.5110,lng:127.0731,line:'9'},
+  {name:'삼전',lat:37.5074,lng:127.0848,line:'9'},
+  {name:'석촌고분',lat:37.5062,lng:127.0973,line:'9'},
+  {name:'석촌',lat:37.5041,lng:127.1002,line:'9'},
+  {name:'송파나루',lat:37.5101,lng:127.1060,line:'9'},
+  {name:'한성백제',lat:37.5135,lng:127.1207,line:'9'},
+  {name:'올림픽공원',lat:37.5153,lng:127.1319,line:'9'},
+  {name:'둔촌오륜',lat:37.5247,lng:127.1361,line:'9'},
+  {name:'중앙보훈병원',lat:37.5336,lng:127.1448,line:'9'},
+];
+
+// ── 가장 가까운 역 계산 (Haversine 공식) ──
+function getNearestStation(lat, lng){
+  var minDist = Infinity;
+  var nearest = null;
+  STATIONS.forEach(function(s){
+    var dLat = (s.lat - lat) * Math.PI / 180;
+    var dLng = (s.lng - lng) * Math.PI / 180;
+    var a = Math.sin(dLat/2)*Math.sin(dLat/2) +
+            Math.cos(lat*Math.PI/180)*Math.cos(s.lat*Math.PI/180)*
+            Math.sin(dLng/2)*Math.sin(dLng/2);
+    var dist = 6371 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    if(dist < minDist){ minDist = dist; nearest = s; }
+  });
+  return {station: nearest, dist: Math.round(minDist * 1000)}; // 미터 단위
+}
+
 function getGPS(){
   var btn=document.getElementById('gpsBtn');
+  var vst=document.getElementById('VST');
   if(!navigator.geolocation){showToast('GPS를 지원하지 않아요');return;}
+  vst.style.color='var(--g4)';
+  vst.textContent='📍 현재 위치 확인 중...';
   navigator.geolocation.getCurrentPosition(
-    pos=>{
+    function(pos){
+      var lat = pos.coords.latitude;
+      var lng = pos.coords.longitude;
+      var result = getNearestStation(lat, lng);
+      var nearest = result.station;
+      var dist = result.dist;
+
+      // GPS 버튼 녹색으로
       btn.classList.add('found');
       btn.querySelector('svg').setAttribute('stroke','#34C759');
-      document.getElementById('DFR').textContent='현재위치';
-      showToast('✅ 현재 위치로 출발지 설정됐어요');
+
+      // 출발역을 가장 가까운 역으로 설정
+      document.getElementById('DFR').textContent = nearest.name;
+      document.getElementById('MapInfo').textContent =
+        '📍 현재 위치에서 가장 가까운 역: ' + nearest.name + ' (' + dist + 'm)';
+
+      // 상태 메시지
+      vst.style.color='var(--green)';
+      vst.textContent='📍 ' + nearest.name + ' 근처 (' + dist + 'm)';
+
+      showToast('📍 출발역: ' + nearest.name + ' (' + dist + 'm)');
     },
-    ()=>{showToast('위치 허용을 눌러주세요');}
+    function(){
+      vst.textContent='';
+      showToast('위치 허용을 눌러주세요');
+    },
+    {enableHighAccuracy: true, timeout: 8000}
   );
 }
 
 // ── 음성인식 ───────────────────────────
 var LM={ko:'ko-KR',en:'en-US',zh:'zh-CN',ja:'ja-JP'};
+// ── 음성 텍스트 파싱 → 출발/도착역 추출 ──
+function parseVoice(tx){
+  // "숭실대입구역 가고 싶어" / "강남역까지" / "신림에서 강남" / "강남 가줘" 등 처리
+  var result = {from: null, to: null};
+  tx = tx.replace(/역/g,'').replace(/\s+/g,' ').trim();
+
+  // "A에서 B" / "A→B" 패턴
+  var fromTo = tx.match(/(.+?)[에서부터]\s*(.+?)(?:까지|으로|로|가줘|가고싶어|어떻게가|알려줘)?$/);
+  if(fromTo){
+    result.from = fromTo[1].trim();
+    result.to   = fromTo[2].trim();
+    return result;
+  }
+
+  // "B까지" / "B가고싶어" / "B가줘" 패턴 → 도착역만
+  var toOnly = tx.match(/(.+?)(?:까지|가고싶어|가줘|으로가|로가|어떻게가|알려줘)/);
+  if(toOnly){
+    result.to = toOnly[1].trim();
+    return result;
+  }
+
+  // "B 급행" / "B 있어" 패턴
+  var expr = tx.match(/(.+?)\s+(?:급행|일반|있어|노선)/);
+  if(expr){
+    result.to = expr[1].trim();
+    return result;
+  }
+
+  // 아무 패턴도 없으면 전체를 도착역으로
+  result.to = tx.trim();
+  return result;
+}
+
+function applyRoute(tx){
+  var parsed = parseVoice(tx);
+  var gpsLabel = document.getElementById('gpsLabel');
+  var currentFrom = document.getElementById('DFR').textContent;
+
+  // 출발역: 파싱된 from이 있으면 사용, 없으면 현재값 유지 (GPS 위치 or 기존값)
+  if(parsed.from){
+    document.getElementById('DFR').textContent = parsed.from;
+  }
+  // 도착역 반영
+  if(parsed.to){
+    document.getElementById('DTO').textContent = parsed.to;
+    document.getElementById('MapInfo').textContent =
+      '📍 출발: ' + document.getElementById('DFR').textContent +
+      ' → 도착: ' + parsed.to;
+  }
+  // 경로 메타 업데이트
+  document.getElementById('DMT').textContent = '경로 검색 중...';
+
+  // 실제 API 연동 (API 키 설정 후 동작)
+  searchRoute(
+    document.getElementById('DFR').textContent,
+    document.getElementById('DTO').textContent
+  );
+}
+
+async function searchRoute(from, to){
+  // 경로 메타 표시
+  document.getElementById('DMT').textContent = from + ' → ' + to + ' · 검색 중...';
+  try{
+    var data = await fetchSubway(to);
+    if(data && data.realtimeArrivalList){
+      document.getElementById('DMT').textContent = from + ' → ' + to + ' · 실시간 데이터';
+    } else {
+      document.getElementById('DMT').textContent = from + ' → ' + to + ' · 데모 모드';
+    }
+  } catch(e){
+    document.getElementById('DMT').textContent = from + ' → ' + to + ' · 데모 모드';
+  }
+}
+
 function doListen(){
   var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
   if(!SR){simListen();return;}
@@ -825,7 +1127,11 @@ function doListen(){
   r.onresult=(e)=>{
     var tx=e.results[0][0].transcript,fin=e.results[0].isFinal;
     vst.textContent=(fin?T[lang].rec+' ':'')+'"'+tx+'"';
-    if(fin){mic.classList.remove('on');setTimeout(()=>goTo(2),700);}
+    if(fin){
+      mic.classList.remove('on');
+      applyRoute(tx); // ← 음성 텍스트를 파싱해서 실제 반영
+      setTimeout(()=>goTo(2),700);
+    }
   };
   r.onerror=(e)=>{
     mic.classList.remove('on');
@@ -839,12 +1145,15 @@ function simListen(){
   setTimeout(()=>{
     mic.classList.remove('on');
     vst.textContent=T[lang].rec+' '+T[lang].c0;
+    applyRoute(T[lang].c0.replace(/"/g,''));
     setTimeout(()=>goTo(2),700);
   },1800);
 }
 function doChip(i){
+  var tx=T[lang]['c'+i].replace(/"/g,'');
   var vst=document.getElementById('VST');
-  vst.style.color='var(--blue)';vst.textContent=T[lang].rec+' '+T[lang]['c'+i];
+  vst.style.color='var(--blue)';vst.textContent=T[lang].rec+' "'+tx+'"';
+  applyRoute(tx); // ← 예시 칩도 실제 반영
   setTimeout(()=>goTo(2),600);
 }
 
@@ -928,21 +1237,76 @@ async function fetchBusByName(name){
 
 // ── 노선도 fallback ────────────────────
 function loadFallbackMap(){
-  // 1차 실패 시 국토부 공공 노선도 이미지로 대체
   var img = document.getElementById('subwayMapImg');
   if(!img) return;
-  var tried = img.getAttribute('data-tried')||'0';
-  if(tried==='0'){
-    img.setAttribute('data-tried','1');
-    img.src='https://www.seoulmetro.co.kr/image/common/routeMap.jpg';
-  } else if(tried==='1'){
-    img.setAttribute('data-tried','2');
-    // 2차 실패 시 텍스트 안내
+  var tried = parseInt(img.getAttribute('data-tried')||'0');
+  var srcs = [
+    'https://www.seoulmetro.co.kr/image/common/routeMap2.jpg',
+    'https://www.seoulmetro.co.kr/image/common/routeMap.jpg',
+    'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Seoul_Metro_map.svg/1200px-Seoul_Metro_map.svg.png'
+  ];
+  if(tried < srcs.length){
+    img.setAttribute('data-tried', tried+1);
+    img.src = srcs[tried];
+  } else {
+    // 모든 이미지 실패 → 공식 링크 안내
     var wrap = document.getElementById('mapImgWrap');
     if(wrap){
-      wrap.innerHTML='<div style="padding:40px 24px;text-align:center;color:#636366"><div style="font-size:48px;margin-bottom:16px">🗺️</div><div style="font-size:17px;font-weight:700;color:#1C1C1E;margin-bottom:8px">노선도 이미지를 불러올 수 없어요</div><div style="font-size:14px;margin-bottom:20px">네트워크 연결을 확인해주세요</div><a href="https://www.seoulmetro.co.kr/kr/cyberStation.do" target="_blank" style="background:#007AFF;color:white;padding:12px 24px;border-radius:14px;font-size:15px;font-weight:700;text-decoration:none;display:inline-block">서울 지하철 공식 노선도 보기 →</a></div>';
+      wrap.innerHTML = `
+        <div style="padding:60px 24px;text-align:center">
+          <div style="font-size:56px;margin-bottom:20px">🗺️</div>
+          <div style="font-size:18px;font-weight:700;color:#fff;margin-bottom:10px">노선도를 불러올 수 없어요</div>
+          <div style="font-size:14px;color:rgba(255,255,255,.5);margin-bottom:24px">네트워크를 확인하거나 공식 사이트를 이용해주세요</div>
+          <a href="https://www.seoulmetro.co.kr/kr/cyberStation.do" target="_blank"
+            style="background:#007AFF;color:white;padding:14px 28px;border-radius:14px;font-size:15px;font-weight:700;text-decoration:none;display:inline-block">
+            서울 지하철 공식 노선도 보기 →
+          </a>
+        </div>`;
     }
   }
+}
+
+// ── 환승 놓쳤을 때 안내 ─────────────────
+// S3 화면에서 "환승 놓침" 버튼 또는 자동 감지 시 호출
+var missedXferData = null;
+
+function missedTransfer(){
+  // 현재 GPS 위치 + 시간으로 다음 버스 안내
+  var xferCard = document.getElementById('missedXferCard');
+  if(xferCard) {
+    xferCard.style.display = 'block';
+    xferCard.scrollIntoView({behavior:'smooth'});
+  }
+
+  showToast('📍 현재 위치에서 대안 경로를 찾고 있어요...');
+
+  navigator.geolocation && navigator.geolocation.getCurrentPosition(
+    function(pos){
+      var nearest = getNearestStation(pos.coords.latitude, pos.coords.longitude);
+      var now = new Date();
+      var timeStr = now.getHours() + '시 ' + now.getMinutes() + '분';
+
+      // 대안 경로 표시
+      var card = document.getElementById('missedXferCard');
+      if(card){
+        card.innerHTML = `
+          <div style="font-size:12px;font-weight:700;color:var(--ylw);background:rgba(255,204,0,.15);border-radius:8px;padding:4px 10px;display:inline-block;margin-bottom:8px">⚠️ 환승 놓침 감지</div>
+          <div style="font-size:16px;font-weight:800;color:#fff;margin-bottom:6px">대안 경로 안내</div>
+          <div style="font-size:13px;color:rgba(255,255,255,.5);margin-bottom:12px">📍 현재 위치: ${nearest.station.name} 근처 (${timeStr})</div>
+          <div style="background:rgba(255,255,255,.08);border-radius:12px;padding:12px;margin-bottom:8px">
+            <div style="font-size:14px;font-weight:700;color:#fff">🚌 대안 1 — 버스 이용</div>
+            <div style="font-size:13px;color:rgba(255,255,255,.5);margin-top:4px">${nearest.station.name} 인근 정류장 → 목적지 방향 버스</div>
+          </div>
+          <button onclick="goTo(4)" style="background:var(--blue);color:#fff;border:none;border-radius:12px;padding:12px 16px;font-size:14px;font-weight:700;width:100%;cursor:pointer;font-family:inherit">
+            🚌 지금 버스 연계 확인하기 →
+          </button>`;
+      }
+    },
+    function(){
+      showToast('위치를 확인할 수 없어요. 버스 연계 탭을 이용해주세요.');
+      setTimeout(()=>goTo(4), 1200);
+    }
+  );
 }
 
 // ── 초기화 ─────────────────────────────
