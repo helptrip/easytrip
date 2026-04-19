@@ -29,13 +29,21 @@ html,body{
 .scr.back{animation:sBk .28s cubic-bezier(.4,0,.2,1)}
 @keyframes sIn{from{opacity:0;transform:translateX(28px)}to{opacity:1;transform:none}}
 @keyframes sBk{from{opacity:0;transform:translateX(-28px)}to{opacity:1;transform:none}}
-.safe{height:max(env(safe-area-inset-top,0px),44px);flex-shrink:0}
+/* safe area */
+.safe{height:max(env(safe-area-inset-top,0px),8px);flex-shrink:0}
+/* S2~S4 nav에 safe area 패딩 직접 포함 */
+.nav,.s2-nav{
+  padding-top:max(env(safe-area-inset-top,0px),0px);
+  height:calc(52px + max(env(safe-area-inset-top,0px),0px));
+}
 
 /* ── 네비바 (14: 토스 스타일 화살표) ── */
 .nav{
-  height:52px;flex-shrink:0;
+  height:calc(52px + env(safe-area-inset-top,0px));
+  padding-top:env(safe-area-inset-top,0px);
+  flex-shrink:0;
   display:flex;align-items:center;justify-content:space-between;
-  padding:0 16px;
+  padding-left:16px;padding-right:16px;
   border-bottom:1px solid var(--g2);
   background:rgba(255,255,255,.94);
   backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
@@ -66,17 +74,14 @@ html,body{
   min-height:0;
 }
 
-/* 상단 헤더 영역 */
 .s1-header{
   display:flex;align-items:flex-start;justify-content:space-between;
-  padding:16px 0 12px;flex-shrink:0;
+  padding:10px 0 6px;flex-shrink:0;
 }
 .s1-title-group{flex:1}
-/* 5: 어디든 말한마디면 → 타이틀 위 */
-.s1-sub-top{font-size:13px;color:var(--g4);font-weight:400;margin-bottom:4px;letter-spacing:.02em}
-/* 5: 고급진 타이틀, 로고 삭제 */
+.s1-sub-top{font-size:12px;color:var(--g4);font-weight:400;margin-bottom:3px;letter-spacing:.02em}
 .s1-appname{
-  font-size:26px;font-weight:900;color:var(--bk);
+  font-size:30px;font-weight:900;color:var(--bk);
   letter-spacing:-.6px;line-height:1.15;
 }
 .s1-appname em{
@@ -107,7 +112,7 @@ html,body{
 /* 마이크 섹션 */
 .mic-section{
   flex:1;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;gap:12px;
+  align-items:center;justify-content:center;gap:8px;
   min-height:0;
 }
 /* 2: 마이크 버튼 1cm 더 크게 (기존 122px → 148px) */
@@ -145,10 +150,10 @@ html,body{
 .mic-hint{font-size:15px;font-weight:500;color:var(--g4)}
 .mic-status{font-size:15px;font-weight:600;color:var(--blue);min-height:22px;text-align:center;padding:0 20px}
 
-/* 7: 예시 칩 — 높이 좁게 */
-.chips-wrap{width:100%;flex-shrink:0}
-.chips-label{font-size:11px;font-weight:600;color:var(--g4);text-transform:uppercase;letter-spacing:.05em;margin-bottom:7px}
-.chips{display:flex;flex-direction:column;gap:6px}
+/* 예시 칩 */
+.chips-wrap{width:100%;flex-shrink:0;margin-top:0px}
+.chips-label{font-size:11px;font-weight:600;color:var(--g4);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px}
+.chips{display:flex;flex-direction:column;gap:5px}
 .chip{
   width:100%;background:var(--g1);border:1.5px solid transparent;
   border-radius:12px;padding:10px 14px; /* 좁게 */
@@ -159,30 +164,39 @@ html,body{
 .chip:active{background:var(--blt);border-color:rgba(0,122,255,.25);color:var(--blue)}
 .chip-icon{font-size:18px;flex-shrink:0}
 
-/* 자주 가는 노선 */
-.favs-wrap{width:100%;flex-shrink:0;margin-top:10px}
-.favs-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
-.favs-label{font-size:11px;font-weight:600;color:var(--g4);text-transform:uppercase;letter-spacing:.05em}
-.fav-edit-btn{font-size:13px;font-weight:600;color:var(--blue);background:none;border:none;cursor:pointer}
-.fav-list{display:flex;flex-direction:column;gap:6px}
+/* 자주 가는 노선 — 파스텔 녹색 카드 */
+.favs-wrap{
+  width:100%;flex-shrink:0;margin-top:6px;
+  background:linear-gradient(145deg,#E8F8EE,#D6F5E1);
+  border-radius:18px;padding:12px 14px 10px;
+  border:1.5px solid rgba(52,199,89,.25);
+  box-shadow:0 2px 12px rgba(52,199,89,.1);
+}
+.favs-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.favs-label{font-size:11px;font-weight:800;color:#1A7A3A;text-transform:uppercase;letter-spacing:.06em}
+.fav-edit-btn{font-size:12px;font-weight:700;color:#2E9E58;background:rgba(52,199,89,.12);border:none;border-radius:8px;padding:3px 9px;cursor:pointer}
+.fav-list{display:flex;flex-direction:column;gap:5px}
 .fav-row{
-  width:100%;background:var(--g1);border-radius:12px;
-  padding:10px 14px;display:flex;align-items:center;gap:10px;
-  cursor:pointer;border:1.5px solid transparent;
+  width:100%;background:rgba(255,255,255,.82);border-radius:11px;
+  padding:9px 12px;display:flex;align-items:center;gap:10px;
+  cursor:pointer;border:1px solid rgba(52,199,89,.18);
   transition:all .15s;text-align:left;
+  box-shadow:0 1px 4px rgba(52,199,89,.08);
 }
-.fav-row:active{background:var(--blt);border-color:rgba(0,122,255,.25)}
+.fav-row:active{background:#fff;border-color:var(--green);transform:scale(.99)}
 .fav-badge{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:var(--wh);flex-shrink:0}
-.fav-route{font-size:15px;font-weight:600;color:var(--bk);flex:1}
-.fav-memo{font-size:12px;color:var(--g4)}
-.fav-chevron{color:var(--g3);font-size:16px}
+.fav-route{font-size:15px;font-weight:700;color:var(--bk);flex:1}
+.fav-memo{font-size:11px;color:#4CAF75;margin-top:1px}
+.fav-chevron{color:rgba(52,199,89,.45);font-size:15px}
 .fav-add{
-  width:100%;background:none;border:1.5px dashed var(--g3);border-radius:12px;
-  padding:10px;display:flex;align-items:center;justify-content:center;gap:7px;
-  font-size:14px;font-weight:500;color:var(--g4);cursor:pointer;margin-top:6px;
-  transition:all .15s;
+  width:100%;background:rgba(255,255,255,.55);
+  border:1.5px dashed rgba(52,199,89,.4);
+  border-radius:10px;padding:8px;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  font-size:13px;font-weight:600;color:#3DAB6A;
+  cursor:pointer;margin-top:6px;transition:all .15s;
 }
-.fav-add:active{background:var(--g1);color:var(--blue);border-color:var(--blue)}
+.fav-add:active{background:rgba(255,255,255,.9);border-color:var(--green)}
 
 /* 언어 탭 */
 .lang-bar{
@@ -202,9 +216,11 @@ html,body{
 
 /* 상단 네비: 10. 재설정을 노선도 쪽으로, 9. 노선도 버튼을 nav로 */
 .s2-nav{
-  height:52px;flex-shrink:0;
+  height:calc(52px + env(safe-area-inset-top,0px));
+  padding-top:env(safe-area-inset-top,0px);
+  flex-shrink:0;
   display:flex;align-items:center;justify-content:space-between;
-  padding:0 16px;
+  padding-left:16px;padding-right:16px;
   border-bottom:1px solid var(--g2);
   background:rgba(255,255,255,.94);
   backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
@@ -225,12 +241,11 @@ html,body{
 .dest-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .dest-from{display:flex;align-items:center;gap:10px}
 /* 레이더 */
-.radar-wrap{position:relative;width:28px;height:28px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
-.radar-core{width:10px;height:10px;border-radius:50%;background:var(--red);position:relative;z-index:2;box-shadow:0 0 0 0 rgba(255,59,48,.4);animation:radarPulse 1.4s ease-in-out infinite}
-.radar-r1{position:absolute;inset:-5px;border-radius:50%;border:2px solid rgba(255,59,48,.7);animation:radarBlink 1.4s ease-in-out infinite}
-.radar-r2{position:absolute;inset:-11px;border-radius:50%;border:1.5px solid rgba(255,59,48,.35);animation:radarBlink 1.4s ease-in-out infinite .35s}
-@keyframes radarPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,59,48,.4)}50%{box-shadow:0 0 0 4px rgba(255,59,48,.0)}}
-@keyframes radarBlink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.2;transform:scale(.92)}}
+.radar-wrap{position:relative;width:20px;height:20px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.radar-core{width:8px;height:8px;border-radius:50%;background:var(--red);position:relative;z-index:2;}
+.radar-r1{position:absolute;inset:-3px;border-radius:50%;border:1.5px solid rgba(255,59,48,.8);animation:radarBlink 1.2s ease-in-out infinite}
+.radar-r2{position:absolute;inset:-6px;border-radius:50%;border:1px solid rgba(255,59,48,.4);animation:radarBlink 1.2s ease-in-out infinite .3s}
+@keyframes radarBlink{0%,100%{opacity:1}50%{opacity:.1}}
 .dest-stations{display:flex;align-items:center;gap:8px;font-size:20px;font-weight:800;letter-spacing:-.3px}
 .dest-arrow-txt{color:var(--blue);font-weight:300}
 .dest-meta{font-size:13px;color:var(--g4);margin-top:4px}
@@ -536,7 +551,6 @@ html,body{
 
 <!-- ═══ S2: 경로 선택 ═══ -->
 <div class="scr" id="s2">
-  <div class="safe"></div>
   <!-- 9: 네비에 노선도 버튼, 10: 재설정은 아래로 -->
   <div class="s2-nav">
     <button class="nav-back" onclick="goBack()">
@@ -647,7 +661,6 @@ html,body{
 
 <!-- ═══ S3: 탑승 안내 ═══ -->
 <div class="scr" id="s3">
-  <div class="safe"></div>
   <div class="nav">
     <button class="nav-back" onclick="goBack()">
       <svg viewBox="0 0 24 24"><polyline points="15,18 9,12 15,6"/></svg>
@@ -688,23 +701,40 @@ html,body{
       </div>
       <div class="door-icon">⬅️</div>
     </div>
-    <!-- 환승 안내 카드 -->
+    <!-- 버스 환승 알림 카드 -->
     <button class="xfer-card" onclick="goTo(4)">
-      <div class="xf-badge">⚡ 환승 알림</div>
-      <div class="xf-title" id="XCT">버스 연계 정보 보기</div>
-      <div class="xf-body" id="XCB">교대역에서 3호선으로 갈아타세요. 강남역 도착 후 연계 버스를 확인하세요.</div>
-      <div class="xf-cta"><span id="XCP">지금 확인하기</span> →</div>
+      <div class="xf-badge">🚌 버스 환승 알림</div>
+      <div class="xf-title" id="XCT">140번 버스로 갈아타세요!</div>
+      <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+        <div style="background:rgba(0,122,255,.2);border-radius:12px;padding:10px 14px;flex:1;min-width:90px;border:1px solid rgba(0,122,255,.3)">
+          <div style="font-size:11px;color:rgba(255,255,255,.5);margin-bottom:4px;font-weight:600;letter-spacing:.04em">환승 버스</div>
+          <div style="font-size:24px;font-weight:900;color:#fff;line-height:1">140</div>
+          <div style="font-size:12px;color:rgba(255,255,255,.5);margin-top:3px">→ 서울역 방향</div>
+        </div>
+        <div style="background:rgba(255,204,0,.15);border-radius:12px;padding:10px 14px;flex:1;min-width:90px;border:1px solid rgba(255,204,0,.25)">
+          <div style="font-size:11px;color:rgba(255,255,255,.5);margin-bottom:4px;font-weight:600;letter-spacing:.04em">예상 도착</div>
+          <div style="font-size:24px;font-weight:900;color:var(--ylw);line-height:1">3분</div>
+          <div style="font-size:12px;color:rgba(255,255,255,.5);margin-top:3px">📍 4번 출구 앞</div>
+        </div>
+        <div style="background:rgba(52,199,89,.15);border-radius:12px;padding:10px 14px;flex:1;min-width:90px;border:1px solid rgba(52,199,89,.25)">
+          <div style="font-size:11px;color:rgba(255,255,255,.5);margin-bottom:4px;font-weight:600;letter-spacing:.04em">다음 버스</div>
+          <div style="font-size:24px;font-weight:900;color:var(--green);line-height:1">8분</div>
+          <div style="font-size:12px;color:rgba(255,255,255,.5);margin-top:3px">3412번</div>
+        </div>
+      </div>
+      <div class="xf-body" id="XCB" style="margin-top:10px">강남역 도착 후 4번 출구로 나오면 바로 정류장이에요.</div>
+      <div class="xf-cta"><span id="XCP">전체 버스 목록 보기</span> →</div>
     </button>
     <!-- 환승 놓쳤을 때 버튼 -->
     <button onclick="missedTransfer()" style="
-      background:rgba(255,59,48,.12);
-      border:1.5px solid rgba(255,59,48,.3);
+      background:rgba(255,59,48,.1);
+      border:1.5px solid rgba(255,59,48,.25);
       border-radius:16px;padding:14px 18px;
       width:100%;text-align:left;cursor:pointer;
       font-family:inherit;transition:opacity .15s;
     ">
       <div style="font-size:14px;font-weight:700;color:var(--red)">😰 환승을 놓쳤어요</div>
-      <div style="font-size:13px;color:rgba(255,59,48,.6);margin-top:3px">현재 위치에서 대안 경로를 찾아드릴게요</div>
+      <div style="font-size:13px;color:rgba(255,59,48,.55);margin-top:3px">현재 위치에서 대안 경로를 찾아드릴게요</div>
     </button>
     <!-- 환승 놓쳤을 때 대안 카드 (JS로 채워짐) -->
     <div id="missedXferCard" class="xfer-card" style="display:none"></div>
@@ -713,7 +743,6 @@ html,body{
 
 <!-- ═══ S4: 버스 환승 (15: 이름 변경) ═══ -->
 <div class="scr" id="s4">
-  <div class="safe"></div>
   <div class="nav">
     <button class="nav-back" onclick="goBack()">
       <svg viewBox="0 0 24 24"><polyline points="15,18 9,12 15,6"/></svg>
