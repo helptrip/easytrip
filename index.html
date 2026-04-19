@@ -76,7 +76,7 @@ html,body{
 
 .s1-header{
   display:flex;align-items:flex-start;justify-content:space-between;
-  padding:10px 0 6px;flex-shrink:0;
+  padding:18px 0 8px;flex-shrink:0; /* 1. 위 여백 18px */
 }
 .s1-title-group{flex:1}
 .s1-sub-top{font-size:12px;color:var(--g4);font-weight:400;margin-bottom:3px;letter-spacing:.02em}
@@ -109,10 +109,11 @@ html,body{
 }
 .gps-btn.found .gps-label{color:var(--green)}
 
-/* 마이크 섹션 */
+/* 마이크 섹션 — 위쪽으로 붙이기 */
 .mic-section{
   flex:1;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;gap:6px;
+  align-items:center;justify-content:flex-start;
+  padding-top:12px;gap:6px;
   min-height:0;
 }
 /* 2: 마이크 버튼 1cm 더 크게 (기존 122px → 148px) */
@@ -151,12 +152,12 @@ html,body{
 .mic-status{font-size:15px;font-weight:600;color:var(--blue);min-height:22px;text-align:center;padding:0 20px}
 
 /* 예시 칩 */
-.chips-wrap{width:100%;flex-shrink:0;margin-top:0px}
+.chips-wrap{width:100%;flex-shrink:0;margin-top:4px}
 .chips-label{font-size:11px;font-weight:600;color:var(--g4);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px}
 .chips{display:flex;flex-direction:column;gap:5px}
 .chip{
   width:100%;background:var(--g1);border:1.5px solid transparent;
-  border-radius:12px;padding:10px 14px; /* 좁게 */
+  border-radius:12px;padding:10px 14px;
   display:flex;align-items:center;gap:10px;
   font-size:15px;font-weight:500;color:var(--bk);
   cursor:pointer;text-align:left;transition:all .15s;
@@ -166,7 +167,7 @@ html,body{
 
 /* 자주 가는 노선 — 파스텔 녹색 카드 */
 .favs-wrap{
-  width:100%;flex-shrink:0;margin-top:6px;
+  width:100%;flex-shrink:0;margin-top:4px; /* 3. 예시-favs 사이 4px */
   background:linear-gradient(145deg,#E8F8EE,#D6F5E1);
   border-radius:18px;padding:12px 14px 10px;
   border:1.5px solid rgba(52,199,89,.25);
@@ -252,14 +253,13 @@ html,body{
 }
 .reset-btn-small:active{background:rgba(255,59,48,.18)}
 
-/* 11: 탑승할 경로 선택 문구 수정 */
+/* 탑승할 경로 선택 */
 .pick-hint{
   margin:10px 16px 0;background:var(--blue);border-radius:14px;
-  padding:22px 16px;font-size:17px;font-weight:700;color:var(--wh);
-  text-align:center;flex-shrink:0;cursor:pointer;transition:opacity .15s;
-  min-height:76px;display:flex;align-items:center;justify-content:center;
+  padding:13px 16px;font-size:16px;font-weight:700;color:var(--wh);
+  text-align:center;flex-shrink:0;cursor:default;
+  pointer-events:none;
 }
-.pick-hint:active{opacity:.85}
 
 .route-list{
   flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;
@@ -357,27 +357,36 @@ html,body{
 /* ══════════════════════════════
    S3 — 탑승 안내 (흰 배경)
 ══════════════════════════════ */
-#s3{background:var(--wh)}
-
+/* line-hero — 깜빡이는 진행중 효과 */
 .line-hero{
   flex-shrink:0;padding:14px 20px 12px;
   border-bottom:1px solid var(--g2);
   display:flex;align-items:center;justify-content:space-between;
-  background:var(--wh);
+  animation:heroBlink 2.2s ease-in-out infinite;
+}
+@keyframes heroBlink{
+  0%,100%{background:rgba(0,122,255,.04)}
+  50%{background:rgba(0,122,255,.12)}
 }
 .lh-left{display:flex;align-items:center;gap:12px}
 .lh-badge{width:60px;height:60px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;color:var(--wh);flex-shrink:0;box-shadow:0 4px 14px rgba(0,0,0,.2)}
 .lh-name{font-size:24px;font-weight:900;color:var(--bk);letter-spacing:-.4px}
 .lh-remain{font-size:14px;color:var(--g4);margin-top:3px}
-.lh-status{background:var(--green);color:var(--wh);border-radius:10px;padding:6px 12px;font-size:13px;font-weight:700;flex-shrink:0}
+/* 9. NXB 환승역 깜빡임 */
+@keyframes xferBlink{0%,100%{opacity:1}50%{opacity:.4}}
+.nxt-sub.xfer-blink{animation:xferBlink 1.4s ease-in-out infinite}
 
-.s3-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px 20px 16px;display:flex;flex-direction:column;gap:10px}
+.s3-body{
+  flex:1;padding:0 16px calc(12px + env(safe-area-inset-bottom,0px));
+  display:flex;flex-direction:column;
+  justify-content:space-evenly;
+  overflow:hidden;
+}
 .s3-body::-webkit-scrollbar{display:none}
 /* 다음역+도착시간 통합 카드 — 가로 좁게, 눈에 띄는 색 */
 .nxt-card{
   background:linear-gradient(145deg,#1C1C1E,#2A2A3A);
-  border-radius:18px;padding:18px 16px 14px;text-align:center;
-  margin:0 16px;/* 좌우 1cm씩 좁힘 */
+  border-radius:18px;padding:14px 16px 12px;text-align:center;
 }
 .nxt-lbl{font-size:12px;font-weight:700;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
 .nxt-name{font-size:56px;font-weight:900;color:#fff;letter-spacing:-.04em;line-height:1}
@@ -581,7 +590,7 @@ html,body{
   </div>
 
   <!-- pick-hint: 클릭 불가, 세로 줄임 -->
-  <div class="pick-hint" id="BAN" style="cursor:default;padding:14px 16px;pointer-events:none">탑승할 경로를 선택해 주세요!</div>
+  <div class="pick-hint" id="BAN">탑승할 경로를 선택해 주세요!</div>
 
   <div class="route-list">
     <div class="rcard rec" onclick="pickRoute()">
@@ -602,9 +611,8 @@ html,body{
         </div>
       </div>
     </div>
-    <!-- 추천경로 음성안내 — 추천 카드 바로 밑 -->
+    <!-- 추천경로 음성안내 — 추천 카드 바로 밑, 라벨 없이 안내 문구만 -->
     <div class="voice-box">
-      <div class="vb-label">🔊 <span id="VGL">추천경로</span></div>
       <div class="vb-text" id="VGT">"추천은 2호선이에요. 교대에서 3호선으로 갈아타면 강남 도착해요."</div>
     </div>
     <div class="rcard" onclick="pickRoute()">
@@ -639,7 +647,7 @@ html,body{
             <!-- 서울교통공사 공식 노선도 이미지 -->
             <img
               id="subwayMapImg"
-              src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Seoul_Metro_map.svg/1600px-Seoul_Metro_map.svg.png"
+              src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Seoul_Metro_map.svg/2000px-Seoul_Metro_map.svg.png"
               alt="서울 지하철 노선도"
               onerror="loadFallbackMap()"
             />
@@ -666,8 +674,8 @@ html,body{
     </div>
   </div>
 
-  <!-- 탑승중 헤더 — 깜빡임 제거, 왼쪽문 통합 -->
-  <div class="line-hero" style="animation:none;background:var(--wh)">
+  <!-- 탑승중 헤더 — 깜빡이는 진행중 표시 -->
+  <div class="line-hero">
     <div class="lh-left">
       <div class="lh-badge" id="lineBadge" style="background:var(--l2)">2</div>
       <div style="margin-left:2px">
@@ -675,10 +683,10 @@ html,body{
         <div class="lh-remain" id="LSB">강남까지 3정거장</div>
       </div>
     </div>
-    <!-- 왼쪽문 + 지하철 도어 SVG -->
+    <!-- 왼쪽문 — SVG 도어만, 갈색 이모지 없음 -->
     <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
-      <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
-        <rect x="2" y="4" width="28" height="24" rx="3" stroke="#34C759" stroke-width="1.8" fill="rgba(52,199,89,.08)"/>
+      <svg width="26" height="26" viewBox="0 0 32 32" fill="none">
+        <rect x="2" y="4" width="28" height="24" rx="3" stroke="#34C759" stroke-width="1.8" fill="rgba(52,199,89,.1)"/>
         <line x1="16" y1="4" x2="16" y2="28" stroke="#34C759" stroke-width="1.4"/>
         <circle cx="12" cy="16" r="1.4" fill="#34C759"/>
         <circle cx="20" cy="16" r="1.4" fill="#34C759"/>
@@ -686,7 +694,8 @@ html,body{
       </svg>
       <div style="font-size:11px;font-weight:700;color:var(--green)" id="DM">왼쪽 문</div>
     </div>
-    <div class="lh-status" id="lineStatus">탑승중</div>
+    <!-- 8. 진행중 뱃지 (깜빡임은 line-hero 전체) -->
+    <div style="background:rgba(0,122,255,.12);border:1.5px solid rgba(0,122,255,.25);color:var(--blue);border-radius:10px;padding:5px 11px;font-size:12px;font-weight:700">진행중</div>
   </div>
 
   <div class="s3-body">
@@ -856,7 +865,7 @@ function applyText(){
     DFR:t.dfr,DTO:t.dto,DMT:t.dmt,BAN:t.ban,
     RB1:t.rb1,RB2:t.rb2,MN1:t.mn,MN2:t.mn,
     RP1:t.rp1,RP2:t.rp2,LXF:t.lxf,RP3:t.rp3,RP4:t.rp4,
-    VGL:t.vgl,VGT:t.vgt,MTL:t.mtl,MapInfo:t.minfo,
+    VGT:t.vgt,MTL:t.mtl,MapInfo:t.minfo,
     S3T:t.s3t,LST:t.lst,LSB:t.lsb,lineStatus:t.stat,
     NXL:t.nxl,NXS:t.nxs,NXB:t.nxb,CDL:t.cdl,CDS:t.cds,
     DM:t.dm,DH:t.dh,XCB:t.xcb,XCP:t.xcp,
@@ -889,23 +898,31 @@ function goReset(){
   document.getElementById('s1').classList.add('on');
 }
 function pickRoute(){
-  // 환승역 색상 동적 적용 (3호선 = 주황, 2호선 = 녹색 등)
   var nxb = document.getElementById('NXB');
   if(nxb){
     var txt = nxb.textContent || '';
-    // 노선별 색상 매핑
-    var lineColors = {'1호선':'#0052A4','2호선':'#00A650','3호선':'#EF7C1C','4호선':'#00A0E9','5호선':'#996CAC','6호선':'#CD7C2F','7호선':'#747F00','8호선':'#E6186C','9호선':'#BDB092'};
-    var matched = null;
+    var lineColors = {
+      '1호선':'#0052A4','2호선':'#00A650','3호선':'#EF7C1C',
+      '4호선':'#00A0E9','5호선':'#996CAC','6호선':'#CD7C2F',
+      '7호선':'#747F00','8호선':'#E6186C','9호선':'#BDB092'
+    };
+    // "환승역 — 0호선으로 갈아타세요!!!" 형식으로 변환
+    var matched = null, matchedLine = null;
     Object.keys(lineColors).forEach(function(ln){
-      if(txt.indexOf(ln) !== -1) matched = lineColors[ln];
+      if(txt.indexOf(ln) !== -1){ matched = lineColors[ln]; matchedLine = ln; }
     });
-    if(matched){
+    if(matched && matchedLine){
+      // 텍스트를 강조 형식으로 변환
+      var stationPart = txt.replace(/환승역.*$/,'').trim() || '환승역';
+      nxb.textContent = '환승역 — ' + matchedLine + '으로 갈아타세요!!!';
       nxb.style.color = matched;
       nxb.style.background = matched + '22';
       nxb.style.borderRadius = '8px';
       nxb.style.padding = '5px 14px';
       nxb.style.display = 'inline-block';
-      nxb.style.fontWeight = '700';
+      nxb.style.fontWeight = '800';
+      nxb.style.fontSize = '15px';
+      nxb.classList.add('xfer-blink'); // 깜빡임 클래스
     }
   }
   goTo(3);
