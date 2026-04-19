@@ -241,12 +241,13 @@ html,body{
 .dest-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .dest-from{display:flex;align-items:center;gap:10px}
 /* 레이더 */
-.radar-wrap{position:relative;width:20px;height:20px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
-.radar-core{width:8px;height:8px;border-radius:50%;background:var(--red);position:relative;z-index:2;}
-.radar-r1{position:absolute;inset:-3px;border-radius:50%;border:1.5px solid rgba(255,59,48,.8);animation:radarBlink 1.2s ease-in-out infinite}
-.radar-r2{position:absolute;inset:-6px;border-radius:50%;border:1px solid rgba(255,59,48,.4);animation:radarBlink 1.2s ease-in-out infinite .3s}
+.radar-wrap{position:relative;width:14px;height:14px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.radar-core{width:5px;height:5px;border-radius:50%;background:var(--red);position:relative;z-index:2;}
+.radar-r1{position:absolute;inset:-2px;border-radius:50%;border:1.2px solid rgba(255,59,48,.85);animation:radarBlink 1.2s ease-in-out infinite}
+.radar-r2{position:absolute;inset:-4px;border-radius:50%;border:1px solid rgba(255,59,48,.4);animation:radarBlink 1.2s ease-in-out infinite .3s}
 @keyframes radarBlink{0%,100%{opacity:1}50%{opacity:.1}}
-.dest-stations{display:flex;align-items:center;gap:8px;font-size:20px;font-weight:800;letter-spacing:-.3px}
+.dest-from{display:flex;align-items:center;gap:6px}
+.dest-stations{display:flex;align-items:center;gap:8px;font-size:20px;font-weight:800;letter-spacing:-.3px;margin-left:2px}
 .dest-arrow-txt{color:var(--blue);font-weight:300}
 .dest-meta{font-size:13px;color:var(--g4);margin-top:4px}
 
@@ -262,41 +263,43 @@ html,body{
 /* 11: 탑승할 경로 선택 문구 수정 */
 .pick-hint{
   margin:10px 16px 0;background:var(--blue);border-radius:14px;
-  padding:12px 16px;font-size:16px;font-weight:700;color:var(--wh);
+  padding:22px 16px;font-size:17px;font-weight:700;color:var(--wh);
   text-align:center;flex-shrink:0;cursor:pointer;transition:opacity .15s;
+  min-height:76px;display:flex;align-items:center;justify-content:center;
 }
 .pick-hint:active{opacity:.85}
 
 .route-list{
   flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;
-  padding:12px 16px 20px;display:flex;flex-direction:column;gap:10px;
+  padding:10px 16px 16px;display:flex;flex-direction:column;gap:8px;
 }
 .route-list::-webkit-scrollbar{display:none}
 .rcard{
-  background:var(--wh);border-radius:20px;cursor:pointer;
-  border:2px solid transparent;box-shadow:0 2px 12px rgba(0,0,0,.07);
+  background:var(--wh);border-radius:16px;cursor:pointer;
+  border:2px solid transparent;box-shadow:0 2px 10px rgba(0,0,0,.07);
   transition:all .18s;overflow:hidden;
 }
 .rcard:active{transform:scale(.99);border-color:var(--blue)}
 .rcard.rec{border-color:var(--blue)}
-.rbadge{padding:9px 16px;font-size:13px;font-weight:700;display:block}
+.rbadge{padding:7px 14px;font-size:12px;font-weight:700;display:block}
 .rb-blue{background:var(--blue);color:var(--wh)}
 .rb-yel{background:var(--ylw);color:var(--bk)}
-.rcont{padding:14px 18px 18px}
-.r-min{font-size:50px;font-weight:900;color:var(--bk);line-height:1;letter-spacing:-.04em}
-.r-min span{font-size:20px;font-weight:400;color:var(--g4);margin-left:3px}
-.r-pills{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
-.rpill{background:var(--g1);border-radius:9px;padding:5px 11px;font-size:13px;color:var(--g5);font-weight:500}
-.r-line{display:flex;align-items:center;gap:5px;margin-top:14px}
-.rldot{width:28px;height:28px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:var(--wh)}
+.rcont{padding:10px 14px 13px}
+.r-min{font-size:40px;font-weight:900;color:var(--bk);line-height:1;letter-spacing:-.04em}
+.r-min span{font-size:17px;font-weight:400;color:var(--g4);margin-left:2px}
+.r-pills{display:flex;gap:5px;margin-top:7px;flex-wrap:wrap}
+.rpill{background:var(--g1);border-radius:8px;padding:4px 9px;font-size:12px;color:var(--g5);font-weight:500}
+.r-line{display:flex;align-items:center;gap:4px;margin-top:10px}
+.rldot{width:24px;height:24px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:var(--wh)}
 .rlbar{flex:1;height:4px;border-radius:2px}
-.rl-xfer{font-size:12px;color:var(--ora);font-weight:700;background:rgba(255,149,0,.1);border-radius:7px;padding:3px 9px}
+.rl-xfer{font-size:11px;color:var(--ora);font-weight:700;background:rgba(255,149,0,.1);border-radius:6px;padding:2px 7px}
 .voice-box{
-  margin:0 16px 16px;background:var(--wh);border-radius:16px;
-  padding:14px 16px;box-shadow:0 2px 12px rgba(0,0,0,.07);flex-shrink:0;
+  background:var(--wh);border-radius:14px;
+  padding:12px 14px;box-shadow:0 2px 10px rgba(0,0,0,.07);
+  flex-shrink:0;
 }
-.vb-label{font-size:12px;font-weight:600;color:var(--g4);text-transform:uppercase;letter-spacing:.04em}
-.vb-text{font-size:15px;color:var(--bk);margin-top:5px;line-height:1.6}
+.vb-label{font-size:11px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.04em}
+.vb-text{font-size:14px;color:var(--bk);margin-top:4px;line-height:1.5}
 
 /* 노선도 — 전체화면 모달 */
 .mdl{position:fixed;inset:0;background:#000;z-index:500;display:none;flex-direction:column;}
@@ -383,20 +386,33 @@ html,body{
 .lh-status{background:var(--green);color:var(--wh);border-radius:12px;padding:7px 14px;font-size:14px;font-weight:700;flex-shrink:0;animation:statusPulse 1.5s ease-in-out infinite}
 @keyframes statusPulse{0%,100%{opacity:1}50%{opacity:.6}}
 
-.s3-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 20px 24px;display:flex;flex-direction:column;gap:12px}
+.s3-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px 20px 16px;display:flex;flex-direction:column;gap:10px}
 .s3-body::-webkit-scrollbar{display:none}
-.nxt-card{background:var(--g1);border-radius:20px;padding:20px;text-align:center}
-.nxt-lbl{font-size:12px;font-weight:600;color:var(--g4);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
-.nxt-name{font-size:50px;font-weight:900;color:var(--bk);letter-spacing:-.04em;line-height:1}
-.nxt-sub{font-size:16px;color:var(--g4);margin-top:8px}
-.cd-zone{text-align:center;padding:4px 0}
-.cd-lbl{font-size:12px;font-weight:600;color:var(--g4);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
-.cd-num{font-size:68px;font-weight:900;color:var(--bk);letter-spacing:-.05em;line-height:1}
-.cd-sub{font-size:14px;color:var(--g4);margin-top:6px}
-.door-card{background:rgba(52,199,89,.08);border:1.5px solid rgba(52,199,89,.2);border-radius:18px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between}
-.door-main{font-size:18px;font-weight:700;color:var(--green)}
-.door-hint{font-size:13px;color:var(--g4);margin-top:3px}
-.door-icon{font-size:32px}
+/* 다음역+도착시간 통합 카드 — 가로 좁게, 눈에 띄는 색 */
+.nxt-card{
+  background:linear-gradient(145deg,#1C1C1E,#2A2A3A);
+  border-radius:18px;padding:18px 16px 14px;text-align:center;
+  margin:0 16px;/* 좌우 1cm씩 좁힘 */
+}
+.nxt-lbl{font-size:11px;font-weight:700;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+.nxt-name{font-size:48px;font-weight:900;color:#fff;letter-spacing:-.04em;line-height:1}
+.nxt-sub{font-size:14px;color:rgba(0,122,255,.9);margin-top:6px;font-weight:600;background:rgba(0,122,255,.12);border-radius:8px;padding:4px 12px;display:inline-block}
+/* 도착시간 — 통합카드 안에 */
+.cd-divider{height:1px;background:rgba(255,255,255,.08);margin:12px 0}
+.cd-zone{text-align:center;padding:0}
+.cd-lbl{font-size:11px;font-weight:700;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+.cd-num{font-size:56px;font-weight:900;color:var(--ylw);letter-spacing:-.05em;line-height:1}
+.cd-sub{font-size:12px;color:rgba(255,255,255,.3);margin-top:4px}
+/* 왼쪽 문 카드 — 화살표 왼쪽, 글씨 오른쪽 */
+.door-card{
+  background:rgba(52,199,89,.08);border:1.5px solid rgba(52,199,89,.22);
+  border-radius:16px;padding:13px 16px;
+  display:flex;align-items:center;gap:14px;
+}
+.door-arrow{font-size:36px;flex-shrink:0}
+.door-right{flex:1}
+.door-main{font-size:17px;font-weight:700;color:var(--green)}
+.door-hint{font-size:13px;color:var(--g4);margin-top:2px}
 
 /* 13: 환승 알림 더 눈에 띄게 */
 .xfer-card{
@@ -437,10 +453,11 @@ html,body{
 /* 16: 음성 버튼 → 리스트 위로 */
 .bvc-top{
   margin:10px 16px 0;background:var(--blue);
-  border-radius:14px;padding:13px 16px;
-  display:flex;align-items:center;gap:10px;
-  font-size:15px;font-weight:700;color:var(--wh);
-  cursor:pointer;border:none;transition:opacity .15s;width:calc(100% - 32px);
+  border-radius:16px;padding:22px 18px;
+  display:flex;align-items:center;gap:12px;
+  font-size:16px;font-weight:700;color:var(--wh);
+  cursor:pointer;border:none;transition:opacity .15s;
+  width:calc(100% - 32px);min-height:72px;
 }
 .bvc-top:active{opacity:.85}
 
@@ -608,6 +625,11 @@ html,body{
         </div>
       </div>
     </div>
+    <!-- 추천경로 음성안내 — 추천 카드 바로 밑 -->
+    <div class="voice-box">
+      <div class="vb-label">🔊 <span id="VGL">추천경로</span></div>
+      <div class="vb-text" id="VGT">"추천은 2호선이에요. 교대에서 3호선으로 갈아타면 강남 도착해요."</div>
+    </div>
     <div class="rcard" onclick="pickRoute()">
       <div class="rbadge rb-yel" id="RB2">⚡ 급행열차 · 빠름</div>
       <div class="rcont">
@@ -623,10 +645,6 @@ html,body{
           <div class="rldot" style="background:var(--l9)">9</div>
         </div>
       </div>
-    </div>
-    <div class="voice-box">
-      <div class="vb-label">🔊 <span id="VGL">음성 안내</span></div>
-      <div class="vb-text" id="VGT">"추천은 2호선이에요. 교대에서 3호선으로 갈아타면 강남 도착해요."</div>
     </div>
   </div>
 
@@ -684,59 +702,66 @@ html,body{
   </div>
 
   <div class="s3-body">
+    <!-- 다음역 + 도착시간 통합 카드 (가로 좌우 1cm 좁힘, 어두운 배경) -->
     <div class="nxt-card">
       <div class="nxt-lbl" id="NXL">다음 역</div>
       <div class="nxt-name" id="NXS">교대</div>
       <div class="nxt-sub" id="NXB">환승역 — 3호선 갈아타세요</div>
+      <div class="cd-divider"></div>
+      <div class="cd-zone">
+        <div class="cd-lbl" id="CDL">도착까지</div>
+        <div class="cd-num" id="CDN">2:30</div>
+        <div class="cd-sub" id="CDS">약 2분 30초 후 도착</div>
+      </div>
     </div>
-    <div class="cd-zone">
-      <div class="cd-lbl" id="CDL">도착까지</div>
-      <div class="cd-num" id="CDN">2:30</div>
-      <div class="cd-sub" id="CDS">약 2분 30초 후 도착</div>
-    </div>
+    <!-- 왼쪽 문 — 화살표 왼쪽, 지하철 도어 SVG, 글씨 오른쪽 -->
     <div class="door-card">
-      <div>
-        <div class="door-main" id="DM">🚪 왼쪽 문</div>
+      <div class="door-arrow">
+        <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+          <rect x="3" y="5" width="30" height="26" rx="3" stroke="#34C759" stroke-width="2" fill="rgba(52,199,89,.08)"/>
+          <line x1="18" y1="5" x2="18" y2="31" stroke="#34C759" stroke-width="1.5"/>
+          <circle cx="14" cy="18" r="1.6" fill="#34C759"/>
+          <circle cx="22" cy="18" r="1.6" fill="#34C759"/>
+          <path d="M11 18 L6 18 M6 18 L9 15 M6 18 L9 21" stroke="#34C759" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="door-right">
+        <div class="door-main" id="DM">왼쪽 문</div>
         <div class="door-hint" id="DH">에스컬레이터 가까운 쪽</div>
       </div>
-      <div class="door-icon">⬅️</div>
     </div>
     <!-- 버스 환승 알림 카드 -->
     <button class="xfer-card" onclick="goTo(4)">
       <div class="xf-badge">🚌 버스 환승 알림</div>
       <div class="xf-title" id="XCT">140번 버스로 갈아타세요!</div>
-      <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
-        <div style="background:rgba(0,122,255,.2);border-radius:12px;padding:10px 14px;flex:1;min-width:90px;border:1px solid rgba(0,122,255,.3)">
-          <div style="font-size:11px;color:rgba(255,255,255,.5);margin-bottom:4px;font-weight:600;letter-spacing:.04em">환승 버스</div>
-          <div style="font-size:24px;font-weight:900;color:#fff;line-height:1">140</div>
-          <div style="font-size:12px;color:rgba(255,255,255,.5);margin-top:3px">→ 서울역 방향</div>
+      <div style="display:flex;gap:7px;margin-top:10px;flex-wrap:wrap">
+        <div style="background:rgba(0,122,255,.2);border-radius:10px;padding:8px 12px;flex:1;min-width:80px;border:1px solid rgba(0,122,255,.3)">
+          <div style="font-size:10px;color:rgba(255,255,255,.5);margin-bottom:3px;font-weight:600;letter-spacing:.04em">환승 버스</div>
+          <div style="font-size:22px;font-weight:900;color:#fff;line-height:1">140</div>
+          <div style="font-size:11px;color:rgba(255,255,255,.5);margin-top:2px">→ 서울역</div>
         </div>
-        <div style="background:rgba(255,204,0,.15);border-radius:12px;padding:10px 14px;flex:1;min-width:90px;border:1px solid rgba(255,204,0,.25)">
-          <div style="font-size:11px;color:rgba(255,255,255,.5);margin-bottom:4px;font-weight:600;letter-spacing:.04em">예상 도착</div>
-          <div style="font-size:24px;font-weight:900;color:var(--ylw);line-height:1">3분</div>
-          <div style="font-size:12px;color:rgba(255,255,255,.5);margin-top:3px">📍 4번 출구 앞</div>
+        <div style="background:rgba(255,204,0,.15);border-radius:10px;padding:8px 12px;flex:1;min-width:80px;border:1px solid rgba(255,204,0,.25)">
+          <div style="font-size:10px;color:rgba(255,255,255,.5);margin-bottom:3px;font-weight:600;letter-spacing:.04em">예상 도착</div>
+          <div style="font-size:22px;font-weight:900;color:#FFCC00;line-height:1">3분</div>
+          <div style="font-size:11px;color:rgba(255,255,255,.5);margin-top:2px">📍 4번 출구</div>
         </div>
-        <div style="background:rgba(52,199,89,.15);border-radius:12px;padding:10px 14px;flex:1;min-width:90px;border:1px solid rgba(52,199,89,.25)">
-          <div style="font-size:11px;color:rgba(255,255,255,.5);margin-bottom:4px;font-weight:600;letter-spacing:.04em">다음 버스</div>
-          <div style="font-size:24px;font-weight:900;color:var(--green);line-height:1">8분</div>
-          <div style="font-size:12px;color:rgba(255,255,255,.5);margin-top:3px">3412번</div>
+        <div style="background:rgba(52,199,89,.15);border-radius:10px;padding:8px 12px;flex:1;min-width:80px;border:1px solid rgba(52,199,89,.25)">
+          <div style="font-size:10px;color:rgba(255,255,255,.5);margin-bottom:3px;font-weight:600;letter-spacing:.04em">다음 버스</div>
+          <div style="font-size:22px;font-weight:900;color:#34C759;line-height:1">8분</div>
+          <div style="font-size:11px;color:rgba(255,255,255,.5);margin-top:2px">3412번</div>
         </div>
       </div>
-      <div class="xf-body" id="XCB" style="margin-top:10px">강남역 도착 후 4번 출구로 나오면 바로 정류장이에요.</div>
+      <div class="xf-body" id="XCB" style="margin-top:8px">강남역 도착 후 4번 출구로 나오면 바로 정류장이에요.</div>
       <div class="xf-cta"><span id="XCP">전체 버스 목록 보기</span> →</div>
     </button>
-    <!-- 환승 놓쳤을 때 버튼 -->
-    <button onclick="missedTransfer()" style="
-      background:rgba(255,59,48,.1);
-      border:1.5px solid rgba(255,59,48,.25);
-      border-radius:16px;padding:14px 18px;
-      width:100%;text-align:left;cursor:pointer;
-      font-family:inherit;transition:opacity .15s;
-    ">
-      <div style="font-size:14px;font-weight:700;color:var(--red)">😰 환승을 놓쳤어요</div>
-      <div style="font-size:13px;color:rgba(255,59,48,.55);margin-top:3px">현재 위치에서 대안 경로를 찾아드릴게요</div>
+    <!-- 환승 놓쳤을 때 버튼 (세로 좁게) -->
+    <button onclick="missedTransfer()" style="background:rgba(255,59,48,.08);border:1.5px solid rgba(255,59,48,.22);border-radius:14px;padding:10px 16px;width:100%;text-align:left;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:10px;">
+      <span style="font-size:20px;flex-shrink:0">😰</span>
+      <div>
+        <div style="font-size:13px;font-weight:700;color:#FF3B30">환승을 놓쳤어요</div>
+        <div style="font-size:12px;color:rgba(255,59,48,.5);margin-top:1px">대안 경로를 찾아드릴게요</div>
+      </div>
     </button>
-    <!-- 환승 놓쳤을 때 대안 카드 (JS로 채워짐) -->
     <div id="missedXferCard" class="xfer-card" style="display:none"></div>
   </div>
 </div>
@@ -753,7 +778,15 @@ html,body{
     </div>
   </div>
   <div class="bus-header">
-    <div class="bus-title" id="S4TI">🚌 강남역 연계 버스</div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <!-- 레이더 (경로선택 화면과 동일) -->
+      <div class="radar-wrap" style="flex-shrink:0">
+        <div class="radar-core"></div>
+        <div class="radar-r1"></div>
+        <div class="radar-r2"></div>
+      </div>
+      <div class="bus-title" id="S4TI">강남역 연계 버스</div>
+    </div>
     <div class="bus-sub" id="S4SU">목적지 방향 버스만 보여드려요</div>
   </div>
   <!-- 16: 음성 버튼 리스트 위로 -->
@@ -796,7 +829,7 @@ var T={
     s3t:'탑승 안내',lst:'2호선 탑승 중',lsb:'강남까지 3정거장',stat:'탑승중',
     nxl:'다음 역',nxs:'교대',nxb:'환승역 — 3호선 갈아타세요',cdl:'도착까지',cds:'약 2분 30초 후 도착',dm:'🚪 왼쪽 문',dh:'에스컬레이터 가까운 쪽',
     xct:'버스 연계 정보 보기',xcb:'교대역에서 3호선으로 갈아타세요. 강남역 도착 후 연계 버스를 확인하세요.',xcp:'지금 확인하기',
-    s4t:'버스 환승',s4ti:'🚌 강남역 연계 버스',s4su:'목적지 방향 버스만 보여드려요',
+    s4t:'버스 환승',s4ti:'강남역 연계 버스',s4su:'목적지 방향 버스만 보여드려요',
     bd1:'→ 서울역 · 시청 방향',ba1:'곧도착',bs1:'📍 4번 출구 앞 · 도보 1분',bd2:'→ 논현 · 신사 방향',ba2:'4분',bs2:'📍 10번 출구 · 도보 2분',bd3:'→ 판교 · 분당 방향',ba3:'8분',bs3:'📍 2번 출구 · 도보 3분',bd4:'→ 역삼 · 선릉 방향',ba4:'12분',bs4:'📍 1번 출구 · 도보 2분',bvb:'"가장 빠른 버스 알려줘"'},
   en:{s1h:'Go When You Say It',s1s:'Just say where to go',mlb:'Tap & Speak',cl:'Examples',lis:'🎙️ Listening...',rec:'✅',c0:'"Take me to Gangnam"',c1:'"How to Seoul Station?"',c2:'"Express to Jamsil?"',fl:'Frequent Routes',fe:'Edit',fa:'Add route',gps:'My Location',
     s2t:'Choose Route',rst:'Reset',mlbl:'Map',dfr:'Sinrim',dto:'Gangnam',dmt:'2 routes · Now',ban:'Please select a route!',rb1:'✅ Recommended · Local',rb2:'⚡ Express · Faster',mn:' min',rp1:'1 transfer',rp2:'In 3 min',lxf:'Gyodae Xfer',rp3:'No transfer',rp4:'In 8 min',vgl:'Voice',vgt:'"Take Line 2. Transfer at Gyodae to Line 3."',
@@ -804,7 +837,7 @@ var T={
     s3t:'On Board',lst:'Line 2 — On Board',lsb:'3 stops to Gangnam',stat:'On Board',
     nxl:'Next Station',nxs:'Gyodae',nxb:'Transfer — Switch to Line 3',cdl:'Arrives in',cds:'approx. 2 min 30 sec',dm:'🚪 Left Door',dh:'Near escalator',
     xct:'See Bus Connections',xcb:'Transfer at Gyodae to Line 3. Check buses at Gangnam.',xcp:'Check now',
-    s4t:'Bus Transfer',s4ti:'🚌 Buses from Gangnam',s4su:'Filtered for your destination',
+    s4t:'Bus Transfer',s4ti:'Buses from Gangnam',s4su:'Filtered for your destination',
     bd1:'→ Seoul Station',ba1:'Arriving',bs1:'📍 Exit 4 · 1 min',bd2:'→ Nonhyeon',ba2:'4 min',bs2:'📍 Exit 10 · 2 min',bd3:'→ Pangyo',ba3:'8 min',bs3:'📍 Exit 2 · 3 min',bd4:'→ Yeoksam',ba4:'12 min',bs4:'📍 Exit 1 · 2 min',bvb:'"Which bus is fastest?"'},
   zh:{s1h:'说走就走',s1s:'说出目的地，马上出发',mlb:'点击说话',cl:'示例',lis:'🎙️ 聆听中...',rec:'✅',c0:'"去江南站"',c1:'"怎么去首尔站？"',c2:'"有蚕室急行吗？"',fl:'常用路线',fe:'编辑',fa:'添加路线',gps:'当前位置',
     s2t:'选择路线',rst:'重置',mlbl:'路线图',dfr:'新林',dto:'江南',dmt:'2条路线 · 现在出发',ban:'请选择路线！',rb1:'✅ 推荐 · 普通',rb2:'⚡ 急行 · 快',mn:' 分',rp1:'换乘1次',rp2:'3分钟后',lxf:'教大换',rp3:'无换乘',rp4:'8分钟后',vgl:'语音',vgt:'"乘2号线，教大换3号线到江南。"',
@@ -812,7 +845,7 @@ var T={
     s3t:'乘车导航',lst:'2号线 乘车中',lsb:'距江南3站',stat:'乘车中',
     nxl:'下一站',nxs:'教大',nxb:'换乘站—换3号线',cdl:'到站',cds:'约2分30秒后',dm:'🚪 左侧车门',dh:'靠近扶梯',
     xct:'查看接驳公交',xcb:'教大换3号线。江南查看公交。',xcp:'立即查看',
-    s4t:'公交换乘',s4ti:'🚌 江南站公交',s4su:'仅目的地方向',
+    s4t:'公交换乘',s4ti:'江南站公交',s4su:'仅目的地方向',
     bd1:'→ 首尔站',ba1:'即将到',bs1:'📍 4号出口·1分',bd2:'→ 论铉',ba2:'4分',bs2:'📍 10号·2分',bd3:'→ 板桥',ba3:'8分',bs3:'📍 2号·3分',bd4:'→ 驿三',ba4:'12分',bs4:'📍 1号·2分',bvb:'"最快的公交？"'},
   ja:{s1h:'話せばすぐ行ける',s1s:'どこへでも、ひと言で',mlb:'押して話してください',cl:'例',lis:'🎙️ 聞いています...',rec:'✅',c0:'"江南駅へ行きたい"',c1:'"ソウル駅まで教えて"',c2:'"蚕室の急行は？"',fl:'よく使う路線',fe:'編集',fa:'路線追加',gps:'現在地',
     s2t:'経路選択',rst:'リセット',mlbl:'路線図',dfr:'新林',dto:'江南',dmt:'2経路 · 今すぐ',ban:'路線を選んでください！',rb1:'✅ おすすめ · 普通',rb2:'⚡ 急行 · 速い',mn:' 分',rp1:'乗換1回',rp2:'3分後',lxf:'教大乗換',rp3:'乗換なし',rp4:'8分後',vgl:'音声',vgt:'"2号線。教大で3号線へ。"',
@@ -820,7 +853,7 @@ var T={
     s3t:'乗車案内',lst:'2号線 乗車中',lsb:'江南まで3駅',stat:'乗車中',
     nxl:'次の駅',nxs:'教大',nxb:'乗換—3号線へ',cdl:'到着まで',cds:'約2分30秒後',dm:'🚪 左のドア',dh:'エスカレーター寄り',
     xct:'バス連絡を見る',xcb:'教大で3号線へ。江南でバス確認。',xcp:'今すぐ確認',
-    s4t:'バス乗換',s4ti:'🚌 江南駅 バス',s4su:'目的地方向のみ',
+    s4t:'バス乗換',s4ti:'江南駅 バス',s4su:'目的地方向のみ',
     bd1:'→ ソウル駅',ba1:'まもなく',bs1:'📍 4番出口·1分',bd2:'→ 論峴',ba2:'4分',bs2:'📍 10番·2分',bd3:'→ 板橋',ba3:'8分',bs3:'📍 2番·3分',bd4:'→ 駅三',ba4:'12分',bs4:'📍 1番·2分',bvb:'"一番早いバスは？"'}
 };
 
