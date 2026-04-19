@@ -642,16 +642,23 @@ html,body{
         <button class="mcl" onclick="closeMdl()">✕</button>
       </div>
       <div class="map-body" id="mapBody">
-        <div id="mapZoomWrap">
-          <div id="mapImgWrap">
-            <!-- 서울교통공사 공식 노선도 이미지 -->
+        <!-- object 태그로 SVG 직접 렌더 — CORS 없이 표시 -->
+        <div id="mapImgWrap" style="width:100%;height:100%;overflow:auto;-webkit-overflow-scrolling:touch;background:#f0f0f0">
+          <object
+            id="subwayMapObj"
+            data="https://upload.wikimedia.org/wikipedia/commons/3/3d/Seoul_Metro_map.svg"
+            type="image/svg+xml"
+            style="width:200%;height:auto;display:block;min-height:100%"
+          >
+            <!-- object 실패시 img fallback -->
             <img
               id="subwayMapImg"
-              src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Seoul_Metro_map.svg/2000px-Seoul_Metro_map.svg.png"
+              src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Seoul_Metro_map.svg/1200px-Seoul_Metro_map.svg.png"
               alt="서울 지하철 노선도"
+              style="width:200%;height:auto;display:block"
               onerror="loadFallbackMap()"
             />
-          </div>
+          </object>
         </div>
       </div>
       <div class="map-info">
@@ -674,7 +681,7 @@ html,body{
     </div>
   </div>
 
-  <!-- 탑승중 헤더 — 깜빡이는 진행중 표시 -->
+  <!-- 탑승중 헤더 — 깜빡이는 효과 -->
   <div class="line-hero">
     <div class="lh-left">
       <div class="lh-badge" id="lineBadge" style="background:var(--l2)">2</div>
@@ -683,7 +690,7 @@ html,body{
         <div class="lh-remain" id="LSB">강남까지 3정거장</div>
       </div>
     </div>
-    <!-- 왼쪽문 — SVG 도어만, 갈색 이모지 없음 -->
+    <!-- 왼쪽문 — SVG 도어 + 문구 (갈색이모지 없음) -->
     <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
       <svg width="26" height="26" viewBox="0 0 32 32" fill="none">
         <rect x="2" y="4" width="28" height="24" rx="3" stroke="#34C759" stroke-width="1.8" fill="rgba(52,199,89,.1)"/>
@@ -694,8 +701,6 @@ html,body{
       </svg>
       <div style="font-size:11px;font-weight:700;color:var(--green)" id="DM">왼쪽 문</div>
     </div>
-    <!-- 8. 진행중 뱃지 (깜빡임은 line-hero 전체) -->
-    <div style="background:rgba(0,122,255,.12);border:1.5px solid rgba(0,122,255,.25);color:var(--blue);border-radius:10px;padding:5px 11px;font-size:12px;font-weight:700">진행중</div>
   </div>
 
   <div class="s3-body">
@@ -807,13 +812,36 @@ html,body{
 <div class="toast" id="toast"></div>
 
 <script>
+// ══ loadFallbackMap — onerror에서 호출되므로 맨 앞에 선언 ══
+function loadFallbackMap(){
+  var wrap = document.getElementById('mapImgWrap');
+  if(!wrap) return;
+  // 이미 fallback 처리됐으면 중복 실행 방지
+  if(wrap.getAttribute('data-fallback')) return;
+  wrap.setAttribute('data-fallback','1');
+  wrap.innerHTML = `
+    <div style="padding:60px 24px;text-align:center;background:#1a1a2e;min-height:100%">
+      <div style="font-size:56px;margin-bottom:20px">🗺️</div>
+      <div style="font-size:18px;font-weight:700;color:#fff;margin-bottom:10px">노선도를 불러올 수 없어요</div>
+      <div style="font-size:14px;color:rgba(255,255,255,.5);margin-bottom:24px">아래 링크에서 공식 노선도를 확인하세요</div>
+      <a href="https://www.seoulmetro.co.kr/kr/cyberStation.do" target="_blank"
+        style="background:#007AFF;color:white;padding:14px 28px;border-radius:14px;font-size:15px;font-weight:700;text-decoration:none;display:inline-block;margin-bottom:12px">
+        서울교통공사 노선도 →
+      </a><br>
+      <a href="https://commons.wikimedia.org/wiki/File:Seoul_Metro_map.svg" target="_blank"
+        style="background:rgba(255,255,255,.15);color:white;padding:12px 24px;border-radius:14px;font-size:14px;font-weight:600;text-decoration:none;display:inline-block;margin-top:8px">
+        위키미디어 노선도 →
+      </a>
+    </div>`;
+}
+
 // ── 다국어 ──────────────────────────────
 var T={
   ko:{s1h:'말하면 바로 가요',s1s:'어디든, 말 한마디면',mlb:'누르고 말하세요',cl:'예시',lis:'🎙️ 듣고 있어요...',rec:'✅',c0:'"강남역 가고 싶어"',c1:'"서울역까지 어떻게 가?"',c2:'"잠실 가는 급행 있어?"',fl:'자주 가는 노선',fe:'편집',fa:'노선 추가',gps:'현 위치',
     s2t:'경로 선택',rst:'재설정',mlbl:'노선도',dfr:'신림',dto:'강남',dmt:'경로 2개 · 지금 출발 기준',ban:'탑승할 경로를 선택해 주세요!',rb1:'✅ 추천 · 일반열차',rb2:'⚡ 급행열차 · 빠름',mn:' 분',rp1:'환승 1회',rp2:'3분 후 출발',lxf:'교대환승',rp3:'환승 없음',rp4:'8분 후 출발',vgl:'음성 안내',vgt:'"추천은 2호선이에요. 교대에서 3호선으로 갈아타면 강남 도착해요."',
     mtl:'🗺️ 서울 지하철 노선도',minfo:'📍 출발역: 신림 (2호선) → 도착역: 강남',
     s3t:'탑승 안내',lst:'2호선 탑승 중',lsb:'강남까지 3정거장',stat:'탑승중',
-    nxl:'다음 역',nxs:'교대',nxb:'환승역 — 3호선 갈아타세요',cdl:'도착까지',cds:'약 2분 30초 후 도착',dm:'🚪 왼쪽 문',dh:'에스컬레이터 가까운 쪽',
+    nxl:'다음 역',nxs:'교대',nxb:'환승역 — 3호선 갈아타세요',cdl:'도착까지',cds:'약 2분 30초 후 도착',dm:'왼쪽 문',dh:'에스컬레이터 가까운 쪽',
     xcb:'교대역에서 3호선으로 갈아타세요. 강남역 도착 후 연계 버스를 확인하세요.',xcp:'지금 확인하기',
     s4t:'버스 환승',s4ti:'강남역 연계 버스',s4su:'목적지 방향 버스만 보여드려요',
     bd1:'→ 서울역 · 시청 방향',ba1:'곧도착',bs1:'📍 4번 출구 앞 · 도보 1분',bd2:'→ 논현 · 신사 방향',ba2:'4분',bs2:'📍 10번 출구 · 도보 2분',bd3:'→ 판교 · 분당 방향',ba3:'8분',bs3:'📍 2번 출구 · 도보 3분',bd4:'→ 역삼 · 선릉 방향',ba4:'12분',bs4:'📍 1번 출구 · 도보 2분',bvb:'"가장 빠른 버스 알려줘"'},
@@ -821,7 +849,7 @@ var T={
     s2t:'Choose Route',rst:'Reset',mlbl:'Map',dfr:'Sinrim',dto:'Gangnam',dmt:'2 routes · Now',ban:'Please select a route!',rb1:'✅ Recommended · Local',rb2:'⚡ Express · Faster',mn:' min',rp1:'1 transfer',rp2:'In 3 min',lxf:'Gyodae Xfer',rp3:'No transfer',rp4:'In 8 min',vgl:'Voice',vgt:'"Take Line 2. Transfer at Gyodae to Line 3."',
     mtl:'🗺️ Seoul Subway Map',minfo:'📍 From: Sinrim (Line 2) → To: Gangnam',
     s3t:'On Board',lst:'Line 2 — On Board',lsb:'3 stops to Gangnam',stat:'On Board',
-    nxl:'Next Station',nxs:'Gyodae',nxb:'Transfer — Switch to Line 3',cdl:'Arrives in',cds:'approx. 2 min 30 sec',dm:'🚪 Left Door',dh:'Near escalator',
+    nxl:'Next Station',nxs:'Gyodae',nxb:'Transfer — Switch to Line 3',cdl:'Arrives in',cds:'approx. 2 min 30 sec',dm:'Left Door',dh:'Near escalator',
     xcb:'Transfer at Gyodae to Line 3. Check buses at Gangnam.',xcp:'Check now',
     s4t:'Bus Transfer',s4ti:'Buses from Gangnam',s4su:'Filtered for your destination',
     bd1:'→ Seoul Station',ba1:'Arriving',bs1:'📍 Exit 4 · 1 min',bd2:'→ Nonhyeon',ba2:'4 min',bs2:'📍 Exit 10 · 2 min',bd3:'→ Pangyo',ba3:'8 min',bs3:'📍 Exit 2 · 3 min',bd4:'→ Yeoksam',ba4:'12 min',bs4:'📍 Exit 1 · 2 min',bvb:'"Which bus is fastest?"'},
@@ -829,7 +857,7 @@ var T={
     s2t:'选择路线',rst:'重置',mlbl:'路线图',dfr:'新林',dto:'江南',dmt:'2条路线 · 现在出发',ban:'请选择路线！',rb1:'✅ 推荐 · 普通',rb2:'⚡ 急行 · 快',mn:' 分',rp1:'换乘1次',rp2:'3分钟后',lxf:'教大换',rp3:'无换乘',rp4:'8分钟后',vgl:'语音',vgt:'"乘2号线，教大换3号线到江南。"',
     mtl:'🗺️ 首尔地铁路线图',minfo:'📍 出发: 新林(2号线) → 到达: 江南',
     s3t:'乘车导航',lst:'2号线 乘车中',lsb:'距江南3站',stat:'乘车中',
-    nxl:'下一站',nxs:'教大',nxb:'换乘站—换3号线',cdl:'到站',cds:'约2分30秒后',dm:'🚪 左侧车门',dh:'靠近扶梯',
+    nxl:'下一站',nxs:'教大',nxb:'换乘站—换3号线',cdl:'到站',cds:'约2分30秒后',dm:'左侧车门',dh:'靠近扶梯',
     xcb:'教大换3号线。江南查看公交。',xcp:'立即查看',
     s4t:'公交换乘',s4ti:'江南站公交',s4su:'仅目的地方向',
     bd1:'→ 首尔站',ba1:'即将到',bs1:'📍 4号出口·1分',bd2:'→ 论铉',ba2:'4分',bs2:'📍 10号·2分',bd3:'→ 板桥',ba3:'8分',bs3:'📍 2号·3分',bd4:'→ 驿三',ba4:'12分',bs4:'📍 1号·2分',bvb:'"最快的公交？"'},
@@ -837,7 +865,7 @@ var T={
     s2t:'経路選択',rst:'リセット',mlbl:'路線図',dfr:'新林',dto:'江南',dmt:'2経路 · 今すぐ',ban:'路線を選んでください！',rb1:'✅ おすすめ · 普通',rb2:'⚡ 急行 · 速い',mn:' 分',rp1:'乗換1回',rp2:'3分後',lxf:'教大乗換',rp3:'乗換なし',rp4:'8分後',vgl:'音声',vgt:'"2号線。教大で3号線へ。"',
     mtl:'🗺️ ソウル地下鉄路線図',minfo:'📍 出発: 新林(2号線) → 到着: 江南',
     s3t:'乗車案内',lst:'2号線 乗車中',lsb:'江南まで3駅',stat:'乗車中',
-    nxl:'次の駅',nxs:'教大',nxb:'乗換—3号線へ',cdl:'到着まで',cds:'約2分30秒後',dm:'🚪 左のドア',dh:'エスカレーター寄り',
+    nxl:'次の駅',nxs:'教大',nxb:'乗換—3号線へ',cdl:'到着まで',cds:'約2分30秒後',dm:'左のドア',dh:'エスカレーター寄り',
     xcb:'教大で3号線へ。江南でバス確認。',xcp:'今すぐ確認',
     s4t:'バス乗換',s4ti:'江南駅 バス',s4su:'目的地方向のみ',
     bd1:'→ ソウル駅',ba1:'まもなく',bs1:'📍 4番出口·1分',bd2:'→ 論峴',ba2:'4分',bs2:'📍 10番·2分',bd3:'→ 板橋',ba3:'8分',bs3:'📍 2番·3分',bd4:'→ 駅三',ba4:'12分',bs4:'📍 1番·2分',bvb:'"一番早いバスは？"'}
@@ -1309,38 +1337,45 @@ setInterval(()=>{
 // ══════════════════════════════════════════
 
 // ── 지하철 실시간 도착 ──────────────────
+// API 응답이 JSON인지 확인하는 헬퍼
+async function safeJson(r){
+  const text = await r.text();
+  // Vercel 배포 전이면 HTML 반환 → null 처리
+  if(text.trim().startsWith('<')) return null;
+  try{ return JSON.parse(text); }catch(e){ return null; }
+}
+
 async function fetchSubway(stationName){
   try{
     const r = await fetch(`/api/subway?station=${encodeURIComponent(stationName)}`);
-    return await r.json();
-  }catch(e){ console.error('subway API', e); return null; }
+    return await safeJson(r);
+  }catch(e){ return null; }
 }
 
 // ── 버스 정류장 검색 ────────────────────
 async function fetchBusByName(name){
   try{
     const r = await fetch(`/api/bus?stationName=${encodeURIComponent(name)}`);
-    return await r.json();
-  }catch(e){ console.error('bus API', e); return null; }
+    return await safeJson(r);
+  }catch(e){ return null; }
 }
 
 // ── 버스 실시간 도착 (정류장 ID) ────────
 async function fetchBusById(arsId){
   try{
     const r = await fetch(`/api/bus?stationId=${encodeURIComponent(arsId)}`);
-    return await r.json();
-  }catch(e){ console.error('bus ID API', e); return null; }
+    return await safeJson(r);
+  }catch(e){ return null; }
 }
 
 // ── 카카오 장소 검색 ────────────────────
-// query: 건물명/주소, gpsLat/gpsLng: 현재 위치 (가까운 순 정렬)
 async function fetchPlace(query, gpsLat, gpsLng){
   try{
     let url = `/api/place?query=${encodeURIComponent(query)}`;
     if(gpsLat && gpsLng) url += `&x=${gpsLng}&y=${gpsLat}`;
     const r = await fetch(url);
-    return await r.json();
-  }catch(e){ console.error('place API', e); return null; }
+    return await safeJson(r);
+  }catch(e){ return null; }
 }
 
 // ── 지하철 도착 정보 화면 반영 ──────────
@@ -1492,36 +1527,6 @@ async function searchRoute(from, to){
 
   // ③ 버스 도착 정보도 병렬 조회
   updateBusArrivals(to);
-}
-
-// ── 노선도 fallback ────────────────────
-function loadFallbackMap(){
-  var img = document.getElementById('subwayMapImg');
-  if(!img) return;
-  var tried = parseInt(img.getAttribute('data-tried')||'0');
-  var srcs = [
-    'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Seoul_Metro_map.svg/1200px-Seoul_Metro_map.svg.png',
-    'https://upload.wikimedia.org/wikipedia/commons/3/3d/Seoul_Metro_map.svg',
-  ];
-  if(tried < srcs.length){
-    img.setAttribute('data-tried', tried+1);
-    img.src = srcs[tried];
-  } else {
-    // 모든 이미지 실패 → 공식 링크 안내
-    var wrap = document.getElementById('mapImgWrap');
-    if(wrap){
-      wrap.innerHTML = `
-        <div style="padding:60px 24px;text-align:center">
-          <div style="font-size:56px;margin-bottom:20px">🗺️</div>
-          <div style="font-size:18px;font-weight:700;color:#fff;margin-bottom:10px">노선도를 불러올 수 없어요</div>
-          <div style="font-size:14px;color:rgba(255,255,255,.5);margin-bottom:24px">네트워크를 확인하거나 공식 사이트를 이용해주세요</div>
-          <a href="https://www.seoulmetro.co.kr/kr/cyberStation.do" target="_blank"
-            style="background:#007AFF;color:white;padding:14px 28px;border-radius:14px;font-size:15px;font-weight:700;text-decoration:none;display:inline-block">
-            서울 지하철 공식 노선도 보기 →
-          </a>
-        </div>`;
-    }
-  }
 }
 
 // ── 환승 놓쳤을 때 안내 ─────────────────
