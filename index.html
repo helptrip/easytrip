@@ -188,15 +188,7 @@ html,body{
 .fav-route{font-size:15px;font-weight:700;color:var(--bk);flex:1}
 .fav-memo{font-size:11px;color:#4CAF75;margin-top:1px}
 .fav-chevron{color:rgba(52,199,89,.45);font-size:15px}
-.fav-add{
-  width:100%;background:rgba(255,255,255,.55);
-  border:1.5px dashed rgba(52,199,89,.4);
-  border-radius:10px;padding:8px;
-  display:flex;align-items:center;justify-content:center;gap:6px;
-  font-size:13px;font-weight:600;color:#3DAB6A;
-  cursor:pointer;margin-top:6px;transition:all .15s;
-}
-.fav-add:active{background:rgba(255,255,255,.9);border-color:var(--green)}
+
 
 /* 언어 탭 */
 .lang-bar{
@@ -367,24 +359,17 @@ html,body{
 ══════════════════════════════ */
 #s3{background:var(--wh)}
 
-/* 12: 탑승중 카드 깜빡이는 효과 */
 .line-hero{
-  flex-shrink:0;padding:16px 20px 14px;
+  flex-shrink:0;padding:14px 20px 12px;
   border-bottom:1px solid var(--g2);
   display:flex;align-items:center;justify-content:space-between;
-  animation:heroBlink 2s ease-in-out infinite;
+  background:var(--wh);
 }
-@keyframes heroBlink{
-  0%,100%{background:var(--wh)}
-  50%{background:rgba(0,122,255,.06)}
-}
-.lh-left{display:flex;align-items:center;gap:14px}
-.lh-badge{width:64px;height:64px;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;color:var(--wh);flex-shrink:0;box-shadow:0 5px 16px rgba(0,0,0,.22);animation:badgePulse 2s ease-in-out infinite}
-@keyframes badgePulse{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+.lh-left{display:flex;align-items:center;gap:12px}
+.lh-badge{width:60px;height:60px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;color:var(--wh);flex-shrink:0;box-shadow:0 4px 14px rgba(0,0,0,.2)}
 .lh-name{font-size:24px;font-weight:900;color:var(--bk);letter-spacing:-.4px}
-.lh-remain{font-size:14px;color:var(--g4);margin-top:4px}
-.lh-status{background:var(--green);color:var(--wh);border-radius:12px;padding:7px 14px;font-size:14px;font-weight:700;flex-shrink:0;animation:statusPulse 1.5s ease-in-out infinite}
-@keyframes statusPulse{0%,100%{opacity:1}50%{opacity:.6}}
+.lh-remain{font-size:14px;color:var(--g4);margin-top:3px}
+.lh-status{background:var(--green);color:var(--wh);border-radius:10px;padding:6px 12px;font-size:13px;font-weight:700;flex-shrink:0}
 
 .s3-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px 20px 16px;display:flex;flex-direction:column;gap:10px}
 .s3-body::-webkit-scrollbar{display:none}
@@ -539,14 +524,13 @@ html,body{
     <!-- 자주 가는 노선 -->
     <div class="favs-wrap">
       <div class="favs-header">
-        <div class="favs-label" id="FL">자주 가는 노선</div>
+        <div class="favs-label">
+          <span id="FL">자주 가는 노선</span>
+          <span id="favCount" style="margin-left:6px;background:var(--green);color:#fff;border-radius:10px;padding:1px 8px;font-size:11px;font-weight:700;display:none">0</span>
+        </div>
         <button class="fav-edit-btn" onclick="openFavMdl()" id="FE">추가</button>
       </div>
       <div class="fav-list" id="favList"></div>
-      <button class="fav-add" onclick="openFavMdl()">
-        ＋ <span id="FA">자주가는 노선 목록</span>
-        <span id="favCount" style="margin-left:6px;background:var(--green);color:#fff;border-radius:10px;padding:1px 8px;font-size:11px;font-weight:700;display:none">0</span>
-      </button>
     </div>
   </div>
 
@@ -572,7 +556,6 @@ html,body{
     </div>
   </div>
 
-  <!-- 8: 레이더 + 10: 재설정 이 영역에 -->
   <div class="dest-strip">
     <div class="dest-row">
       <div class="dest-from">
@@ -581,13 +564,14 @@ html,body{
           <div class="radar-r1"></div>
           <div class="radar-r2"></div>
         </div>
-        <div>
+        <div style="margin-left:6px">
           <div class="dest-stations">
             <span id="DFR">신림</span>
             <span class="dest-arrow-txt"> → </span>
             <span id="DTO">강남</span>
           </div>
-          <div class="dest-meta" id="DMT">경로 2개 · 지금 출발 기준</div>
+          <!-- DMT는 API 상태 표시용 (숨김) -->
+          <span id="DMT" style="display:none"></span>
         </div>
       </div>
       <div class="dest-right">
@@ -596,8 +580,8 @@ html,body{
     </div>
   </div>
 
-  <!-- 11: 문구 수정 + 클릭으로도 경로 선택 -->
-  <div class="pick-hint" id="BAN" onclick="pickRoute()">탑승할 경로를 선택해 주세요!</div>
+  <!-- pick-hint: 클릭 불가, 세로 줄임 -->
+  <div class="pick-hint" id="BAN" style="cursor:default;padding:14px 16px;pointer-events:none">탑승할 경로를 선택해 주세요!</div>
 
   <div class="route-list">
     <div class="rcard rec" onclick="pickRoute()">
@@ -655,7 +639,7 @@ html,body{
             <!-- 서울교통공사 공식 노선도 이미지 -->
             <img
               id="subwayMapImg"
-              src="https://www.seoulmetro.co.kr/image/common/routeMap2.jpg"
+              src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Seoul_Metro_map.svg/1600px-Seoul_Metro_map.svg.png"
               alt="서울 지하철 노선도"
               onerror="loadFallbackMap()"
             />
@@ -682,39 +666,36 @@ html,body{
     </div>
   </div>
 
-  <!-- 12: 깜빡이는 탑승중 카드 -->
-  <div class="line-hero">
+  <!-- 탑승중 헤더 — 깜빡임 제거, 왼쪽문 통합 -->
+  <div class="line-hero" style="animation:none;background:var(--wh)">
     <div class="lh-left">
       <div class="lh-badge" id="lineBadge" style="background:var(--l2)">2</div>
-      <div>
+      <div style="margin-left:2px">
         <div class="lh-name" id="LST">2호선 탑승 중</div>
         <div class="lh-remain" id="LSB">강남까지 3정거장</div>
       </div>
+    </div>
+    <!-- 왼쪽문 + 지하철 도어 SVG -->
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
+      <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+        <rect x="2" y="4" width="28" height="24" rx="3" stroke="#34C759" stroke-width="1.8" fill="rgba(52,199,89,.08)"/>
+        <line x1="16" y1="4" x2="16" y2="28" stroke="#34C759" stroke-width="1.4"/>
+        <circle cx="12" cy="16" r="1.4" fill="#34C759"/>
+        <circle cx="20" cy="16" r="1.4" fill="#34C759"/>
+        <path d="M10 16 L5 16 M5 16 L8 13 M5 16 L8 19" stroke="#34C759" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <div style="font-size:11px;font-weight:700;color:var(--green)" id="DM">왼쪽 문</div>
     </div>
     <div class="lh-status" id="lineStatus">탑승중</div>
   </div>
 
   <div class="s3-body">
-    <!-- 다음역 + 도착시간 + 문방향 통합 카드 -->
+    <!-- 다음역 + 도착시간 통합 카드 -->
     <div class="nxt-card">
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
-        <div style="flex:1;text-align:center">
-          <div class="nxt-lbl" id="NXL">다음 역</div>
-          <div class="nxt-name" id="NXS">교대</div>
-          <div class="nxt-sub" id="NXB">환승역 — 3호선 갈아타세요</div>
-        </div>
-        <!-- 내리는 문 방향 — 오른쪽 -->
-        <div style="background:rgba(52,199,89,.15);border-radius:14px;padding:10px 12px;text-align:center;flex-shrink:0;min-width:72px;border:1px solid rgba(52,199,89,.25)">
-          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" style="display:block;margin:0 auto 5px">
-            <rect x="2" y="4" width="28" height="24" rx="3" stroke="#34C759" stroke-width="1.8" fill="rgba(52,199,89,.08)"/>
-            <line x1="16" y1="4" x2="16" y2="28" stroke="#34C759" stroke-width="1.4"/>
-            <circle cx="12" cy="16" r="1.4" fill="#34C759"/>
-            <circle cx="20" cy="16" r="1.4" fill="#34C759"/>
-            <path d="M10 16 L5 16 M5 16 L8 13 M5 16 L8 19" stroke="#34C759" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          <div style="font-size:13px;font-weight:700;color:var(--green)" id="DM">왼쪽 문</div>
-          <div style="font-size:10px;color:rgba(52,199,89,.7);margin-top:2px" id="DH">에스컬레이터</div>
-        </div>
+      <div style="text-align:center">
+        <div class="nxt-lbl" id="NXL">다음 역</div>
+        <div class="nxt-name" id="NXS">교대</div>
+        <div class="nxt-sub" id="NXB">환승역 — 3호선 갈아타세요</div>
       </div>
       <div class="cd-divider"></div>
       <div class="cd-zone">
@@ -726,8 +707,7 @@ html,body{
     <!-- 버스 환승 알림 카드 -->
     <button class="xfer-card" onclick="goTo(4)">
       <div class="xf-badge">🚌 버스 환승 알림</div>
-      <div class="xf-title" id="XCT">140번 버스로 갈아타세요!</div>
-      <div style="display:flex;gap:7px;margin-top:10px;flex-wrap:wrap">
+      <div style="display:flex;gap:7px;margin-top:8px;flex-wrap:wrap">
         <div style="background:rgba(0,122,255,.2);border-radius:10px;padding:8px 12px;flex:1;min-width:80px;border:1px solid rgba(0,122,255,.3)">
           <div style="font-size:10px;color:rgba(255,255,255,.5);margin-bottom:3px;font-weight:600;letter-spacing:.04em">환승 버스</div>
           <div style="font-size:22px;font-weight:900;color:#fff;line-height:1">140</div>
@@ -771,14 +751,14 @@ html,body{
     </div>
   </div>
   <div class="bus-header">
-    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
       <div class="radar-wrap" style="flex-shrink:0">
         <div class="radar-core"></div>
         <div class="radar-r1"></div>
         <div class="radar-r2"></div>
       </div>
       <div class="bus-title" id="S4TI">강남역 연계 버스</div>
-      <div class="bus-sub" id="S4SU" style="margin:0;font-size:12px">· 목적지 방향만</div>
+      <div class="bus-sub" id="S4SU" style="margin:0;font-size:12px;margin-left:2px">· 목적지 방향만</div>
     </div>
   </div>
   <!-- 16: 음성 버튼 리스트 위로 -->
@@ -825,7 +805,7 @@ var T={
     mtl:'🗺️ 서울 지하철 노선도',minfo:'📍 출발역: 신림 (2호선) → 도착역: 강남',
     s3t:'탑승 안내',lst:'2호선 탑승 중',lsb:'강남까지 3정거장',stat:'탑승중',
     nxl:'다음 역',nxs:'교대',nxb:'환승역 — 3호선 갈아타세요',cdl:'도착까지',cds:'약 2분 30초 후 도착',dm:'🚪 왼쪽 문',dh:'에스컬레이터 가까운 쪽',
-    xct:'버스 연계 정보 보기',xcb:'교대역에서 3호선으로 갈아타세요. 강남역 도착 후 연계 버스를 확인하세요.',xcp:'지금 확인하기',
+    xcb:'교대역에서 3호선으로 갈아타세요. 강남역 도착 후 연계 버스를 확인하세요.',xcp:'지금 확인하기',
     s4t:'버스 환승',s4ti:'강남역 연계 버스',s4su:'목적지 방향 버스만 보여드려요',
     bd1:'→ 서울역 · 시청 방향',ba1:'곧도착',bs1:'📍 4번 출구 앞 · 도보 1분',bd2:'→ 논현 · 신사 방향',ba2:'4분',bs2:'📍 10번 출구 · 도보 2분',bd3:'→ 판교 · 분당 방향',ba3:'8분',bs3:'📍 2번 출구 · 도보 3분',bd4:'→ 역삼 · 선릉 방향',ba4:'12분',bs4:'📍 1번 출구 · 도보 2분',bvb:'"가장 빠른 버스 알려줘"'},
   en:{s1h:'Go When You Say It',s1s:'Just say where to go',mlb:'Tap & Speak',cl:'Examples',lis:'🎙️ Listening...',rec:'✅',c0:'"Take me to Gangnam"',c1:'"How to Seoul Station?"',c2:'"Express to Jamsil?"',fl:'Frequent Routes',fe:'Edit',fa:'Add route',gps:'My Location',
@@ -833,7 +813,7 @@ var T={
     mtl:'🗺️ Seoul Subway Map',minfo:'📍 From: Sinrim (Line 2) → To: Gangnam',
     s3t:'On Board',lst:'Line 2 — On Board',lsb:'3 stops to Gangnam',stat:'On Board',
     nxl:'Next Station',nxs:'Gyodae',nxb:'Transfer — Switch to Line 3',cdl:'Arrives in',cds:'approx. 2 min 30 sec',dm:'🚪 Left Door',dh:'Near escalator',
-    xct:'See Bus Connections',xcb:'Transfer at Gyodae to Line 3. Check buses at Gangnam.',xcp:'Check now',
+    xcb:'Transfer at Gyodae to Line 3. Check buses at Gangnam.',xcp:'Check now',
     s4t:'Bus Transfer',s4ti:'Buses from Gangnam',s4su:'Filtered for your destination',
     bd1:'→ Seoul Station',ba1:'Arriving',bs1:'📍 Exit 4 · 1 min',bd2:'→ Nonhyeon',ba2:'4 min',bs2:'📍 Exit 10 · 2 min',bd3:'→ Pangyo',ba3:'8 min',bs3:'📍 Exit 2 · 3 min',bd4:'→ Yeoksam',ba4:'12 min',bs4:'📍 Exit 1 · 2 min',bvb:'"Which bus is fastest?"'},
   zh:{s1h:'说走就走',s1s:'说出目的地，马上出发',mlb:'点击说话',cl:'示例',lis:'🎙️ 聆听中...',rec:'✅',c0:'"去江南站"',c1:'"怎么去首尔站？"',c2:'"有蚕室急行吗？"',fl:'常用路线',fe:'编辑',fa:'添加路线',gps:'当前位置',
@@ -841,7 +821,7 @@ var T={
     mtl:'🗺️ 首尔地铁路线图',minfo:'📍 出发: 新林(2号线) → 到达: 江南',
     s3t:'乘车导航',lst:'2号线 乘车中',lsb:'距江南3站',stat:'乘车中',
     nxl:'下一站',nxs:'教大',nxb:'换乘站—换3号线',cdl:'到站',cds:'约2分30秒后',dm:'🚪 左侧车门',dh:'靠近扶梯',
-    xct:'查看接驳公交',xcb:'教大换3号线。江南查看公交。',xcp:'立即查看',
+    xcb:'教大换3号线。江南查看公交。',xcp:'立即查看',
     s4t:'公交换乘',s4ti:'江南站公交',s4su:'仅目的地方向',
     bd1:'→ 首尔站',ba1:'即将到',bs1:'📍 4号出口·1分',bd2:'→ 论铉',ba2:'4分',bs2:'📍 10号·2分',bd3:'→ 板桥',ba3:'8分',bs3:'📍 2号·3分',bd4:'→ 驿三',ba4:'12分',bs4:'📍 1号·2分',bvb:'"最快的公交？"'},
   ja:{s1h:'話せばすぐ行ける',s1s:'どこへでも、ひと言で',mlb:'押して話してください',cl:'例',lis:'🎙️ 聞いています...',rec:'✅',c0:'"江南駅へ行きたい"',c1:'"ソウル駅まで教えて"',c2:'"蚕室の急行は？"',fl:'よく使う路線',fe:'編集',fa:'路線追加',gps:'現在地',
@@ -849,7 +829,7 @@ var T={
     mtl:'🗺️ ソウル地下鉄路線図',minfo:'📍 出発: 新林(2号線) → 到着: 江南',
     s3t:'乗車案内',lst:'2号線 乗車中',lsb:'江南まで3駅',stat:'乗車中',
     nxl:'次の駅',nxs:'教大',nxb:'乗換—3号線へ',cdl:'到着まで',cds:'約2分30秒後',dm:'🚪 左のドア',dh:'エスカレーター寄り',
-    xct:'バス連絡を見る',xcb:'教大で3号線へ。江南でバス確認。',xcp:'今すぐ確認',
+    xcb:'教大で3号線へ。江南でバス確認。',xcp:'今すぐ確認',
     s4t:'バス乗換',s4ti:'江南駅 バス',s4su:'目的地方向のみ',
     bd1:'→ ソウル駅',ba1:'まもなく',bs1:'📍 4番出口·1分',bd2:'→ 論峴',ba2:'4分',bs2:'📍 10番·2分',bd3:'→ 板橋',ba3:'8分',bs3:'📍 2番·3分',bd4:'→ 駅三',ba4:'12分',bs4:'📍 1番·2分',bvb:'"一番早いバスは？"'}
 };
@@ -879,7 +859,7 @@ function applyText(){
     VGL:t.vgl,VGT:t.vgt,MTL:t.mtl,MapInfo:t.minfo,
     S3T:t.s3t,LST:t.lst,LSB:t.lsb,lineStatus:t.stat,
     NXL:t.nxl,NXS:t.nxs,NXB:t.nxb,CDL:t.cdl,CDS:t.cds,
-    DM:t.dm,DH:t.dh,XCT:t.xct,XCB:t.xcb,XCP:t.xcp,
+    DM:t.dm,DH:t.dh,XCB:t.xcb,XCP:t.xcp,
     S4T:t.s4t,S4TI:t.s4ti,S4SU:t.s4su,
     BD1:t.bd1,BA1:t.ba1,BS1:t.bs1,BD2:t.bd2,BA2:t.ba2,BS2:t.bs2,
     BD3:t.bd3,BA3:t.ba3,BS3:t.bs3,BD4:t.bd4,BA4:t.ba4,BS4:t.bs4,
@@ -908,7 +888,28 @@ function goReset(){
   document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on','back'));
   document.getElementById('s1').classList.add('on');
 }
-function pickRoute(){goTo(3);}
+function pickRoute(){
+  // 환승역 색상 동적 적용 (3호선 = 주황, 2호선 = 녹색 등)
+  var nxb = document.getElementById('NXB');
+  if(nxb){
+    var txt = nxb.textContent || '';
+    // 노선별 색상 매핑
+    var lineColors = {'1호선':'#0052A4','2호선':'#00A650','3호선':'#EF7C1C','4호선':'#00A0E9','5호선':'#996CAC','6호선':'#CD7C2F','7호선':'#747F00','8호선':'#E6186C','9호선':'#BDB092'};
+    var matched = null;
+    Object.keys(lineColors).forEach(function(ln){
+      if(txt.indexOf(ln) !== -1) matched = lineColors[ln];
+    });
+    if(matched){
+      nxb.style.color = matched;
+      nxb.style.background = matched + '22';
+      nxb.style.borderRadius = '8px';
+      nxb.style.padding = '5px 14px';
+      nxb.style.display = 'inline-block';
+      nxb.style.fontWeight = '700';
+    }
+  }
+  goTo(3);
+}
 function openMdl(){document.getElementById('MDL').classList.add('on');}
 function closeMdl(){document.getElementById('MDL').classList.remove('on');}
 
@@ -1401,8 +1402,7 @@ async function updateBusArrivals(stationName){
   `).join('');
 
   // S3 환승 알림 카드 첫번째 버스로 업데이트
-  const xct = document.getElementById('XCT');
-  if(xct && buses[0]) xct.textContent = buses[0].busNo + '번 버스로 갈아타세요!';
+
 }
 
 // ── 장소검색 → 가장 가까운 역 설정 ──────
@@ -1483,9 +1483,8 @@ function loadFallbackMap(){
   if(!img) return;
   var tried = parseInt(img.getAttribute('data-tried')||'0');
   var srcs = [
-    'https://www.seoulmetro.co.kr/image/common/routeMap2.jpg',
-    'https://www.seoulmetro.co.kr/image/common/routeMap.jpg',
-    'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Seoul_Metro_map.svg/1200px-Seoul_Metro_map.svg.png'
+    'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Seoul_Metro_map.svg/1200px-Seoul_Metro_map.svg.png',
+    'https://upload.wikimedia.org/wikipedia/commons/3/3d/Seoul_Metro_map.svg',
   ];
   if(tried < srcs.length){
     img.setAttribute('data-tried', tried+1);
