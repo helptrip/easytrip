@@ -1077,6 +1077,9 @@ function getGPS(){
     function(pos){
       var lat = pos.coords.latitude;
       var lng = pos.coords.longitude;
+      // 전역 저장 (searchRoute에서 장소 검색 시 활용)
+      window._gpsLat = lat;
+      window._gpsLng = lng;
       var result = getNearestStation(lat, lng);
       var nearest = result.station;
       var dist = result.dist;
@@ -1165,20 +1168,6 @@ function applyRoute(tx){
   );
 }
 
-async function searchRoute(from, to){
-  // 경로 메타 표시
-  document.getElementById('DMT').textContent = from + ' → ' + to + ' · 검색 중...';
-  try{
-    var data = await fetchSubway(to);
-    if(data && data.realtimeArrivalList){
-      document.getElementById('DMT').textContent = from + ' → ' + to + ' · 실시간 데이터';
-    } else {
-      document.getElementById('DMT').textContent = from + ' → ' + to + ' · 데모 모드';
-    }
-  } catch(e){
-    document.getElementById('DMT').textContent = from + ' → ' + to + ' · 데모 모드';
-  }
-}
 
 function doListen(){
   var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
@@ -1287,14 +1276,191 @@ setInterval(()=>{
   if(e)e.textContent=Math.floor(sec/60)+':'+String(sec%60).padStart(2,'0');
 },1000);
 
-// ── API 호출 함수 ──────────────────────
+// ══════════════════════════════════════════
+// ★ 실제 API 연동
+// ══════════════════════════════════════════
+
+// ── 지하철 실시간 도착 ──────────────────
 async function fetchSubway(stationName){
-  try{const r=await fetch(`/api/subway?station=${encodeURIComponent(stationName)}`);return await r.json();}
-  catch(e){console.error('지하철 API',e);return null;}
+  try{
+    const r = await fetch(`/api/subway?station=${encodeURIComponent(stationName)}`);
+    return await r.json();
+  }catch(e){ console.error('subway API', e); return null; }
 }
+
+// ── 버스 정류장 검색 ────────────────────
 async function fetchBusByName(name){
-  try{const r=await fetch(`/api/bus?stationName=${encodeURIComponent(name)}`);return await r.json();}
-  catch(e){console.error('버스 API',e);return null;}
+  try{
+    const r = await fetch(`/api/bus?stationName=${encodeURIComponent(name)}`);
+    return await r.json();
+  }catch(e){ console.error('bus API', e); return null; }
+}
+
+// ── 버스 실시간 도착 (정류장 ID) ────────
+async function fetchBusById(arsId){
+  try{
+    const r = await fetch(`/api/bus?stationId=${encodeURIComponent(arsId)}`);
+    return await r.json();
+  }catch(e){ console.error('bus ID API', e); return null; }
+}
+
+// ── 카카오 장소 검색 ────────────────────
+// query: 건물명/주소, gpsLat/gpsLng: 현재 위치 (가까운 순 정렬)
+async function fetchPlace(query, gpsLat, gpsLng){
+  try{
+    let url = `/api/place?query=${encodeURIComponent(query)}`;
+    if(gpsLat && gpsLng) url += `&x=${gpsLng}&y=${gpsLat}`;
+    const r = await fetch(url);
+    return await r.json();
+  }catch(e){ console.error('place API', e); return null; }
+}
+
+// ── 지하철 도착 정보 화면 반영 ──────────
+async function updateSubwayArrivals(stationName){
+  const vst = document.getElementById('VST');
+  const dmt = document.getElementById('DMT');
+  dmt.textContent = stationName + ' 실시간 조회 중...';
+
+  const data = await fetchSubway(stationName);
+
+  if(!data || !data.ok){
+    dmt.textContent = document.getElementById('DFR').textContent +
+      ' → ' + document.getElementById('DTO').textContent + ' · 데모 모드';
+    return;
+  }
+
+  const arrivals = data.arrivals || [];
+  if(arrivals.length === 0){
+    dmt.textContent = stationName + ' · 운행 종료 또는 정보 없음';
+    return;
+  }
+
+  // 첫번째 열차 정보로 화면 업데이트
+  const first = arrivals[0];
+  const min = first.barvlDt ? Math.ceil(parseInt(first.barvlDt)/60) : null;
+  const arrText = min !== null ? `${min}분 후` : first.arrivalMsg;
+
+  dmt.textContent = document.getElementById('DFR').textContent +
+    ' → ' + document.getElementById('DTO').textContent +
+    ' · ' + arrText + ' 출발 (실시간)';
+
+  // S2 경로 카드 업데이트
+  const rp2 = document.getElementById('RP2');
+  if(rp2) rp2.textContent = arrText;
+}
+
+// ── 버스 도착 정보 화면 반영 ────────────
+async function updateBusArrivals(stationName){
+  const busListEl = document.getElementById('busListDynamic');
+
+  // 먼저 정류장 ID 검색
+  const stData = await fetchBusByName(stationName + '역');
+  if(!stData || !stData.ok || !stData.stations || stData.stations.length === 0){
+    console.log('버스 정류장 없음:', stationName);
+    return;
+  }
+
+  // 첫번째 정류장의 실시간 도착 조회
+  const arsId = stData.stations[0].arsId;
+  if(!arsId) return;
+
+  const arrData = await fetchBusById(arsId);
+  if(!arrData || !arrData.ok || !arrData.buses || arrData.buses.length === 0) return;
+
+  const buses = arrData.buses.slice(0, 4);
+
+  // S4 버스 목록 동적 업데이트
+  const busList = document.querySelector('.bus-list');
+  if(!busList) return;
+
+  const colors = ['var(--blue)','var(--ora)','var(--pur)','var(--green)'];
+  const arrColors = ['ar','ao','ag','ag'];
+
+  busList.innerHTML = buses.map((b, i) => `
+    <div class="bcard">
+      <div class="btop">
+        <div>
+          <div class="bnum" style="color:${colors[i%4]}">${b.busNo}</div>
+          <div class="bdest">→ ${b.dest}</div>
+        </div>
+        <div class="barr ${arrColors[i%4]}">${b.arrMsg1}</div>
+      </div>
+      <div class="bstop">📍 ${stData.stations[0].stNm}</div>
+    </div>
+  `).join('');
+
+  // S3 환승 알림 카드 첫번째 버스로 업데이트
+  const xct = document.getElementById('XCT');
+  if(xct && buses[0]) xct.textContent = buses[0].busNo + '번 버스로 갈아타세요!';
+}
+
+// ── 장소검색 → 가장 가까운 역 설정 ──────
+async function searchPlaceAndSetRoute(placeName, gpsLat, gpsLng){
+  const vst = document.getElementById('VST');
+  vst.style.color = 'var(--blue)';
+  vst.textContent = '🔍 "' + placeName + '" 검색 중...';
+
+  const data = await fetchPlace(placeName, gpsLat, gpsLng);
+
+  if(!data || !data.ok || !data.places || data.places.length === 0){
+    vst.textContent = '장소를 찾지 못했어요. 역 이름으로 다시 말해보세요.';
+    showToast('❌ 장소를 찾지 못했어요');
+    return false;
+  }
+
+  const place = data.places[0];
+  const nearest = getNearestStation(place.lat, place.lng);
+
+  // 도착지를 가장 가까운 역으로 설정
+  document.getElementById('DTO').textContent = nearest.station.name;
+  document.getElementById('MapInfo').textContent =
+    '📍 ' + place.name + ' → 가장 가까운 역: ' + nearest.station.name +
+    ' (' + nearest.dist + 'm)';
+
+  vst.style.color = 'var(--green)';
+  vst.textContent = '✅ "' + place.name + '" → ' + nearest.station.name + '역';
+
+  showToast('📍 ' + place.name + '\n→ ' + nearest.station.name + '역 (' + nearest.dist + 'm)');
+  return true;
+}
+
+// ── 통합 경로 검색 ──────────────────────
+// 음성/칩/자주가는 노선에서 모두 이 함수로 집결
+async function searchRoute(from, to){
+  const dmt = document.getElementById('DMT');
+  dmt.textContent = from + ' → ' + to + ' · 검색 중...';
+
+  // GPS 좌표 가져오기 (장소명 판별용)
+  var gpsLat = null, gpsLng = null;
+  try {
+    // 이전에 GPS 얻은 경우 재활용
+    if(window._gpsLat) { gpsLat = window._gpsLat; gpsLng = window._gpsLng; }
+  } catch(e){}
+
+  // ① 도착지가 역명인지 장소명인지 판별
+  //    STATIONS 배열에 없으면 장소 검색 시도
+  const isStation = STATIONS.some(s =>
+    s.name === to || s.name === to.replace('역','')
+  );
+
+  if(!isStation && to.length >= 2){
+    // 장소명으로 검색 → 가장 가까운 역 찾기
+    const found = await searchPlaceAndSetRoute(to, gpsLat, gpsLng);
+    if(found){
+      // 업데이트된 DTO로 다시 searchRoute 호출
+      const newTo = document.getElementById('DTO').textContent;
+      dmt.textContent = from + ' → ' + newTo + ' · 경로 확인 중...';
+      await updateSubwayArrivals(newTo);
+      await updateBusArrivals(newTo);
+      return;
+    }
+  }
+
+  // ② 역명으로 바로 지하철 조회
+  await updateSubwayArrivals(to);
+
+  // ③ 버스 도착 정보도 병렬 조회
+  updateBusArrivals(to);
 }
 
 // ── 노선도 fallback ────────────────────
