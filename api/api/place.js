@@ -1,17 +1,15 @@
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET');
 
-  const { query, x, y } = req.query;  // x,y = 현재 위치 (선택, 가까운 순 정렬용)
+  const { query, x, y } = req.query;
   if (!query) return res.status(400).json({ error: '검색어 필요' });
 
   const key = process.env.KAKAO_KEY;
   if (!key) return res.status(500).json({ error: 'API 키 없음' });
 
   try {
-    // 현재 위치 기반으로 가까운 순 정렬 (선택)
-    let url = `https://dapi.kakao.com/v2/local/search/keyword.json` +
-      `?query=${encodeURIComponent(query)}&size=5`;
+    let url = `https://dapi.kakao.com/v2/local/search/keyword.json?query=${encodeURIComponent(query)}&size=5`;
     if (x && y) url += `&x=${x}&y=${y}&sort=distance`;
 
     const r = await fetch(url, {
@@ -26,8 +24,8 @@ export default async function handler(req, res) {
       address:  p.road_address_name || p.address_name,
       category: p.category_name,
       phone:    p.phone,
-      lng:      parseFloat(p.x),   // 경도
-      lat:      parseFloat(p.y),   // 위도
+      lng:      parseFloat(p.x),
+      lat:      parseFloat(p.y),
       distance: p.distance || '',
       url:      p.place_url,
     }));
@@ -38,4 +36,4 @@ export default async function handler(req, res) {
     console.error('place error:', e);
     return res.status(500).json({ ok: false, error: e.message });
   }
-}
+};
