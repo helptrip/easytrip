@@ -802,7 +802,7 @@ function doListen(){
   var r=new SR();r.lang=LM[lang]||'ko-KR';r.continuous=false;r.interimResults=isIOS?false:true;r.maxAlternatives=1;
   var mic=document.getElementById('MIC'),vst=document.getElementById('VST');
   r.onstart=()=>{mic.classList.add('on');vst.style.color='var(--emerald)';vst.textContent=T[lang].lis;};
-  r.onresult=e=>{var tx=e.results[0][0].transcript,fin=isIOS?true:e.results[0].isFinal;vst.textContent=(fin?T[lang].rec+' ')+'\"'+tx+'\"';if(fin){try{localStorage.setItem('mic_granted','1');}catch(x){}mic.classList.remove('on');applyRoute(tx);setTimeout(()=>goTo(2),700);}};
+  r.onresult=e=>{var tx=e.results[0][0].transcript,fin=isIOS?true:e.results[0].isFinal;vst.textContent=(fin?T[lang].rec+' ':'')+'\"'+tx+'\"';if(fin){try{localStorage.setItem('mic_granted','1');}catch(x){}mic.classList.remove('on');applyRoute(tx);setTimeout(()=>goTo(2),700);}};
   r.onend=()=>{mic.classList.remove('on');};
   r.onerror=e=>{mic.classList.remove('on');if(e.error==='not-allowed'){showToast(isIOS?'설정 → Safari → 마이크를 허용해주세요':'마이크 권한을 허용해주세요');}else if(e.error==='no-speech'){showToast('다시 눌러서 말해주세요');}else{simListen();}};
   try{r.start();}catch(e){isIOS?showToast('마이크 버튼을 다시 눌러주세요'):simListen();}
