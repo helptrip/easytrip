@@ -602,6 +602,12 @@ html,body{
         <span class="rc-pill">1,600원</span>
         <span class="rc-pill" id="RP2">3분 후 출발</span>
       </div>
+      <!-- 지도 안내 버튼 -->
+      <div onclick="event.stopPropagation();goToMap()" style="
+        margin-top:14px;background:rgba(0,201,167,.2);border:1px solid rgba(0,201,167,.4);
+        border-radius:12px;padding:10px;text-align:center;
+        font-size:var(--fs-sm);font-weight:700;color:var(--emerald);
+      ">🗺️ 지도로 길 안내 받기</div>
     </button>
     <div class="voice-card">
       <div class="voice-icon">🔊</div>
@@ -746,8 +752,80 @@ html,body{
     </div>
   </div>
 </div>
+
+<!-- ══ S5: 지도 경로 안내 ══ -->
+<div class="scr" id="s5">
+  <div class="nav" style="background:transparent;position:absolute;top:0;left:0;right:0;z-index:10;border:none">
+    <button class="nav-back" onclick="goBack()" style="background:rgba(255,255,255,.95);box-shadow:0 2px 12px rgba(0,0,0,.15)">
+      <svg viewBox="0 0 24 24"><polyline points="15,18 9,12 15,6"/></svg>
+    </button>
+    <div style="flex:1"></div>
+    <button onclick="goReset()" style="background:rgba(255,255,255,.95);border:none;border-radius:20px;padding:8px 16px;font-size:13px;font-weight:700;color:var(--coral);box-shadow:0 2px 12px rgba(0,0,0,.15);cursor:pointer">재설정</button>
+  </div>
+
+  <!-- 카카오맵 -->
+  <div id="kakaoMap" style="width:100%;flex:1;position:relative;background:#e8eaed"></div>
+
+  <!-- 하단 경로 안내 카드 -->
+  <div id="routeCard" style="
+    position:absolute;bottom:0;left:0;right:0;z-index:10;
+    background:var(--card);border-radius:24px 24px 0 0;
+    padding:20px 20px calc(20px + var(--sab));
+    box-shadow:0 -8px 32px rgba(26,31,54,.12);
+  ">
+    <!-- 핸들 -->
+    <div style="width:36px;height:4px;background:var(--bd);border-radius:2px;margin:0 auto 16px"></div>
+
+    <!-- 현재 안내 -->
+    <div id="guideStep" style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
+      <div id="guideIcon" style="width:52px;height:52px;border-radius:16px;background:linear-gradient(135deg,var(--emerald),var(--emerald2));display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">🚶</div>
+      <div style="flex:1">
+        <div id="guideTitle" style="font-size:var(--fs-lg);font-weight:900;color:var(--t1);letter-spacing:-.3px">경로 계산 중...</div>
+        <div id="guideSub" style="font-size:var(--fs-sm);color:var(--t2);margin-top:3px"></div>
+      </div>
+    </div>
+
+    <!-- 총 요약 -->
+    <div style="display:flex;gap:8px">
+      <div style="flex:1;background:var(--bg);border-radius:var(--r-md);padding:12px;text-align:center">
+        <div style="font-size:var(--fs-xs);color:var(--t3);margin-bottom:4px">총 거리</div>
+        <div id="totalDist" style="font-size:var(--fs-lg);font-weight:900;color:var(--t1)">-</div>
+      </div>
+      <div style="flex:1;background:var(--bg);border-radius:var(--r-md);padding:12px;text-align:center">
+        <div style="font-size:var(--fs-xs);color:var(--t3);margin-bottom:4px">총 시간</div>
+        <div id="totalTime" style="font-size:var(--fs-lg);font-weight:900;color:var(--navy)">-</div>
+      </div>
+      <div style="flex:1;background:linear-gradient(135deg,var(--emerald),var(--emerald2));border-radius:var(--r-md);padding:12px;text-align:center;cursor:pointer" onclick="speakGuide()">
+        <div style="font-size:var(--fs-xs);color:rgba(255,255,255,.7);margin-bottom:4px">음성</div>
+        <div style="font-size:var(--fs-lg);font-weight:900;color:#fff">🔊</div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
+<!-- 카카오맵 SDK — JS 키로 로드 -->
+<script>
+// 카카오맵 JS 키를 서버에서 받아서 동적으로 SDK 로드
+(function(){
+  var script = document.createElement('script');
+  script.src = '/api/kakaokey';
+  script.onload = function(){};
+  // 직접 키 사용 (KAKAO_JS_KEY)
+  var kakaoScript = document.createElement('script');
+  kakaoScript.type = 'text/javascript';
+  kakaoScript.src = 'https://dapi.kakao.com/v2/maps/sdk.js?appkey=c478032712c9f54e8d4c7f000df59629&autoload=false&libraries=services';
+  kakaoScript.onload = function(){
+    if(window.kakao && window.kakao.maps){
+      window.kakao.maps.load(function(){
+        window._kakaoMapReady = true;
+      });
+    }
+  };
+  document.head.appendChild(kakaoScript);
+})();
+</script>
 <script>
 function loadFallbackMap(){var w=document.getElementById('mapWrap');if(!w||w.getAttribute('df'))return;w.setAttribute('df','1');w.innerHTML='<div style="padding:48px 20px;text-align:center;background:#111;min-height:100%"><div style="font-size:40px;margin-bottom:12px">🗺️</div><div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:8px">노선도를 불러올 수 없어요</div><a href="https://www.seoulmetro.co.kr/kr/cyberStation.do" target="_blank" style="background:#00C9A7;color:#1A1F36;padding:12px 24px;border-radius:12px;font-size:14px;font-weight:800;text-decoration:none;display:inline-block">서울교통공사 노선도 →</a></div>';}
 
@@ -997,6 +1075,157 @@ function delFav(i){favs.splice(i,1);try{localStorage.setItem('mbrg_favs',JSON.st
 function doListenBus(){doListen();updateXferBusAlert();}
 function showToast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),3000);}
 var sec=150;setInterval(()=>{if(sec>0)sec--;var e=document.getElementById('CDN');if(e)e.textContent=Math.floor(sec/60)+':'+String(sec%60).padStart(2,'0');},1000);
+
+// ━━━ 카카오맵 + 경로 안내 ━━━
+var _map=null, _polyline=null, _markers=[], _guides=[], _guideIdx=0;
+
+// 지도 초기화
+function initMap(centerLat, centerLng){
+  if(!window.kakao||!window.kakao.maps||!window._kakaoMapReady){
+    setTimeout(()=>initMap(centerLat,centerLng),300);return;
+  }
+  var container=document.getElementById('kakaoMap');
+  if(!container)return;
+  var options={center:new kakao.maps.LatLng(centerLat,centerLng),level:4};
+  _map=new kakao.maps.Map(container,options);
+
+  // 현재 위치 마커
+  var pos=new kakao.maps.LatLng(centerLat,centerLng);
+  var markerImg=new kakao.maps.MarkerImage(
+    'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png',
+    new kakao.maps.Size(24,35)
+  );
+  var marker=new kakao.maps.Marker({position:pos,map:_map});
+  _markers.push(marker);
+}
+
+// 경로 그리기
+async function drawRoute(startLat,startLng,endLat,endLng,endName){
+  if(!_map){initMap(startLat,startLng);await new Promise(r=>setTimeout(r,500));}
+  if(!_map)return;
+
+  showToast('🗺️ 경로 계산 중...');
+  document.getElementById('guideTitle').textContent='경로 계산 중...';
+
+  try{
+    var url='/api/route?startX='+startLng+'&startY='+startLat+'&endX='+endLng+'&endY='+endLat;
+    var r=await fetch(url);
+    var data=await r.json();
+
+    if(!data.ok){showToast('경로를 찾을 수 없어요');return;}
+
+    // 거리/시간 표시
+    var dist=data.summary.distance;
+    var dur=Math.round(data.summary.duration/60);
+    document.getElementById('totalDist').textContent=dist>=1000?(dist/1000).toFixed(1)+'km':dist+'m';
+    document.getElementById('totalTime').textContent=dur+'분';
+
+    // 경로 폴리라인 그리기
+    if(_polyline){_polyline.setMap(null);}
+    var path=data.points.map(p=>new kakao.maps.LatLng(p.lat,p.lng));
+    _polyline=new kakao.maps.Polyline({
+      path,strokeWeight:6,strokeColor:'#00C9A7',
+      strokeOpacity:.9,strokeStyle:'solid',map:_map
+    });
+
+    // 도착지 마커
+    _markers.forEach(m=>m.setMap(null));_markers=[];
+    var endMarker=new kakao.maps.Marker({
+      position:new kakao.maps.LatLng(endLat,endLng),map:_map
+    });
+    _markers.push(endMarker);
+
+    // 출발지 마커
+    var startMarker=new kakao.maps.Marker({
+      position:new kakao.maps.LatLng(startLat,startLng),map:_map
+    });
+    _markers.push(startMarker);
+
+    // 지도 범위 조정
+    var bounds=new kakao.maps.LatLngBounds();
+    path.forEach(p=>bounds.extend(p));
+    _map.setBounds(bounds);
+
+    // 안내 포인트 저장
+    _guides=data.guides||[];
+    _guideIdx=0;
+    showNextGuide();
+
+    // GPS 실시간 추적 시작
+    startWatchPosition();
+
+  }catch(e){
+    showToast('경로 오류: '+e.message);
+    document.getElementById('guideTitle').textContent='경로를 불러올 수 없어요';
+  }
+}
+
+// 다음 안내 표시
+function showNextGuide(){
+  if(!_guides.length)return;
+  var g=_guides[_guideIdx]||_guides[_guides.length-1];
+  var icons={0:'🚶',1:'↑',2:'↰',3:'↱',4:'↲',5:'↳',8:'🏁',10:'🚦',11:'📍'};
+  document.getElementById('guideIcon').textContent=icons[g.type]||'📍';
+  document.getElementById('guideTitle').textContent=g.guidance||g.name||'계속 직진하세요';
+  document.getElementById('guideSub').textContent=g.distance?g.distance+'m 앞':'';
+  if(window._speechEnabled)speakGuide();
+}
+
+// 음성 안내
+function speakGuide(){
+  var txt=document.getElementById('guideTitle').textContent;
+  if(!txt||!window.speechSynthesis)return;
+  window.speechSynthesis.cancel();
+  var utt=new SpeechSynthesisUtterance(txt);
+  utt.lang=LM[lang]||'ko-KR';utt.rate=.95;utt.pitch=1;
+  window.speechSynthesis.speak(utt);
+  window._speechEnabled=true;
+}
+
+// GPS 실시간 추적
+var _watchId=null;
+function startWatchPosition(){
+  if(_watchId)navigator.geolocation.clearWatch(_watchId);
+  if(!navigator.geolocation)return;
+  _watchId=navigator.geolocation.watchPosition(pos=>{
+    var lat=pos.coords.latitude,lng=pos.coords.longitude;
+    if(!_map)return;
+    // 현재 위치 마커 업데이트
+    if(_markers[1])_markers[1].setPosition(new kakao.maps.LatLng(lat,lng));
+    _map.setCenter(new kakao.maps.LatLng(lat,lng));
+    // 가장 가까운 안내 포인트 찾기
+    if(_guides.length){
+      var nearest=_guides.reduce((a,b,i)=>{
+        var da=Math.hypot(a.x-lng,a.y-lat);
+        var db=Math.hypot(b.x-lng,b.y-lat);
+        return db<da?{...b,i}:{...a};
+      },{..._guides[0],i:0});
+      if(nearest.i!==_guideIdx){_guideIdx=nearest.i;showNextGuide();}
+    }
+  },{enableHighAccuracy:true,maximumAge:3000,timeout:10000});
+}
+
+// S5 지도 화면으로 이동 (경로 포함)
+async function goToMap(){
+  goTo(5);
+  var fromLat=window._gpsLat, fromLng=window._gpsLng;
+  var toName=document.getElementById('DTO').textContent;
+
+  if(!fromLat||!fromLng){showToast('📍 현재 위치를 먼저 확인해주세요');return;}
+
+  // 도착지 좌표 가져오기
+  var pd=await fetchPlace(toName,fromLat,fromLng);
+  if(pd&&pd.ok&&pd.places&&pd.places.length){
+    var p=pd.places[0];
+    drawRoute(fromLat,fromLng,p.lat,p.lng,p.name);
+  } else {
+    // 역명으로 좌표 찾기
+    var st=STATIONS.find(s=>s.name===toName||s.name===toName.replace('역',''));
+    if(st){drawRoute(fromLat,fromLng,st.lat,st.lng,st.name);}
+    else{showToast('목적지 좌표를 찾을 수 없어요');}
+  }
+}
+
 applyText();
 setTimeout(getGPS,600);
 (function(){if(!navigator.permissions)return;navigator.permissions.query({name:'microphone'}).then(p=>{if(p.state==='granted')try{localStorage.setItem('mic_granted','1');}catch(e){}p.onchange=()=>{if(p.state==='granted')try{localStorage.setItem('mic_granted','1');}catch(e){}else try{localStorage.removeItem('mic_granted');}catch(e){}};}).catch(()=>{});})();
