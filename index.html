@@ -1,35 +1,51 @@
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET');
- 
+
   const { startX, startY, endX, endY } = req.query;
   if (!startX || !startY || !endX || !endY)
     return res.status(400).json({ error: '좌표 필요' });
- 
+
   const key = process.env.SEOUL_ROUTE_KEY;
   if (!key) return res.status(500).json({ error: 'API 키 없음' });
- 
+
   try {
-    // 원본 응답 그대로 반환해서 구조 확인
     const encoded = encodeURIComponent(key);
-    const url = `http://ws.bus.go.kr/api/rest/pathinfo/getPathInfoByBusNSub`
+
+    // https로 변경
+    const url = `https://ws.bus.go.kr/api/rest/pathinfo/getPathInfoByBusNSub`
       + `?serviceKey=${encoded}`
       + `&startX=${startX}&startY=${startY}`
       + `&endX=${endX}&endY=${endY}`
       + `&resultType=json`;
- 
+
     const r = await fetch(url);
     const text = await r.text();
-    
-    // 원본 텍스트 앞 2000자 반환 (구조 파악용)
-    return res.status(200).json({ 
-      ok: true, 
+
+    return res.status(200).json({
+      ok: true,
       debug: true,
+      status: r.status,
       raw: text.slice(0, 3000)
     });
- 
+
   } catch (e) {
-    return res.status(500).json({ ok: false, error: e.message });
+    // ODsay API로 대체 시도
+    try {
+      const odKey = process.env.SEOUL_ROUTE_KEY;
+      const odUrl = `https://api.odsay.com/v1/api/searchPubTransPathT`
+        + `?SX=${startX}&SY=${startY}`
+        + `&EX=${endX}&EY=${endY}`
+        + `&apiKey=${encodeURIComponent(odKey)}`;
+
+      const or = await fetch(odUrl);
+      const otext = await or.text();
+      return res.status(200).json({
+        ok: true, debug: true, source: 'odsay',
+        status: or.status, raw: otext.slice(0, 3000)
+      });
+    } catch(e2) {
+      return res.status(500).json({ ok: false, error: e.message, error2: e2.message });
+    }
   }
 };
- 
