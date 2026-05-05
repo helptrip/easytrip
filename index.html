@@ -1,6 +1,5 @@
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET');
 
   const { startX, startY, endX, endY } = req.query;
   if (!startX || !startY || !endX || !endY)
@@ -11,8 +10,6 @@ module.exports = async function handler(req, res) {
 
   try {
     const encoded = encodeURIComponent(key);
-
-    // https로 변경
     const url = `https://ws.bus.go.kr/api/rest/pathinfo/getPathInfoByBusNSub`
       + `?serviceKey=${encoded}`
       + `&startX=${startX}&startY=${startY}`
@@ -22,30 +19,13 @@ module.exports = async function handler(req, res) {
     const r = await fetch(url);
     const text = await r.text();
 
+    // 원본 그대로 반환
     return res.status(200).json({
-      ok: true,
-      debug: true,
-      status: r.status,
-      raw: text.slice(0, 3000)
+      httpStatus: r.status,
+      rawText: text.slice(0, 5000)
     });
 
   } catch (e) {
-    // ODsay API로 대체 시도
-    try {
-      const odKey = process.env.SEOUL_ROUTE_KEY;
-      const odUrl = `https://api.odsay.com/v1/api/searchPubTransPathT`
-        + `?SX=${startX}&SY=${startY}`
-        + `&EX=${endX}&EY=${endY}`
-        + `&apiKey=${encodeURIComponent(odKey)}`;
-
-      const or = await fetch(odUrl);
-      const otext = await or.text();
-      return res.status(200).json({
-        ok: true, debug: true, source: 'odsay',
-        status: or.status, raw: otext.slice(0, 3000)
-      });
-    } catch(e2) {
-      return res.status(500).json({ ok: false, error: e.message, error2: e2.message });
-    }
+    return res.status(500).json({ error: e.message });
   }
 };
